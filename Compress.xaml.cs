@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.WindowsAPICodePack;
 
 namespace Archiver
 {
@@ -22,6 +24,11 @@ namespace Archiver
         public Compress()
         {
             InitializeComponent();
+
+            this.selectSource.Click += (s, e) => {
+                FileSelector selector = new FileSelector();
+                selector.ShowDialog();
+            };
         }
 
         private void DockPanel_MouseDown(object sender, MouseButtonEventArgs e)

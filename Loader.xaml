@@ -1,0 +1,29 @@
+﻿<Window x:Class="Archiver.Loader"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Archiver"
+        xmlns:ui="clr-namespace:Archiver.UI"
+        mc:Ignorable="d" FontFamily="Adobe Clean" Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"
+        Title="Loading ..." Height="118" Width="400">
+    <Grid>
+        <StackPanel Margin="20" Orientation="Horizontal">
+            <ui:LoadingRing/>
+            <StackPanel Orientation="Vertical" Margin="20 0 0 0">
+                <Label Name="lblTitle" Visibility="Visible" Width="308" TextElement.FontWeight="Bold" TextElement.FontSize="14" 
+                       Content="Opening archive ..."/>
+                <TextBlock x:Name="lblDesc" Width="308" TextElement.FontSize="12" Padding="5" LineHeight="18"
+                           TextWrapping="NoWrap" Text="Reading archived content information from"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CornerRadius="0"
+                      GlassFrameThickness="0.1"
+                      UseAeroCaptionButtons="True"
+                      NonClientFrameEdges="Top"
+                      CaptionHeight="0.1"/>
+    </WindowChrome.WindowChrome>
+</Window>

@@ -100,9 +100,16 @@
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                         <StackPanel Orientation="Vertical">
                             <StackPanel Orientation="Horizontal">
-                                <ComboBox IsEnabled="True" SelectedIndex="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="225">
+                                <ComboBox x:Name="comboBoxSource" IsEnabled="True" 
+                                          SelectedIndex="0" HorizontalAlignment="Left" 
+                                          VerticalAlignment="Top" Width="225">
                                 </ComboBox>
-                                <Button IsEnabled="False" Content="Select ..." Padding="10 0 10 0"/>
+                                <Button x:Name="selectSource" IsEnabled="True" Padding="4 0 4 0">
+                                    <Image Width="12" Height="12"  Source="Resources/apple-files.png"/>
+                                </Button>
+                                <Button x:Name="selectWildMask" IsEnabled="True" Padding="4 0 4 0">
+                                    <Image Width="12" Height="12"  Source="Resources/compare.png"/>
+                                </Button>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -113,14 +120,16 @@
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                         <StackPanel Orientation="Vertical">
                             <StackPanel Orientation="Horizontal">
-                                <ComboBox Width="225" SelectedIndex="0">
+                                <ComboBox x:Name="comboBoxDest"  Width="225" SelectedIndex="0">
                                     <ComboBoxItem Content="Same directory with the archives"/>
                                 </ComboBox>
-                                <Button Content="Select ..." Padding="10 0"/>
+                                <Button x:Name="selectDest" Padding="4 0">
+                                    <Image Width="12" Height="12"  Source="Resources/apple-files.png"/>
+                                </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Width="150" Text="Archive.zip"/>
-                                <ComboBox IsEnabled="True" SelectedIndex="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150"
+                                <TextBox x:Name="txtArchiveName"  Width="150" Text="Archive"/>
+                                <ComboBox x:Name="comboArchiveType"  IsEnabled="True" SelectedIndex="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150"
                                       Margin="0">
                                     <ComboBoxItem>Zip</ComboBoxItem>
                                     <ComboBoxItem>Bzip2</ComboBoxItem>
@@ -141,10 +150,10 @@
                                VerticalAlignment="Top" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                         <StackPanel Orientation="Vertical">
-                            <RadioButton Content="No password" IsChecked="True"/>
-                            <RadioButton Content="Specify password to extract this archive"/>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBox Width="200" Margin="25 0 0 0"></TextBox>
+                            <RadioButton x:Name="radioNoPassword"  Content="No password" IsChecked="True"/>
+                            <RadioButton x:Name="radioWithPassword"  Content="Specify password to extract this archive"/>
+                            <StackPanel x:Name="panelPassword"  Orientation="Horizontal" Visibility="Collapsed">
+                                <TextBox x:Name="txtPassword"  Width="200" Margin="25 0 0 0"></TextBox>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -153,38 +162,38 @@
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox Content="Delete files after adding to archive"/>
+                        <CheckBox x:Name="chkDeleteFiles"  Content="Delete files after adding to archive"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox Content="Restore NT security information"/>
+                        <CheckBox x:Name="chkRestoreNTSecurity"  Content="Restore NT security information"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox IsChecked="True" Content="Include alternative NTFS data streams"/>
+                        <CheckBox x:Name="chkIncludeNTFS"  IsChecked="True" Content="Include alternative NTFS data streams"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox IsChecked="True" Content="Compress shared files (files that are open for read)"/>
+                        <CheckBox x:Name="chkCompressShared"  IsChecked="True" Content="Compress shared files (files that are open for read)"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox IsChecked="False" Margin="0 0 10 0" Content="Set archive timestamp from the most recently modified file"/>
+                        <CheckBox x:Name="chkSetTimestamp"  IsChecked="False" Margin="0 0 10 0" Content="Set archive timestamp from the most recently modified file"/>
                     </StackPanel>
                     <Grid Height="15"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox Content="Using fully-qualified file paths (spf)"/>
+                        <CheckBox x:Name="chkSPF"  Content="Using fully-qualified file paths (spf)"/>
                     </StackPanel>
                     <Grid Height="15"/>
                 </StackPanel>
@@ -194,12 +203,12 @@
         <Grid Grid.Row="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-                <Button Content="Cancel" Margin="20 15 0 15" Padding="10 0 10 0"/>
-                <Button Content="Compress" Margin="5 15 15 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnCancel"  Content="Cancel" Margin="20 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnOK"  Content="Compress" Margin="5 15 15 15" Padding="10 0 10 0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
 
-                <Button Content="Compression Settings ..." Margin="15 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnCompressionSettings" Content="Compression Settings ..." Margin="15 15 0 15" Padding="10 0 10 0"/>
             </StackPanel>
         </Grid>
     </Grid>

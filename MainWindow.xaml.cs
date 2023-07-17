@@ -359,7 +359,6 @@ namespace Archiver
             proc.StartInfo.RedirectStandardInput = true;
             proc.StartInfo.RedirectStandardError = true;
 
-            ImageSourceConverter isc = new ImageSourceConverter();
             bool suc = proc.Start();
 
             if (proc != null) {
@@ -367,222 +366,251 @@ namespace Archiver
                 proc.WaitForExitAsync();
 
                 System.IO.FileInfo info = new FileInfo(path);
-                
-                currentArchive = new Archive();
-                this.previous.Clear();
-                this.next.Clear();
-                this.menuRootdir.IsEnabled = true;
-                this.menuUplevel.IsEnabled = true;
-                currentArchive.Name = info.Name;
-                currentArchive.Icon = (ImageSource?)isc.ConvertFrom("pack://siteoforigin:,,,/resources/brief.ico");
-                this.gridList.Visibility = Visibility.Visible;
-                this.gridDetails.Visibility = Visibility.Visible;
 
-                this.dirCombo.Content = (currentArchive);
+                BackgroundWorker worker = new BackgroundWorker();
+                worker.DoWork += (s, e) => {
+                    ImageSourceConverter isc = new ImageSourceConverter();
+                    var tempArchive = new Archive();
 
-                bool beginArchiveHeader = false;
-                bool beginContentHeader = false;
-                Item? item = null;
-                foreach (var line in output.Replace("\r\n", "\n").Split('\n')) {
-                    if (line == "--") {
-                        beginArchiveHeader = true;
-                        continue;
-                    } else if (line == "----------") {
-                        beginContentHeader = true;
-                        beginArchiveHeader = false;
-                        item = new FileItem();
-                        continue;
-                    }
-
-                    if (beginArchiveHeader) {
-                        if (string.IsNullOrEmpty(line)) continue;
-
-                        string[] pair = line.Split('=');
-                        string content = pair[1].Trim();
-                        bool emptyContent = string.IsNullOrEmpty(content);
-                        switch (pair[0].Trim().ToLower()) {
-                            case "path": currentArchive.FullName = content; break;
-                            case "type": currentArchive.Type = content; break;
-                            case "physical size": currentArchive.PhysicalSize = long.Parse(content); break;
-                            default:
-                                break;
+                    this.Dispatcher.Invoke(new Action(() => {
+                        this.previous.Clear();
+                        this.next.Clear();
+                        this.menuRootdir.IsEnabled = true;
+                        this.menuUplevel.IsEnabled = true;
+                        this.gridList.Visibility = Visibility.Visible;
+                        this.gridDetails.Visibility = Visibility.Visible;
+                    }));
+                    
+                    tempArchive.Name = info.Name;
+                    tempArchive.Icon = (ImageSource?)isc.ConvertFrom("pack://siteoforigin:,,,/resources/brief.ico");
+                    
+                    bool beginArchiveHeader = false;
+                    bool beginContentHeader = false;
+                    Item? item = null;
+                    foreach (var line in output.Replace("\r\n", "\n").Split('\n')) {
+                        if (line == "--") {
+                            beginArchiveHeader = true;
+                            continue;
+                        } else if (line == "----------") {
+                            beginContentHeader = true;
+                            beginArchiveHeader = false;
+                            item = new FileItem();
+                            continue;
                         }
-                        continue;
-                    }
 
-                    if (beginContentHeader) {
-                        if (string.IsNullOrWhiteSpace(line)) {
-                            if(item != null && !string.IsNullOrEmpty(item.FullName)) {
-                                if (item.IsFolder) {
-                                    FolderItem temp = new FolderItem() {
-                                        Attributes = item.Attributes,
-                                        Characteristics = item.Characteristics,
-                                        Comment = item.Comment,
-                                        CompressedSize = item.CompressedSize,
-                                        CRC = item.CRC,
-                                        DateAccessed = item.DateAccessed,
-                                        DateCreation = item.DateCreation,
-                                        DateModified = item.DateModified,
-                                        FullName = item.FullName,
-                                        IsFolder = item.IsFolder,
-                                        HostOS = item.HostOS,
-                                        IsEncrypted = item.IsEncrypted,
-                                        Method = item.Method,
-                                        VolumeId = item.VolumeId,
-                                        Name = item.Name,
-                                        Offset = item.Offset,
-                                        Size = item.Size,
-                                        Version = item.Version
-                                    };
+                        if (beginArchiveHeader) {
+                            if (string.IsNullOrEmpty(line)) continue;
 
-                                    item = temp;
-                                }
+                            string[] pair = line.Split('=');
+                            string content = pair[1].Trim();
+                            bool emptyContent = string.IsNullOrEmpty(content);
+                            switch (pair[0].Trim().ToLower()) {
+                                case "path": tempArchive.FullName = content; break;
+                                case "type": tempArchive.Type = content; break;
+                                case "physical size": tempArchive.PhysicalSize = long.Parse(content); break;
+                                default:
+                                    break;
+                            }
+                            continue;
+                        }
 
-                                string[] fullpath = item.FullName.Replace("\\","/").Split('/');
-                                item.Name = fullpath.Last();
-                                FolderItem? parent = null;
-                                string fullCascadeName = "";
-
-                                // extract icons
-
-                                if (item.IsFolder) {
-                                    item.Icon = (ImageSource?)isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico");
-                                } else { 
-                                    if (item.Name.Contains(".")) {
-                                        string ext = item.Name.Split('.').Last();
-                                        if (!File.Exists(System.Windows.Forms.Application.StartupPath + @"temp\." + ext))
-                                            File.Create(System.Windows.Forms.Application.StartupPath + @"temp\." + ext);
-                                        var icon = GetIconFromFile(System.Windows.Forms.Application.StartupPath + @"temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
-                                        //var icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.StartupPath + @"\temp\." + ext);
-                                        if (icon?.Width > 0)
-                                            item.Icon = icon.ToImageSource();
-                                    }
-                                }
-
-                                if (fullpath.Count() > 1) {
-                                    string cascadeName = fullpath[0];
-                                    fullCascadeName = fullCascadeName + cascadeName;
-                                    parent = (FolderItem?)currentArchive.Children.Find((x) => { return (x.Name == cascadeName && x.IsFolder); });
-                                    if (parent == null) {
-                                        parent = new FolderItem() {
-                                            Name = cascadeName,
-                                            FullName = fullCascadeName,
-                                            IsFolder = true,
-                                            Icon = (ImageSource?)isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico")
+                        if (beginContentHeader) {
+                            if (string.IsNullOrWhiteSpace(line)) {
+                                if (item != null && !string.IsNullOrEmpty(item.FullName)) {
+                                    if (item.IsFolder) {
+                                        FolderItem temp = new FolderItem() {
+                                            Attributes = item.Attributes,
+                                            Characteristics = item.Characteristics,
+                                            Comment = item.Comment,
+                                            CompressedSize = item.CompressedSize,
+                                            CRC = item.CRC,
+                                            DateAccessed = item.DateAccessed,
+                                            DateCreation = item.DateCreation,
+                                            DateModified = item.DateModified,
+                                            FullName = item.FullName,
+                                            IsFolder = item.IsFolder,
+                                            HostOS = item.HostOS,
+                                            IsEncrypted = item.IsEncrypted,
+                                            Method = item.Method,
+                                            VolumeId = item.VolumeId,
+                                            Name = item.Name,
+                                            Offset = item.Offset,
+                                            Size = item.Size,
+                                            Version = item.Version
                                         };
-                                        currentArchive.Children.Add(parent);
+
+                                        item = temp;
                                     }
 
-                                    for (int cascade = 1; cascade < fullpath.Length - 1; cascade++) {
-                                        cascadeName = fullpath[cascade];
-                                        fullCascadeName = fullCascadeName + "/" + cascadeName;
-                                        FolderItem? fi = (FolderItem?)parent.Children.Find((x) => { return x.Name == cascadeName && x.IsFolder; });
-                                        if (fi == null) {
-                                            fi = new FolderItem() {
+                                    string[] fullpath = item.FullName.Replace("\\", "/").Split('/');
+                                    item.Name = fullpath.Last();
+                                    FolderItem? parent = null;
+                                    string fullCascadeName = "";
+
+                                    // extract icons
+
+                                    if (item.IsFolder) {
+                                        item.Icon = (ImageSource?)isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico");
+                                    } else {
+                                        if (item.Name.Contains(".")) {
+                                            this.Dispatcher.Invoke(new Action(() => {
+                                                string ext = item.Name.Split('.').Last();
+                                                if (!File.Exists(System.Windows.Forms.Application.StartupPath + @"temp\." + ext))
+                                                    File.Create(System.Windows.Forms.Application.StartupPath + @"temp\." + ext);
+                                                var icon = GetIconFromFile(System.Windows.Forms.Application.StartupPath + @"temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
+                                                //var icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.StartupPath + @"\temp\." + ext);
+                                                if (icon?.Width > 0)
+                                                    item.Icon = icon.ToImageSource();
+                                            }));
+                                        }
+                                    }
+
+                                    if (fullpath.Count() > 1) {
+                                        string cascadeName = fullpath[0];
+                                        fullCascadeName = fullCascadeName + cascadeName;
+                                        parent = (FolderItem?)tempArchive.Children.Find((x) => { return (x.Name == cascadeName && x.IsFolder); });
+                                        if (parent == null) {
+                                            parent = new FolderItem() {
                                                 Name = cascadeName,
                                                 FullName = fullCascadeName,
                                                 IsFolder = true,
                                                 Icon = (ImageSource?)isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico")
-                                        };
-                                            parent.Children.Add(fi);
+                                            };
+                                            tempArchive.Children.Add(parent);
                                         }
 
-                                        parent = fi;
+                                        for (int cascade = 1; cascade < fullpath.Length - 1; cascade++) {
+                                            cascadeName = fullpath[cascade];
+                                            fullCascadeName = fullCascadeName + "/" + cascadeName;
+                                            FolderItem? fi = (FolderItem?)parent.Children.Find((x) => { return x.Name == cascadeName && x.IsFolder; });
+                                            if (fi == null) {
+                                                fi = new FolderItem() {
+                                                    Name = cascadeName,
+                                                    FullName = fullCascadeName,
+                                                    IsFolder = true,
+                                                    Icon = (ImageSource?)isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico")
+                                                };
+                                                parent.Children.Add(fi);
+                                            }
+
+                                            parent = fi;
+                                        }
+
+                                        if (item.IsFolder) {
+                                            FolderItem? found = (FolderItem?)parent.Children.Find((x) => {
+                                                return (x.Name == item.Name && x.IsFolder);
+                                            });
+
+                                            if (found != null) {
+                                                var folder = item as FolderItem;
+                                                if (folder != null) folder.Children = found.Children;
+                                                parent.Children.Remove(found);
+                                            }
+                                        }
+
+                                        parent.Children.Add(item);
+                                        item = new FileItem();
+                                        continue;
                                     }
 
                                     if (item.IsFolder) {
-                                        FolderItem? found = (FolderItem?)parent.Children.Find((x) => {
+                                        FolderItem? found = (FolderItem?)tempArchive.Children.Find((x) => {
                                             return (x.Name == item.Name && x.IsFolder);
                                         });
 
-                                        if(found != null) {
+                                        if (found != null) {
                                             var folder = item as FolderItem;
-                                            if(folder != null) folder.Children = found.Children;
-                                            parent.Children.Remove(found);
+                                            if (folder != null) folder.Children = found.Children;
+                                            tempArchive.Children.Remove(found);
                                         }
                                     }
 
-                                    parent.Children.Add(item);
+                                    tempArchive.Children.Add(item);
                                     item = new FileItem();
-                                    continue;
                                 }
 
-                                if (item.IsFolder) {
-                                    FolderItem? found = (FolderItem?)currentArchive.Children.Find((x) => {
-                                        return (x.Name == item.Name && x.IsFolder);
-                                    });
+                            } else {
+                                string[] pair = line.Split('=');
+                                string content = pair[1].Trim();
+                                bool emptyContent = string.IsNullOrEmpty(content);
 
-                                    if (found != null) {
-                                        var folder = item as FolderItem;
-                                        if (folder != null) folder.Children = found.Children;
-                                        currentArchive.Children.Remove(found);
-                                    }
+                                if (item == null) continue;
+                                if (emptyContent) continue;
+                                switch (pair[0].Trim().ToLower()) {
+                                    case "path": item.FullName = content;
+                                        var substring = content;
+                                        if (substring.Length > 50)
+                                            substring = "... " + content.Substring(content.Length - 50);
+                                        worker.ReportProgress(0, (
+                                            "Opening archive ...",
+                                            "Reading archived content information from",
+                                            substring
+                                            ));
+                                        break;
+                                    case "folder": item.IsFolder = content == "+"; break;
+                                    case "size": item.Size = long.Parse(content); break;
+                                    case "packed size": item.CompressedSize = long.Parse(content); break;
+                                    case "modified": if (!emptyContent) item.DateModified = DateTime.Parse(content); break;
+                                    case "created": if (!emptyContent) item.DateCreation = DateTime.Parse(content); break;
+                                    case "accessed": if (!emptyContent) item.DateAccessed = DateTime.Parse(content); break;
+                                    case "attributes":
+                                        item.Attributes = content;
+                                        if (content.Contains("D"))
+                                            item.IsFolder = true;
+                                        break;
+                                    case "encrypted": item.IsEncrypted = content == "+"; break;
+                                    case "comment": item.Comment = content; break;
+                                    case "crc": item.CRC = content; break;
+                                    case "method": item.Method = content; break;
+                                    case "characteristics": item.Characteristics = content; break;
+                                    case "host os": item.HostOS = content; break;
+                                    case "version": item.Version = content; break;
+                                    case "volume index": item.VolumeId = int.Parse(content); break;
+                                    case "offset": item.Offset = int.Parse(content); break;
+                                    default:
+                                        break;
                                 }
-
-                                currentArchive.Children.Add(item);
-                                item = new FileItem();
-                            }
-
-                        } else {
-                            string[] pair = line.Split('=');
-                            string content = pair[1].Trim();
-                            bool emptyContent = string.IsNullOrEmpty(content);
-                            
-                            if (item == null) continue;
-                            if (emptyContent) continue;
-                            switch (pair[0].Trim().ToLower()) {
-                                case "path": item.FullName = content; break;
-                                case "folder": item.IsFolder = content == "+"; break;
-                                case "size": item.Size = long.Parse(content); break;
-                                case "packed size": item.CompressedSize = long.Parse(content); break;
-                                case "modified": if (!emptyContent) item.DateModified = DateTime.Parse(content); break;
-                                case "created": if (!emptyContent) item.DateCreation = DateTime.Parse(content); break;
-                                case "accessed": if (!emptyContent) item.DateAccessed = DateTime.Parse(content); break;
-                                case "attributes": item.Attributes = content;
-                                    if (content.Contains("D"))
-                                        item.IsFolder = true;
-                                    break;
-                                case "encrypted": item.IsEncrypted = content == "+"; break;
-                                case "comment": item.Comment = content; break;
-                                case "crc": item.CRC = content; break;
-                                case "method": item.Method = content; break;
-                                case "characteristics": item.Characteristics = content; break;
-                                case "host os": item.HostOS = content; break;
-                                case "version": item.Version = content; break;
-                                case "volume index": item.VolumeId = int.Parse(content); break;
-                                case "offset": item.Offset = int.Parse(content); break;
-                                default:
-                                    break;
                             }
                         }
                     }
-                }
 
-                // now fininshes current archive parsing.
-                Navigate(currentArchive);
+                    this.Dispatcher.Invoke(new Action(() => {
+                        this.currentArchive = tempArchive;
+                        this.dirCombo.Content = (currentArchive);
 
-                {
-                    this.imgIcon.Source = currentArchive.Icon;
-                    this.lblDesc.Text = currentArchive.Name + " (" + currentArchive.Children.Count + " items)";
-                    this.tArchiveType.Text = currentArchive.Type;
-                    this.sArchiveType.Visibility = Visibility.Visible;
-                    this.tPhysicalSize.Text = exprSize(currentArchive.PhysicalSize);
-                    this.sPhysicalSize.Visibility = Visibility.Visible;
-                    this.sActualSize.Visibility = Visibility.Collapsed;
-                    this.sAttributes.Visibility = Visibility.Collapsed;
-                    this.sChar.Visibility = Visibility.Collapsed;
-                    this.sCompressedSize.Visibility = Visibility.Collapsed;
-                    this.sCompressionMethod.Visibility = Visibility.Collapsed;
-                    this.sCRC.Visibility = Visibility.Collapsed;
-                    this.sDateAccessed.Visibility = Visibility.Collapsed;
-                    this.sDateCreation.Visibility = Visibility.Collapsed;
-                    this.sDateModified.Visibility = Visibility.Collapsed;
-                    this.sEncrypted.Visibility = Visibility.Collapsed;
-                    this.sHostOS.Visibility = Visibility.Collapsed;
-                    this.sVer.Visibility = Visibility.Collapsed;
-                    this.sVol.Visibility = Visibility.Collapsed;
-                }
+                        // now fininshes current archive parsing.
+                        Navigate(currentArchive);
 
+                        {
+                            this.imgIcon.Source = currentArchive.Icon;
+                            this.lblDesc.Text = currentArchive.Name + " (" + currentArchive.Children.Count + " items)";
+                            this.tArchiveType.Text = currentArchive.Type;
+                            this.sArchiveType.Visibility = Visibility.Visible;
+                            this.tPhysicalSize.Text = exprSize(currentArchive.PhysicalSize);
+                            this.sPhysicalSize.Visibility = Visibility.Visible;
+                            this.sActualSize.Visibility = Visibility.Collapsed;
+                            this.sAttributes.Visibility = Visibility.Collapsed;
+                            this.sChar.Visibility = Visibility.Collapsed;
+                            this.sCompressedSize.Visibility = Visibility.Collapsed;
+                            this.sCompressionMethod.Visibility = Visibility.Collapsed;
+                            this.sCRC.Visibility = Visibility.Collapsed;
+                            this.sDateAccessed.Visibility = Visibility.Collapsed;
+                            this.sDateCreation.Visibility = Visibility.Collapsed;
+                            this.sDateModified.Visibility = Visibility.Collapsed;
+                            this.sEncrypted.Visibility = Visibility.Collapsed;
+                            this.sHostOS.Visibility = Visibility.Collapsed;
+                            this.sVer.Visibility = Visibility.Collapsed;
+                            this.sVol.Visibility = Visibility.Collapsed;
+                        }
+                    }
+                        ));
+                    
+                };
+
+                Loader loader = new Loader(worker);
+                loader.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                loader.ResizeMode = ResizeMode.NoResize;
+                loader.ShowDialog();
             }
         }
 

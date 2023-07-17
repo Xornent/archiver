@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="Archiver.UI.LoadingRing"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Archiver.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="32" d:DesignWidth="32">
+    <UserControl.Resources>
+        <Storyboard x:Key="storyBoard" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames x:Name="animation" Storyboard.TargetName="globalRotate">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.05" Value="30"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.1" Value="60"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.15" Value="90"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.20" Value="120"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.25" Value="150"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.3" Value="180"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.35" Value="210"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.4" Value="240"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.45" Value="270"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.5" Value="300"/>
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0.55" Value="330"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+    <Grid>
+        <Canvas Width="32" Height="32" RenderTransformOrigin="0.5 0.5">
+            <Canvas.RenderTransform>
+                <RotateTransform x:Name="globalRotate" Angle="0"/>
+            </Canvas.RenderTransform>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#808080">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="0"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#888888">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="30"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#909090">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="60"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#989898">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="90"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#a0a0a0">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="120"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#a8a8a8">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="150"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#b0b0b0">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="180"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#b8b8b8">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="210"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#c0c0c0">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="240"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#c8c8c8">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="270"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#d0d0d0">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="300"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle Width="10" Height="3" Canvas.Left="0" Canvas.Top="14.5" 
+                       RenderTransformOrigin="1.6,0.5" RadiusX="1.5" RadiusY="1.5"
+                       Fill="#d8d8d8">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="330"/>
+                </Rectangle.RenderTransform>
+            </Rectangle>
+        </Canvas> 
+    </Grid>
+</UserControl>
