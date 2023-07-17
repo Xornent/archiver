@@ -19,26 +19,12 @@ namespace Archiver
     /// <summary>
     /// Interaction logic for FileSelector.xaml
     /// </summary>
-    public partial class FileSelector : Window
+    public partial class FolderSelector : Window
     {
-        public FileSelector()
+        public FolderSelector()
         {
             InitializeComponent();
             this.explorer.NavigationTarget = ShellObject.FromParsingName("C:");
-            this.explorer.SelectedItems.CollectionChanged += (s, e) => {
-                this.SelectedDirectories.Clear();
-                this.SelectedFiles.Clear();
-
-                foreach (var item in this.explorer.SelectedItems) {
-                    if (item.IsFileSystemObject) {
-                        if (item is ShellFile file) {
-                            this.SelectedFiles.Add(new FileInfo(file.ParsingName));
-                        } else if (item is ShellFolder folder) {
-                            this.SelectedDirectories.Add(new DirectoryInfo(folder.ParsingName));
-                        }
-                    }
-                }
-            };
 
             this.btnCancel.Click += (s, e) => {
                 this.DialogResult = false;
@@ -47,6 +33,7 @@ namespace Archiver
 
             this.btnOK.Click += (s, e) => {
                 this.DialogResult = true;
+                this.SelectedDirectory = new DirectoryInfo((explorer.NavigationLog.Last() as ShellFolder).ParsingName);
                 this.Close();
             };
         }
@@ -71,7 +58,6 @@ namespace Archiver
             this.WindowState = WindowState.Minimized;
         }
 
-        public List<FileInfo> SelectedFiles { get; private set; } = new List<FileInfo>();
-        public List<DirectoryInfo> SelectedDirectories { get; private set; } = new List<DirectoryInfo>();
+        public DirectoryInfo SelectedDirectory { get; private set; }
     }
 }

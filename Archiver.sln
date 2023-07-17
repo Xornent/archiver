@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archiver", "..\net472\Archiver\Archiver.csproj", "{FC321339-D1FB-4D45-8450-CC659BA45D42}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archiver", "Archiver.csproj", "{FC321339-D1FB-4D45-8450-CC659BA45D42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

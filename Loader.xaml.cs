@@ -23,7 +23,7 @@ namespace Archiver
         public Loader(BackgroundWorker worker)
         {
             InitializeComponent();
-
+            this.ring.Scale = 0.8f;
             worker.WorkerReportsProgress = true;
             worker.ProgressChanged += (s, e) => {
                 (string title, string desc, string progress) loaderInfo =

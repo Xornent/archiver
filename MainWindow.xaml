@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Archiver"
         mc:Ignorable="d" FontFamily="Adobe Clean" Background="#ffffff"
         Title="Archiver" Height="650" Width="900" UseLayoutRounding="True"
-        WindowStartupLocation="CenterScreen" Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico">
+        WindowStartupLocation="CenterScreen" Icon="pack://siteoforigin:,,,/resources/defrag.ico">
 
     <Window.Resources>
         <DataTemplate x:Key="dirTemplate">
@@ -17,14 +17,31 @@
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
-    
+
     <Grid x:Name="windowGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
             <RowDefinition Height="150"/>
         </Grid.RowDefinitions>
+
+        <Grid Grid.Row="2" Grid.RowSpan="3" x:Name="splashScreen" Background="LightSteelBlue" 
+              Visibility="Visible" Panel.ZIndex="100">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                <Label Content="Archiver" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   FontStyle="Normal" FontWeight="Black" FontSize="100" Foreground="#80ffffff"/>
+                <Label Content="Drag an archive here to open, or" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   FontStyle="Normal" FontWeight="Light" FontSize="32" Foreground="#60ffffff"/>
+                <Label Content="Drag files and folders you want to compress" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   FontStyle="Normal" FontWeight="Light" FontSize="32" Foreground="#60ffffff"/>
+                <Grid Height="30"/>
+                <Label Content="[α] 0.4.0b154" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   FontStyle="Normal" FontWeight="Normal" FontSize="16" FontFamily="SF Mono" Foreground="#60ffffff"/>
+            </StackPanel>
+        </Grid>
 
         <Grid Grid.Row="0">
             <Rectangle Fill="White" MouseDown="DockPanel_MouseDown"/>
@@ -147,7 +164,7 @@
                         <Image Width="16" Height="16"
                        Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
                         <Grid Width="10"/>
-                        <TextBlock Text="Archiver · Startup" VerticalAlignment="Center"
+                        <TextBlock x:Name="lblTitle" Text="Archiver · Startup" VerticalAlignment="Center"
                            FontWeight="Bold" FontFamily="SF Pro Text"/>
                     </StackPanel>
                 </Grid>
@@ -197,16 +214,17 @@
                         </Button>
                     </StackPanel>
                 </ScrollViewer>
-                
+
                 <TextBlock Foreground="gray" Text="Directory" HorizontalAlignment="Left" Margin="10,12,0,0" 
                 VerticalAlignment="Top" Width="70" Height="23" TextAlignment="Right"
                 TextWrapping="Wrap" LineHeight="17" Padding="5" FontWeight="Regular"/>
             </Grid>
-            
+
 
 
         </Grid>
-        <Grid x:Name="gridDetails" Grid.Row="3" Visibility="Collapsed">
+        
+        <Grid x:Name="gridDetails" Grid.Row="4" Visibility="Collapsed">
             <Border BorderThickness="0 0 0 0" BorderBrush="#e3e3e3" Background="#fafafa"></Border>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -318,15 +336,17 @@
                     </ScrollViewer>
                 </Grid>
 
-                <Grid Grid.Column="2">
-                    <StackPanel Margin="10 5 10 10" Orientation="Vertical">
+                <DockPanel Grid.Column="2">
+                    <StackPanel Margin="10 5 10 0" Orientation="Vertical" DockPanel.Dock="Top">
                         <Label Content="Comments" FontWeight="Bold"/>
-                        <TextBox x:Name="tComment" Height="108" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
                     </StackPanel>
-                </Grid>
+
+                    <TextBox x:Name="tComment" Margin="10 0 10 10" TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"/>
+                </DockPanel>
             </Grid>
         </Grid>
-        
+
         <Grid Grid.Row="1">
             <Border BorderThickness="0 0 0 1" BorderBrush="#e3e3e3"/>
             <Menu Height="30" VerticalAlignment="Top">
@@ -394,6 +414,8 @@
                 </MenuItem>
             </Menu>
         </Grid>
+
+        <GridSplitter HorizontalAlignment="Stretch" Background="White" Grid.Row="3"/>
     </Grid>
 
     <WindowChrome.WindowChrome>

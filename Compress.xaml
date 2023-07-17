@@ -110,6 +110,9 @@
                                 <Button x:Name="selectWildMask" IsEnabled="True" Padding="4 0 4 0">
                                     <Image Width="12" Height="12"  Source="Resources/compare.png"/>
                                 </Button>
+                                <Button x:Name="fileSystemTree" IsEnabled="False" Padding="4 0 4 0">
+                                    <Image Width="12" Height="12"  Source="Resources/tree.png"/>
+                                </Button>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -140,9 +143,9 @@
                                     <ComboBoxItem>Tar</ComboBoxItem>
                                 </ComboBox>
                             </StackPanel>
-                            
+
                         </StackPanel>
-                        
+
                     </StackPanel>
                     <Grid Height="15"/>
                     <StackPanel Orientation="Horizontal">

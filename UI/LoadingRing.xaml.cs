@@ -27,10 +27,23 @@ namespace Archiver.UI
             this.Loaded += (s, e) => {
                 Storyboard storyboard = (Storyboard)this.Resources["storyBoard"];
                 DoubleAnimationUsingKeyFrames animation = (DoubleAnimationUsingKeyFrames)storyboard.Children[0];
-                // Storyboard.SetTarget(animation, globalRotate);
                 Storyboard.SetTargetProperty(animation, new PropertyPath("(RotateTransform.Angle)"));
                 BeginStoryboard(storyboard);
             };
+        }
+
+        public static DependencyProperty ScaleProperty = DependencyProperty.Register("Scale",
+            typeof(float), typeof(LoadingRing), new PropertyMetadata(1.0f));
+
+        private float _scale = 1.0f;
+        public float Scale
+        {
+            get { return _scale; }
+            set { 
+                _scale = value;
+                this.globalScale.ScaleX = value;
+                this.globalScale.ScaleY = value;
+            }
         }
     }
 }

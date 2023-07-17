@@ -42,7 +42,7 @@ namespace Archiver
             this.list.MouseDoubleClick += (s, e) => {
                 if (this.list.SelectedItems.Count == 1) {
                     object item = this.list.SelectedItem;
-                    if(item is FolderItem folder) {
+                    if (item is FolderItem folder) {
                         Navigate(folder);
                     }
                 }
@@ -128,7 +128,7 @@ namespace Archiver
                     FileSystemNode node = this.list.SelectedItems[0] as FileSystemNode ?? currentArchive;
 
                     this.imgIcon.Source = node.Icon;
-                    if(node is Archive arch) {
+                    if (node is Archive arch) {
                         this.lblDesc.Text = arch.Name + " (" + arch.Children.Count + " items)";
                         this.tArchiveType.Text = arch.Type;
                         this.sArchiveType.Visibility = Visibility.Visible;
@@ -166,10 +166,10 @@ namespace Archiver
 
                         if ((it.Name ?? "").Contains(".")) {
                             string ext = (it.Name ?? "").Split('.').Last();
-                            if (!File.Exists(System.Windows.Forms.Application.StartupPath + @"temp\." + ext))
-                                File.Create(System.Windows.Forms.Application.StartupPath + @"temp\." + ext);
+                            if (!File.Exists(System.Windows.Forms.Application.StartupPath + @"\temp\." + ext))
+                                File.Create(System.Windows.Forms.Application.StartupPath + @"\temp\." + ext);
 
-                            var icon = GetIconFromFile(System.Windows.Forms.Application.StartupPath + @"temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_JUMBO);
+                            var icon = GetIconFromFile(System.Windows.Forms.Application.StartupPath + @"\temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_JUMBO);
                             if (icon?.Width > 0) {
                                 this.imgIcon.Source = icon.ToImageSource();
                             }
@@ -188,12 +188,12 @@ namespace Archiver
                             this.tActualSize.Text = exprSize(it.Size);
                         }
 
-                        if (it.Attributes != default(string?)) {
+                        if (it.Attributes != default(string)) {
                             this.sAttributes.Visibility = Visibility.Visible;
                             this.tAttributes.Text = it.Attributes;
                         }
 
-                        if (it.Characteristics != default(string?)) {
+                        if (it.Characteristics != default(string)) {
                             this.sChar.Visibility = Visibility.Visible;
                             this.tChar.Text = it.Characteristics;
                         }
@@ -203,12 +203,12 @@ namespace Archiver
                             this.tCompressedSize.Text = exprSize(it.CompressedSize);
                         }
 
-                        if (it.Method != default(string?)) {
+                        if (it.Method != default(string)) {
                             this.sCompressionMethod.Visibility = Visibility.Visible;
                             this.tCompressionMethod.Text = it.Method;
                         }
 
-                        if (it.CRC != default(string?)) {
+                        if (it.CRC != default(string)) {
                             this.sCRC.Visibility = Visibility.Visible;
                             this.tCRC.Text = it.CRC;
                         }
@@ -231,12 +231,12 @@ namespace Archiver
                             this.tEncrypted.Text = it.IsEncrypted.ToString();
                         }
 
-                        if (it.HostOS != default(string?)) {
+                        if (it.HostOS != default(string)) {
                             this.sHostOS.Visibility = Visibility.Visible;
                             this.tHostOS.Text = it.HostOS;
                         }
 
-                        if (it.Version != default(string?)) {
+                        if (it.Version != default(string)) {
                             this.sVer.Visibility = Visibility.Visible;
                             this.tVer.Text = it.Version;
                         }
@@ -256,7 +256,7 @@ namespace Archiver
         {
             Vanara.PInvoke.Shell32.SHFILEINFO info = new Vanara.PInvoke.Shell32.SHFILEINFO();
             IntPtr iconIntPtr = Vanara.PInvoke.Shell32.SHGetFileInfo(
-                fileName, 0, ref info, (int)Marshal.SizeOf(info), 
+                fileName, 0, ref info, (int)Marshal.SizeOf(info),
                 Vanara.PInvoke.Shell32.SHGFI.SHGFI_ICON | Vanara.PInvoke.Shell32.SHGFI.SHGFI_OPENICON);
             if (iconIntPtr == IntPtr.Zero)
                 return IntPtr.Zero;
@@ -276,16 +276,16 @@ namespace Archiver
 
         public static System.Drawing.Icon GetIcon(int iIcon, Vanara.PInvoke.Shell32.SHIL flag)
         {
-            object? list = null;
+            object list = null;
             Guid theGuid = new Guid("46EB5926-582E-4017-9FDF-E8998DAA0950"); // IID_IImageList
             // Acquire the system image list
-            Vanara.PInvoke.Shell32.SHGetImageList(flag, in theGuid, out list); 
+            Vanara.PInvoke.Shell32.SHGetImageList(flag, in theGuid, out list);
 
             Vanara.PInvoke.ComCtl32.IImageList imglist = (Vanara.PInvoke.ComCtl32.IImageList)list;
-            var hIcon = imglist.GetIcon(iIcon, 
+            var hIcon = imglist.GetIcon(iIcon,
                 Vanara.PInvoke.ComCtl32.IMAGELISTDRAWFLAGS.ILD_TRANSPARENT |
                 Vanara.PInvoke.ComCtl32.IMAGELISTDRAWFLAGS.ILD_IMAGE);
-            
+
             return System.Drawing.Icon.FromHandle(hIcon.DangerousGetHandle());
         }
 
@@ -363,7 +363,7 @@ namespace Archiver
 
             if (proc != null) {
                 string output = proc.StandardOutput.ReadToEnd();
-                proc.WaitForExitAsync();
+                proc.WaitForExit();
 
                 System.IO.FileInfo info = new FileInfo(path);
 
@@ -372,21 +372,12 @@ namespace Archiver
                     ImageSourceConverter isc = new ImageSourceConverter();
                     var tempArchive = new Archive();
 
-                    this.Dispatcher.Invoke(new Action(() => {
-                        this.previous.Clear();
-                        this.next.Clear();
-                        this.menuRootdir.IsEnabled = true;
-                        this.menuUplevel.IsEnabled = true;
-                        this.gridList.Visibility = Visibility.Visible;
-                        this.gridDetails.Visibility = Visibility.Visible;
-                    }));
-                    
                     tempArchive.Name = info.Name;
-                    tempArchive.Icon = (ImageSource?)isc.ConvertFrom("pack://siteoforigin:,,,/resources/brief.ico");
-                    
+                    tempArchive.Icon = (ImageSource)isc.ConvertFrom("pack://siteoforigin:,,,/resources/brief.ico");
+
                     bool beginArchiveHeader = false;
                     bool beginContentHeader = false;
-                    Item? item = null;
+                    Item item = null;
                     foreach (var line in output.Replace("\r\n", "\n").Split('\n')) {
                         if (line == "--") {
                             beginArchiveHeader = true;
@@ -444,20 +435,20 @@ namespace Archiver
 
                                     string[] fullpath = item.FullName.Replace("\\", "/").Split('/');
                                     item.Name = fullpath.Last();
-                                    FolderItem? parent = null;
+                                    FolderItem parent = null;
                                     string fullCascadeName = "";
 
                                     // extract icons
 
                                     if (item.IsFolder) {
-                                        item.Icon = (ImageSource?)isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico");
+                                        item.Icon = (ImageSource)isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico");
                                     } else {
                                         if (item.Name.Contains(".")) {
                                             this.Dispatcher.Invoke(new Action(() => {
                                                 string ext = item.Name.Split('.').Last();
-                                                if (!File.Exists(System.Windows.Forms.Application.StartupPath + @"temp\." + ext))
-                                                    File.Create(System.Windows.Forms.Application.StartupPath + @"temp\." + ext);
-                                                var icon = GetIconFromFile(System.Windows.Forms.Application.StartupPath + @"temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
+                                                if (!File.Exists(System.Windows.Forms.Application.StartupPath + @"\temp\." + ext))
+                                                    File.Create(System.Windows.Forms.Application.StartupPath + @"\temp\." + ext);
+                                                var icon = GetIconFromFile(System.Windows.Forms.Application.StartupPath + @"\temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
                                                 //var icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.StartupPath + @"\temp\." + ext);
                                                 if (icon?.Width > 0)
                                                     item.Icon = icon.ToImageSource();
@@ -468,13 +459,13 @@ namespace Archiver
                                     if (fullpath.Count() > 1) {
                                         string cascadeName = fullpath[0];
                                         fullCascadeName = fullCascadeName + cascadeName;
-                                        parent = (FolderItem?)tempArchive.Children.Find((x) => { return (x.Name == cascadeName && x.IsFolder); });
+                                        parent = (FolderItem)tempArchive.Children.Find((x) => { return (x.Name == cascadeName && x.IsFolder); });
                                         if (parent == null) {
                                             parent = new FolderItem() {
                                                 Name = cascadeName,
                                                 FullName = fullCascadeName,
                                                 IsFolder = true,
-                                                Icon = (ImageSource?)isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico")
+                                                Icon = (ImageSource)isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico")
                                             };
                                             tempArchive.Children.Add(parent);
                                         }
@@ -482,13 +473,13 @@ namespace Archiver
                                         for (int cascade = 1; cascade < fullpath.Length - 1; cascade++) {
                                             cascadeName = fullpath[cascade];
                                             fullCascadeName = fullCascadeName + "/" + cascadeName;
-                                            FolderItem? fi = (FolderItem?)parent.Children.Find((x) => { return x.Name == cascadeName && x.IsFolder; });
+                                            FolderItem fi = (FolderItem)parent.Children.Find((x) => { return x.Name == cascadeName && x.IsFolder; });
                                             if (fi == null) {
                                                 fi = new FolderItem() {
                                                     Name = cascadeName,
                                                     FullName = fullCascadeName,
                                                     IsFolder = true,
-                                                    Icon = (ImageSource?)isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico")
+                                                    Icon = (ImageSource)isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico")
                                                 };
                                                 parent.Children.Add(fi);
                                             }
@@ -497,7 +488,7 @@ namespace Archiver
                                         }
 
                                         if (item.IsFolder) {
-                                            FolderItem? found = (FolderItem?)parent.Children.Find((x) => {
+                                            FolderItem found = (FolderItem)parent.Children.Find((x) => {
                                                 return (x.Name == item.Name && x.IsFolder);
                                             });
 
@@ -514,7 +505,7 @@ namespace Archiver
                                     }
 
                                     if (item.IsFolder) {
-                                        FolderItem? found = (FolderItem?)tempArchive.Children.Find((x) => {
+                                        FolderItem found = (FolderItem)tempArchive.Children.Find((x) => {
                                             return (x.Name == item.Name && x.IsFolder);
                                         });
 
@@ -537,7 +528,8 @@ namespace Archiver
                                 if (item == null) continue;
                                 if (emptyContent) continue;
                                 switch (pair[0].Trim().ToLower()) {
-                                    case "path": item.FullName = content;
+                                    case "path":
+                                        item.FullName = content;
                                         var substring = content;
                                         if (substring.Length > 50)
                                             substring = "... " + content.Substring(content.Length - 50);
@@ -577,6 +569,7 @@ namespace Archiver
                     this.Dispatcher.Invoke(new Action(() => {
                         this.currentArchive = tempArchive;
                         this.dirCombo.Content = (currentArchive);
+                        this.lblTitle.Text = "Archiver · " + System.IO.Path.GetFileName(path);
 
                         // now fininshes current archive parsing.
                         Navigate(currentArchive);
@@ -604,7 +597,16 @@ namespace Archiver
                         }
                     }
                         ));
-                    
+
+                    this.Dispatcher.Invoke(new Action(() => {
+                        this.previous.Clear();
+                        this.next.Clear();
+                        this.menuRootdir.IsEnabled = true;
+                        this.menuUplevel.IsEnabled = true;
+                        this.splashScreen.Visibility = Visibility.Hidden;
+                        this.gridList.Visibility = Visibility.Visible;
+                        this.gridDetails.Visibility = Visibility.Visible;
+                    }));
                 };
 
                 Loader loader = new Loader(worker);
@@ -667,35 +669,35 @@ namespace Archiver
         private void Navigate(string relativePath, Archive archive)
         {
             string[] fullpath = relativePath.Replace("\\", "/").Split('/');
-            FolderItem? parent = null;
+            FolderItem parent = null;
             string folderName = fullpath.Last();
             string fullCascadeName = "";
 
             if (fullpath.Count() > 1) {
                 string cascadeName = fullpath[0];
                 fullCascadeName = fullCascadeName + cascadeName;
-                parent = (FolderItem?)archive.Children.Find((x) => { return (x.Name == cascadeName && x.IsFolder); });
+                parent = (FolderItem)archive.Children.Find((x) => { return (x.Name == cascadeName && x.IsFolder); });
                 if (parent == null) return;
 
                 for (int cascade = 1; cascade < fullpath.Length - 1; cascade++) {
                     cascadeName = fullpath[cascade];
                     fullCascadeName = fullCascadeName + "/" + cascadeName;
-                    FolderItem? fi = (FolderItem?)parent.Children.Find((x) => { return x.Name == cascadeName; });
+                    FolderItem fi = (FolderItem)parent.Children.Find((x) => { return x.Name == cascadeName; });
                     if (fi == null) return;
 
                     parent = fi;
                 }
 
-                FolderItem? found = (FolderItem?)parent.Children.Find((x) => {
+                FolderItem found = (FolderItem)parent.Children.Find((x) => {
                     return (x.Name == folderName && x.IsFolder);
                 });
 
                 if (found != null) Navigate(found);
                 else Navigate(parent);
-            
+
             } else {
 
-                FolderItem? found = (FolderItem?)archive.Children.Find((x) => {
+                FolderItem found = (FolderItem)archive.Children.Find((x) => {
                     return (x.Name == folderName && x.IsFolder);
                 });
 
@@ -720,7 +722,7 @@ namespace Archiver
         {
             comboSuppress = true;
             string[] fullpath = relativePath.Replace("\\", "/").Split('/');
-            FolderItem? parent = null;
+            FolderItem parent = null;
             string folderName = fullpath.Last();
             string fullCascadeName = "";
 
@@ -731,12 +733,12 @@ namespace Archiver
             if (fullpath.Count() > 1) {
                 string cascadeName = fullpath[0];
                 fullCascadeName = fullCascadeName + cascadeName;
-                parent = (FolderItem?)archive.Children.Find((x) => { return (x.Name == cascadeName && x.IsFolder); });
+                parent = (FolderItem)archive.Children.Find((x) => { return (x.Name == cascadeName && x.IsFolder); });
                 int parentId = -1; int tempId = 0;
                 if (parent == null) return;
 
                 ComboBox combo = new ComboBox();
-                combo.ItemTemplate = (DataTemplate) this.Resources["dirTemplate"];
+                combo.ItemTemplate = (DataTemplate)this.Resources["dirTemplate"];
                 foreach (var item in archive.Children) {
                     if (item.IsFolder) {
                         combo.Items.Add(item);
@@ -753,7 +755,7 @@ namespace Archiver
                 for (int cascade = 1; cascade < fullpath.Length - 1; cascade++) {
                     cascadeName = fullpath[cascade];
                     fullCascadeName = fullCascadeName + "/" + cascadeName;
-                    FolderItem? fi = (FolderItem?)parent.Children.Find((x) => { return x.Name == cascadeName && x.IsFolder; });
+                    FolderItem fi = (FolderItem)parent.Children.Find((x) => { return x.Name == cascadeName && x.IsFolder; });
                     int fid = 0; int tid0 = 0;
                     if (fi == null) return;
 
@@ -776,7 +778,7 @@ namespace Archiver
                     parent = fi;
                 }
 
-                FolderItem? found = (FolderItem?)parent.Children.Find((x) => {
+                FolderItem found = (FolderItem)parent.Children.Find((x) => {
                     return (x.Name == folderName && x.IsFolder);
                 });
 
@@ -800,7 +802,7 @@ namespace Archiver
 
             } else {
 
-                FolderItem? found = (FolderItem?)archive.Children.Find((x) => {
+                FolderItem found = (FolderItem)archive.Children.Find((x) => {
                     return (x.Name == folderName && x.IsFolder);
                 });
 
@@ -811,7 +813,7 @@ namespace Archiver
                     foreach (var item in archive.Children) {
                         if (item.IsFolder) {
                             combo2.Items.Add(item);
-                            if(item.Name ==folderName) { foundId = tid; }
+                            if (item.Name == folderName) { foundId = tid; }
                             tid++;
                         }
                     }
@@ -826,7 +828,7 @@ namespace Archiver
             comboSuppress = false;
         }
 
-        private void comboSelectionChanged (object sender, SelectionChangedEventArgs e)
+        private void comboSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.currentArchive == null) return;
             if (comboSuppress) return;
@@ -858,7 +860,7 @@ namespace Archiver
             this.menuSortDescending.IsChecked = false;
         }
 
-        Archive? currentArchive = null;
+        Archive currentArchive = null;
 
         List<FileSystemNode> previous = new List<FileSystemNode>();
         List<FileSystemNode> next = new List<FileSystemNode>();
@@ -872,21 +874,21 @@ namespace Archiver
             public DateTime? DateModified { get; set; }
             public DateTime? DateCreation { get; set; }
             public DateTime? DateAccessed { get; set; }
-            public string? Attributes { get; set; }
+            public string Attributes { get; set; }
             public bool? IsEncrypted { get; set; }
-            public string? CRC { get; set; }
-            public string? Method { get; set; }
-            public string? Characteristics { get; set; }
-            public string? HostOS { get; set; }
-            public string? Version { get; set; }
+            public string CRC { get; set; }
+            public string Method { get; set; }
+            public string Characteristics { get; set; }
+            public string HostOS { get; set; }
+            public string Version { get; set; }
             public int? VolumeId { get; set; }
             public long? Offset { get; set; }
-            public string? Comment { get; set; }
+            public string Comment { get; set; }
         }
 
         public class FolderItem : Item
         {
-            public List<Item> Children { get; set; } = new List<Item>(); 
+            public List<Item> Children { get; set; } = new List<Item>();
         }
 
         public class FileItem : Item
@@ -902,9 +904,10 @@ namespace Archiver
             public long PhysicalSize { get; set; }
         }
 
-        public class FileSystemNode {
-            public string? Name { get; set; }
-            public ImageSource? Icon { get; set; }
+        public class FileSystemNode
+        {
+            public string Name { get; set; }
+            public ImageSource Icon { get; set; }
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)

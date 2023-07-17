@@ -1,659 +1,576 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FC321339-D1FB-4D45-8450-CC659BA45D42}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <RootNamespace>Archiver</RootNamespace>
+    <AssemblyName>Archiver</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
-    <None Remove="Resources\action.png" />
-    <None Remove="Resources\add-circle.png" />
-    <None Remove="Resources\add-to-selection.png" />
-    <None Remove="Resources\add-to.png" />
-    <None Remove="Resources\ads.png" />
-    <None Remove="Resources\alert-add.png" />
-    <None Remove="Resources\alert-check.png" />
-    <None Remove="Resources\alert-circle-filled.png" />
-    <None Remove="Resources\alert-circle.png" />
-    <None Remove="Resources\alert.png" />
-    <None Remove="Resources\algorithm.png" />
-    <None Remove="Resources\alias.png" />
-    <None Remove="Resources\align-bottom.png" />
-    <None Remove="Resources\align-center.png" />
-    <None Remove="Resources\align-left.png" />
-    <None Remove="Resources\align-middle.png" />
-    <None Remove="Resources\align-right.png" />
-    <None Remove="Resources\align-top.png" />
-    <None Remove="Resources\anchor.png" />
-    <None Remove="Resources\annotate-pen.png" />
-    <None Remove="Resources\annotate.png" />
-    <None Remove="Resources\app-delivery.png" />
-    <None Remove="Resources\app-refresh.png" />
-    <None Remove="Resources\app.png" />
-    <None Remove="Resources\apple-files.png" />
-    <None Remove="Resources\approve-reject.png" />
-    <None Remove="Resources\apps.png" />
-    <None Remove="Resources\archieve-remove.png" />
-    <None Remove="Resources\archieve.png" />
-    <None Remove="Resources\article.png" />
-    <None Remove="Resources\asset-add.png" />
-    <None Remove="Resources\asset-alert.png" />
-    <None Remove="Resources\asset-check.png" />
-    <None Remove="Resources\asset-download.png" />
-    <None Remove="Resources\asset-publish.png" />
-    <None Remove="Resources\asset.png" />
-    <None Remove="Resources\at.png" />
-    <None Remove="Resources\attach-exclude.png" />
-    <None Remove="Resources\attach.png" />
-    <None Remove="Resources\beaker-checked.png" />
-    <None Remove="Resources\beaker.png" />
-    <None Remove="Resources\bell.png" />
-    <None Remove="Resources\bidrule-add.png" />
-    <None Remove="Resources\bidrule.png" />
-    <None Remove="Resources\book.png" />
-    <None Remove="Resources\bookmark-single-filled.png" />
-    <None Remove="Resources\bookmark-single.png" />
-    <None Remove="Resources\bookmark.png" />
-    <None Remove="Resources\boolean.png" />
-    <None Remove="Resources\border.png" />
-    <None Remove="Resources\box-add.png" />
-    <None Remove="Resources\box-export.png" />
-    <None Remove="Resources\box-import.png" />
-    <None Remove="Resources\box.png" />
-    <None Remove="Resources\bracket-square.png" />
-    <None Remove="Resources\bracket.png" />
-    <None Remove="Resources\branch-circle.png" />
-    <None Remove="Resources\branch.png" />
-    <None Remove="Resources\breadcrumb.png" />
-    <None Remove="Resources\briefcase.png" />
-    <None Remove="Resources\browse.png" />
-    <None Remove="Resources\bug.png" />
-    <None Remove="Resources\calendar-add.png" />
-    <None Remove="Resources\calendar-lock.png" />
-    <None Remove="Resources\calendar-unlock.png" />
-    <None Remove="Resources\calendar.png" />
-    <None Remove="Resources\camera-flip.png" />
-    <None Remove="Resources\camera-refresh.png" />
-    <None Remove="Resources\camera.png" />
-    <None Remove="Resources\chat-add.png" />
-    <None Remove="Resources\chat.png" />
-    <None Remove="Resources\check-circle-filled.png" />
-    <None Remove="Resources\check-circle.png" />
-    <None Remove="Resources\check-pause.png" />
-    <None Remove="Resources\check.png" />
-    <None Remove="Resources\checkbox.png" />
-    <None Remove="Resources\chevron-double-left.png" />
-    <None Remove="Resources\chevron-double-right.png" />
-    <None Remove="Resources\chevron-down.png" />
-    <None Remove="Resources\chevron-left.png" />
-    <None Remove="Resources\chevron-right.png" />
-    <None Remove="Resources\chevron-up.png" />
-    <None Remove="Resources\chevron-updown.png" />
-    <None Remove="Resources\circle-filled.png" />
-    <None Remove="Resources\clock-check.png" />
-    <None Remove="Resources\close-circle.png" />
-    <None Remove="Resources\close.png" />
-    <None Remove="Resources\cloud-disconnect.png" />
-    <None Remove="Resources\cloud-error.png" />
-    <None Remove="Resources\cloud-outline.png" />
-    <None Remove="Resources\cloud.png" />
-    <None Remove="Resources\code.png" />
-    <None Remove="Resources\colorwheel.png" />
-    <None Remove="Resources\compare.png" />
-    <None Remove="Resources\compass.png" />
-    <None Remove="Resources\condition.png" />
-    <None Remove="Resources\copy.png" />
-    <None Remove="Resources\crop-rotate.png" />
-    <None Remove="Resources\crop.png" />
-    <None Remove="Resources\cut.png" />
-    <None Remove="Resources\dashboard.png" />
-    <None Remove="Resources\data-add.png" />
-    <None Remove="Resources\data-check.png" />
-    <None Remove="Resources\data-refresh.png" />
-    <None Remove="Resources\data-remove.png" />
-    <None Remove="Resources\data-setting.png" />
-    <None Remove="Resources\data-unavailable.png" />
-    <None Remove="Resources\data.png" />
-    <None Remove="Resources\date-input.png" />
-    <None Remove="Resources\date.png" />
-    <None Remove="Resources\delete-filled.png" />
-    <None Remove="Resources\delete.png" />
-    <None Remove="Resources\desktop-mobile.png" />
-    <None Remove="Resources\desktop.png" />
-    <None Remove="Resources\device-rotate.png" />
-    <None Remove="Resources\document-filled.png" />
-    <None Remove="Resources\document-refresh.png" />
-    <None Remove="Resources\document.png" />
-    <None Remove="Resources\download-fromcloud-filled.png" />
-    <None Remove="Resources\download-fromcloud.png" />
-    <None Remove="Resources\draft.png" />
-    <None Remove="Resources\draw.png" />
-    <None Remove="Resources\dropdown.png" />
-    <None Remove="Resources\effect.png" />
-    <None Remove="Resources\exposure.png" />
-    <None Remove="Resources\extension.png" />
-    <None Remove="Resources\file-code.png" />
-    <None Remove="Resources\file-data.png" />
-    <None Remove="Resources\file-gear.png" />
-    <None Remove="Resources\file-key.png" />
-    <None Remove="Resources\file-workflow.png" />
-    <None Remove="Resources\file-zip.png" />
-    <None Remove="Resources\filter-add.png" />
-    <None Remove="Resources\filter-check.png" />
-    <None Remove="Resources\filter-delete.png" />
-    <None Remove="Resources\find-replace.png" />
-    <None Remove="Resources\flag-exclude.png" />
-    <None Remove="Resources\flag.png" />
-    <None Remove="Resources\flash-off.png" />
-    <None Remove="Resources\flash.png" />
-    <None Remove="Resources\folder-add.png" />
-    <None Remove="Resources\folder-addto.png" />
-    <None Remove="Resources\folder-delete.png" />
-    <None Remove="Resources\folder-gear.png" />
-    <None Remove="Resources\folder-lock.png" />
-    <None Remove="Resources\folder-search.png" />
-    <None Remove="Resources\folder.png" />
-    <None Remove="Resources\fullscreen.png" />
-    <None Remove="Resources\function.png" />
-    <None Remove="Resources\help.png" />
-    <None Remove="Resources\history.png" />
-    <None Remove="Resources\home.png" />
-    <None Remove="Resources\homepage.png" />
-    <None Remove="Resources\identity-service.png" />
-    <None Remove="Resources\image-add.png" />
-    <None Remove="Resources\image-album.png" />
-    <None Remove="Resources\image-check.png" />
-    <None Remove="Resources\info-filled.png" />
-    <None Remove="Resources\info.png" />
-    <None Remove="Resources\invite.png" />
-    <None Remove="Resources\key-clock.png" />
-    <None Remove="Resources\key-exclude.png" />
-    <None Remove="Resources\key.png" />
-    <None Remove="Resources\label-exclude.png" />
-    <None Remove="Resources\label.png" />
-    <None Remove="Resources\labels.png" />
-    <None Remove="Resources\launch.png" />
-    <None Remove="Resources\link-checked.png" />
-    <None Remove="Resources\link-off.png" />
-    <None Remove="Resources\location.png" />
-    <None Remove="Resources\lock.png" />
-    <None Remove="Resources\login.png" />
-    <None Remove="Resources\logout.png" />
-    <None Remove="Resources\mobile.png" />
-    <None Remove="Resources\more-h.png" />
-    <None Remove="Resources\more-v-small.png" />
-    <None Remove="Resources\more-v.png" />
-    <None Remove="Resources\multiple-add.png" />
-    <None Remove="Resources\multiple-check.png" />
-    <None Remove="Resources\multiple-exclude.png" />
-    <None Remove="Resources\multiple.png" />
-    <None Remove="Resources\new.png" />
-    <None Remove="Resources\note-add.png" />
-    <None Remove="Resources\note.png" />
-    <None Remove="Resources\notification.png" />
-    <None Remove="Resources\offer.png" />
-    <None Remove="Resources\orbit.png" />
-    <None Remove="Resources\os.png" />
-    <None Remove="Resources\page-exclude.png" />
-    <None Remove="Resources\page-gear.png" />
-    <None Remove="Resources\page-tag.png" />
-    <None Remove="Resources\pages-exclude.png" />
-    <None Remove="Resources\palette.png" />
-    <None Remove="Resources\paste-list.png" />
-    <None Remove="Resources\paste-text.png" />
-    <None Remove="Resources\paste.png" />
-    <None Remove="Resources\pause-circle.png" />
-    <None Remove="Resources\pause.png" />
-    <None Remove="Resources\pending.png" />
-    <None Remove="Resources\pin-off.png" />
-    <None Remove="Resources\pin-on.png" />
-    <None Remove="Resources\placeholder.png" />
-    <None Remove="Resources\play-circle.png" />
-    <None Remove="Resources\play.png" />
-    <None Remove="Resources\plug.png" />
-    <None Remove="Resources\preview.png" />
-    <None Remove="Resources\print-preview.png" />
-    <None Remove="Resources\print.png" />
-    <None Remove="Resources\profile.png" />
-    <None Remove="Resources\project-add.png" />
-    <None Remove="Resources\project-edit.png" />
-    <None Remove="Resources\project-name-edit.png" />
-    <None Remove="Resources\project.png" />
-    <None Remove="Resources\properties-add.png" />
-    <None Remove="Resources\properties.png" />
-    <None Remove="Resources\publish-check.png" />
-    <None Remove="Resources\publish-pending.png" />
-    <None Remove="Resources\publish-reject.png" />
-    <None Remove="Resources\publish-remove.png" />
-    <None Remove="Resources\publish-schedule.png" />
-    <None Remove="Resources\question.png" />
-    <None Remove="Resources\rail-left.png" />
-    <None Remove="Resources\refresh.png" />
-    <None Remove="Resources\remove-circle.png" />
-    <None Remove="Resources\remove.png" />
-    <None Remove="Resources\replay.png" />
-    <None Remove="Resources\resize.png" />
-    <None Remove="Resources\rotate-ccw-bold.png" />
-    <None Remove="Resources\rotate-ccw.png" />
-    <None Remove="Resources\rotate-cw-bold.png" />
-    <None Remove="Resources\rotate-cw.png" />
-    <None Remove="Resources\select.png" />
-    <None Remove="Resources\selection-checked.png" />
-    <None Remove="Resources\selection-move.png" />
-    <None Remove="Resources\selection.png" />
-    <None Remove="Resources\sentiment-negative.png" />
-    <None Remove="Resources\sentiment-neutral.png" />
-    <None Remove="Resources\sentiment-positive.png" />
-    <None Remove="Resources\settings.png" />
-    <None Remove="Resources\shield.png" />
-    <None Remove="Resources\shuffle.png" />
-    <None Remove="Resources\spellcheck.png" />
-    <None Remove="Resources\spin.png" />
-    <None Remove="Resources\star-filled.png" />
-    <None Remove="Resources\star.png" />
-    <None Remove="Resources\stopwatch.png" />
-    <None Remove="Resources\target.png" />
-    <None Remove="Resources\targeted.png" />
-    <None Remove="Resources\text-add.png" />
-    <None Remove="Resources\text-baseline-shift.png" />
-    <None Remove="Resources\text-color.png" />
-    <None Remove="Resources\text-decrese.png" />
-    <None Remove="Resources\text-edit.png" />
-    <None Remove="Resources\text-exclude.png" />
-    <None Remove="Resources\text-increase.png" />
-    <None Remove="Resources\text-italic.png" />
-    <None Remove="Resources\text-kerning.png" />
-    <None Remove="Resources\text-list-letterlower.png" />
-    <None Remove="Resources\text-list-letterupper.png" />
-    <None Remove="Resources\text-list-number.png" />
-    <None Remove="Resources\text-list-romanlower.png" />
-    <None Remove="Resources\text-list-romanupper.png" />
-    <None Remove="Resources\text-paragraph.png" />
-    <None Remove="Resources\text-script.png" />
-    <None Remove="Resources\text-size-add.png" />
-    <None Remove="Resources\text-strike.png" />
-    <None Remove="Resources\text-stroke.png" />
-    <None Remove="Resources\text-style.png" />
-    <None Remove="Resources\text-superscript.png" />
-    <None Remove="Resources\text-tracking.png" />
-    <None Remove="Resources\text-underline.png" />
-    <None Remove="Resources\text.png" />
-    <None Remove="Resources\textalign-center.png" />
-    <None Remove="Resources\textalign-justify.png" />
-    <None Remove="Resources\textalign-left.png" />
-    <None Remove="Resources\textalign-right.png" />
-    <None Remove="Resources\tip.png" />
-    <None Remove="Resources\tree-collapse.png" />
-    <None Remove="Resources\tree-collapseall.png" />
-    <None Remove="Resources\tree-expand.png" />
-    <None Remove="Resources\tree-expandall.png" />
-    <None Remove="Resources\tree.png" />
-    <None Remove="Resources\unlock.png" />
-    <None Remove="Resources\upload-filled.png" />
-    <None Remove="Resources\upload.png" />
-    <None Remove="Resources\variable.png" />
-    <None Remove="Resources\view-tags.png" />
-    <None Remove="Resources\webpage.png" />
-    <None Remove="Resources\webpages.png" />
-    <None Remove="Resources\workflow-add.png" />
-    <None Remove="Resources\workflow.png" />
-    <None Remove="Resources\wrench.png" />
-    <None Remove="Resources\zoom-in.png" />
-    <None Remove="Resources\zoom-out.png" />
+    <Reference Include="Microsoft.Extensions.FileSystemGlobbing, Version=7.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Microsoft.Extensions.FileSystemGlobbing.7.0.0\lib\net462\Microsoft.Extensions.FileSystemGlobbing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\WindowsAPICodePack-Core.1.1.1\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encoding.CodePages, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\System.Text.Encoding.CodePages.4.5.0\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Vanara.Core, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.Core.3.4.15\lib\net45\Vanara.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Vanara.PInvoke.ComCtl32, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.PInvoke.ComCtl32.3.4.15\lib\net45\Vanara.PInvoke.ComCtl32.dll</HintPath>
+    </Reference>
+    <Reference Include="Vanara.PInvoke.Cryptography, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.PInvoke.Cryptography.3.4.15\lib\net45\Vanara.PInvoke.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="Vanara.PInvoke.Gdi32, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.PInvoke.Gdi32.3.4.15\lib\net45\Vanara.PInvoke.Gdi32.dll</HintPath>
+    </Reference>
+    <Reference Include="Vanara.PInvoke.Kernel32, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.PInvoke.Kernel32.3.4.15\lib\net45\Vanara.PInvoke.Kernel32.dll</HintPath>
+    </Reference>
+    <Reference Include="Vanara.PInvoke.Ole, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.PInvoke.Ole.3.4.15\lib\net45\Vanara.PInvoke.Ole.dll</HintPath>
+    </Reference>
+    <Reference Include="Vanara.PInvoke.Rpc, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.PInvoke.Rpc.3.4.15\lib\net45\Vanara.PInvoke.Rpc.dll</HintPath>
+    </Reference>
+    <Reference Include="Vanara.PInvoke.Security, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.PInvoke.Security.3.4.15\lib\net45\Vanara.PInvoke.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Vanara.PInvoke.Shared, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.PInvoke.Shared.3.4.15\lib\net45\Vanara.PInvoke.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="Vanara.PInvoke.Shell32, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.PInvoke.Shell32.3.4.15\lib\net45\Vanara.PInvoke.Shell32.dll</HintPath>
+    </Reference>
+    <Reference Include="Vanara.PInvoke.ShlwApi, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.PInvoke.ShlwApi.3.4.15\lib\net45\Vanara.PInvoke.ShlwApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Vanara.PInvoke.User32, Version=3.4.15.0, Culture=neutral, PublicKeyToken=c37e4080322237fa, processorArchitecture=MSIL">
+      <HintPath>..\..\Archiver\packages\Vanara.PInvoke.User32.3.4.15\lib\net45\Vanara.PInvoke.User32.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
   </ItemGroup>
-
   <ItemGroup>
-    <EmbeddedResource Include="Resources\action.png" />
-    <EmbeddedResource Include="Resources\add-circle.png" />
-    <EmbeddedResource Include="Resources\add-to-selection.png" />
-    <EmbeddedResource Include="Resources\add-to.png" />
-    <EmbeddedResource Include="Resources\ads.png" />
-    <EmbeddedResource Include="Resources\alert-add.png" />
-    <EmbeddedResource Include="Resources\alert-check.png" />
-    <EmbeddedResource Include="Resources\alert-circle-filled.png" />
-    <EmbeddedResource Include="Resources\alert-circle.png" />
-    <EmbeddedResource Include="Resources\alert.png" />
-    <EmbeddedResource Include="Resources\algorithm.png" />
-    <EmbeddedResource Include="Resources\alias.png" />
-    <EmbeddedResource Include="Resources\align-bottom.png" />
-    <EmbeddedResource Include="Resources\align-center.png" />
-    <EmbeddedResource Include="Resources\align-left.png" />
-    <EmbeddedResource Include="Resources\align-middle.png" />
-    <EmbeddedResource Include="Resources\align-right.png" />
-    <EmbeddedResource Include="Resources\align-top.png" />
-    <EmbeddedResource Include="Resources\anchor.png" />
-    <EmbeddedResource Include="Resources\annotate-pen.png" />
-    <EmbeddedResource Include="Resources\annotate.png" />
-    <EmbeddedResource Include="Resources\app-delivery.png" />
-    <EmbeddedResource Include="Resources\app-refresh.png" />
-    <EmbeddedResource Include="Resources\app.png" />
-    <EmbeddedResource Include="Resources\apple-files.png" />
-    <EmbeddedResource Include="Resources\approve-reject.png" />
-    <EmbeddedResource Include="Resources\apps.png" />
-    <EmbeddedResource Include="Resources\archieve-remove.png" />
-    <EmbeddedResource Include="Resources\archieve.png" />
-    <EmbeddedResource Include="Resources\article.png" />
-    <EmbeddedResource Include="Resources\asset-add.png" />
-    <EmbeddedResource Include="Resources\asset-alert.png" />
-    <EmbeddedResource Include="Resources\asset-check.png" />
-    <EmbeddedResource Include="Resources\asset-download.png" />
-    <EmbeddedResource Include="Resources\asset-publish.png" />
-    <EmbeddedResource Include="Resources\asset.png" />
-    <EmbeddedResource Include="Resources\at.png" />
-    <EmbeddedResource Include="Resources\attach-exclude.png" />
-    <EmbeddedResource Include="Resources\attach.png" />
-    <EmbeddedResource Include="Resources\beaker-checked.png" />
-    <EmbeddedResource Include="Resources\beaker.png" />
-    <EmbeddedResource Include="Resources\bell.png" />
-    <EmbeddedResource Include="Resources\bidrule-add.png" />
-    <EmbeddedResource Include="Resources\bidrule.png" />
-    <EmbeddedResource Include="Resources\book.png" />
-    <EmbeddedResource Include="Resources\bookmark-single-filled.png" />
-    <EmbeddedResource Include="Resources\bookmark-single.png" />
-    <EmbeddedResource Include="Resources\bookmark.png" />
-    <EmbeddedResource Include="Resources\boolean.png" />
-    <EmbeddedResource Include="Resources\border.png" />
-    <EmbeddedResource Include="Resources\box-add.png" />
-    <EmbeddedResource Include="Resources\box-export.png" />
-    <EmbeddedResource Include="Resources\box-import.png" />
-    <EmbeddedResource Include="Resources\box.png" />
-    <EmbeddedResource Include="Resources\bracket-square.png" />
-    <EmbeddedResource Include="Resources\bracket.png" />
-    <EmbeddedResource Include="Resources\branch-circle.png" />
-    <EmbeddedResource Include="Resources\branch.png" />
-    <EmbeddedResource Include="Resources\breadcrumb.png" />
-    <EmbeddedResource Include="Resources\briefcase.png" />
-    <EmbeddedResource Include="Resources\browse.png" />
-    <EmbeddedResource Include="Resources\bug.png" />
-    <EmbeddedResource Include="Resources\calendar-add.png" />
-    <EmbeddedResource Include="Resources\calendar-lock.png" />
-    <EmbeddedResource Include="Resources\calendar-unlock.png" />
-    <EmbeddedResource Include="Resources\calendar.png" />
-    <EmbeddedResource Include="Resources\camera-flip.png" />
-    <EmbeddedResource Include="Resources\camera-refresh.png" />
-    <EmbeddedResource Include="Resources\camera.png" />
-    <EmbeddedResource Include="Resources\chat-add.png" />
-    <EmbeddedResource Include="Resources\chat.png" />
-    <EmbeddedResource Include="Resources\check-circle-filled.png" />
-    <EmbeddedResource Include="Resources\check-circle.png" />
-    <EmbeddedResource Include="Resources\check-pause.png" />
-    <EmbeddedResource Include="Resources\check.png" />
-    <EmbeddedResource Include="Resources\checkbox.png" />
-    <EmbeddedResource Include="Resources\chevron-double-left.png" />
-    <EmbeddedResource Include="Resources\chevron-double-right.png" />
-    <EmbeddedResource Include="Resources\chevron-down.png" />
-    <EmbeddedResource Include="Resources\chevron-left.png" />
-    <EmbeddedResource Include="Resources\chevron-right.png" />
-    <EmbeddedResource Include="Resources\chevron-up.png" />
-    <EmbeddedResource Include="Resources\chevron-updown.png" />
-    <EmbeddedResource Include="Resources\circle-filled.png" />
-    <EmbeddedResource Include="Resources\clock-check.png" />
-    <EmbeddedResource Include="Resources\close-circle.png" />
-    <EmbeddedResource Include="Resources\close.png" />
-    <EmbeddedResource Include="Resources\cloud-disconnect.png" />
-    <EmbeddedResource Include="Resources\cloud-error.png" />
-    <EmbeddedResource Include="Resources\cloud-outline.png" />
-    <EmbeddedResource Include="Resources\cloud.png" />
-    <EmbeddedResource Include="Resources\code.png" />
-    <EmbeddedResource Include="Resources\colorwheel.png" />
-    <EmbeddedResource Include="Resources\compare.png" />
-    <EmbeddedResource Include="Resources\compass.png" />
-    <EmbeddedResource Include="Resources\condition.png" />
-    <EmbeddedResource Include="Resources\copy.png" />
-    <EmbeddedResource Include="Resources\crop-rotate.png" />
-    <EmbeddedResource Include="Resources\crop.png" />
-    <EmbeddedResource Include="Resources\cut.png" />
-    <EmbeddedResource Include="Resources\dashboard.png" />
-    <EmbeddedResource Include="Resources\data-add.png" />
-    <EmbeddedResource Include="Resources\data-check.png" />
-    <EmbeddedResource Include="Resources\data-refresh.png" />
-    <EmbeddedResource Include="Resources\data-remove.png" />
-    <EmbeddedResource Include="Resources\data-setting.png" />
-    <EmbeddedResource Include="Resources\data-unavailable.png" />
-    <EmbeddedResource Include="Resources\data.png" />
-    <EmbeddedResource Include="Resources\date-input.png" />
-    <EmbeddedResource Include="Resources\date.png" />
-    <EmbeddedResource Include="Resources\delete-filled.png" />
-    <EmbeddedResource Include="Resources\delete.png" />
-    <EmbeddedResource Include="Resources\desktop-mobile.png" />
-    <EmbeddedResource Include="Resources\desktop.png" />
-    <EmbeddedResource Include="Resources\device-rotate.png" />
-    <EmbeddedResource Include="Resources\document-filled.png" />
-    <EmbeddedResource Include="Resources\document-refresh.png" />
-    <EmbeddedResource Include="Resources\document.png" />
-    <EmbeddedResource Include="Resources\download-fromcloud-filled.png" />
-    <EmbeddedResource Include="Resources\download-fromcloud.png" />
-    <EmbeddedResource Include="Resources\draft.png" />
-    <EmbeddedResource Include="Resources\draw.png" />
-    <EmbeddedResource Include="Resources\dropdown.png" />
-    <EmbeddedResource Include="Resources\effect.png" />
-    <EmbeddedResource Include="Resources\exposure.png" />
-    <EmbeddedResource Include="Resources\extension.png" />
-    <EmbeddedResource Include="Resources\file-code.png" />
-    <EmbeddedResource Include="Resources\file-data.png" />
-    <EmbeddedResource Include="Resources\file-gear.png" />
-    <EmbeddedResource Include="Resources\file-key.png" />
-    <EmbeddedResource Include="Resources\file-workflow.png" />
-    <EmbeddedResource Include="Resources\file-zip.png" />
-    <EmbeddedResource Include="Resources\filter-add.png" />
-    <EmbeddedResource Include="Resources\filter-check.png" />
-    <EmbeddedResource Include="Resources\filter-delete.png" />
-    <EmbeddedResource Include="Resources\find-replace.png" />
-    <EmbeddedResource Include="Resources\flag-exclude.png" />
-    <EmbeddedResource Include="Resources\flag.png" />
-    <EmbeddedResource Include="Resources\flash-off.png" />
-    <EmbeddedResource Include="Resources\flash.png" />
-    <EmbeddedResource Include="Resources\folder-add.png" />
-    <EmbeddedResource Include="Resources\folder-addto.png" />
-    <EmbeddedResource Include="Resources\folder-delete.png" />
-    <EmbeddedResource Include="Resources\folder-gear.png" />
-    <EmbeddedResource Include="Resources\folder-lock.png" />
-    <EmbeddedResource Include="Resources\folder-search.png" />
-    <EmbeddedResource Include="Resources\folder.png" />
-    <EmbeddedResource Include="Resources\fullscreen.png" />
-    <EmbeddedResource Include="Resources\function.png" />
-    <EmbeddedResource Include="Resources\help.png" />
-    <EmbeddedResource Include="Resources\history.png" />
-    <EmbeddedResource Include="Resources\home.png" />
-    <EmbeddedResource Include="Resources\homepage.png" />
-    <EmbeddedResource Include="Resources\identity-service.png" />
-    <EmbeddedResource Include="Resources\image-add.png" />
-    <EmbeddedResource Include="Resources\image-album.png" />
-    <EmbeddedResource Include="Resources\image-check.png" />
-    <EmbeddedResource Include="Resources\info-filled.png" />
-    <EmbeddedResource Include="Resources\info.png" />
-    <EmbeddedResource Include="Resources\invite.png" />
-    <EmbeddedResource Include="Resources\key-clock.png" />
-    <EmbeddedResource Include="Resources\key-exclude.png" />
-    <EmbeddedResource Include="Resources\key.png" />
-    <EmbeddedResource Include="Resources\label-exclude.png" />
-    <EmbeddedResource Include="Resources\label.png" />
-    <EmbeddedResource Include="Resources\labels.png" />
-    <EmbeddedResource Include="Resources\launch.png" />
-    <EmbeddedResource Include="Resources\link-checked.png" />
-    <EmbeddedResource Include="Resources\link-off.png" />
-    <EmbeddedResource Include="Resources\location.png" />
-    <EmbeddedResource Include="Resources\lock.png" />
-    <EmbeddedResource Include="Resources\login.png" />
-    <EmbeddedResource Include="Resources\logout.png" />
-    <EmbeddedResource Include="Resources\mobile.png" />
-    <EmbeddedResource Include="Resources\more-h.png" />
-    <EmbeddedResource Include="Resources\more-v-small.png" />
-    <EmbeddedResource Include="Resources\more-v.png" />
-    <EmbeddedResource Include="Resources\multiple-add.png" />
-    <EmbeddedResource Include="Resources\multiple-check.png" />
-    <EmbeddedResource Include="Resources\multiple-exclude.png" />
-    <EmbeddedResource Include="Resources\multiple.png" />
-    <EmbeddedResource Include="Resources\new.png" />
-    <EmbeddedResource Include="Resources\note-add.png" />
-    <EmbeddedResource Include="Resources\note.png" />
-    <EmbeddedResource Include="Resources\notification.png" />
-    <EmbeddedResource Include="Resources\offer.png" />
-    <EmbeddedResource Include="Resources\orbit.png" />
-    <EmbeddedResource Include="Resources\os.png" />
-    <EmbeddedResource Include="Resources\page-exclude.png" />
-    <EmbeddedResource Include="Resources\page-gear.png" />
-    <EmbeddedResource Include="Resources\page-tag.png" />
-    <EmbeddedResource Include="Resources\pages-exclude.png" />
-    <EmbeddedResource Include="Resources\palette.png" />
-    <EmbeddedResource Include="Resources\paste-list.png" />
-    <EmbeddedResource Include="Resources\paste-text.png" />
-    <EmbeddedResource Include="Resources\paste.png" />
-    <EmbeddedResource Include="Resources\pause-circle.png" />
-    <EmbeddedResource Include="Resources\pause.png" />
-    <EmbeddedResource Include="Resources\pending.png" />
-    <EmbeddedResource Include="Resources\pin-off.png" />
-    <EmbeddedResource Include="Resources\pin-on.png" />
-    <EmbeddedResource Include="Resources\placeholder.png" />
-    <EmbeddedResource Include="Resources\play-circle.png" />
-    <EmbeddedResource Include="Resources\play.png" />
-    <EmbeddedResource Include="Resources\plug.png" />
-    <EmbeddedResource Include="Resources\preview.png" />
-    <EmbeddedResource Include="Resources\print-preview.png" />
-    <EmbeddedResource Include="Resources\print.png" />
-    <EmbeddedResource Include="Resources\profile.png" />
-    <EmbeddedResource Include="Resources\project-add.png" />
-    <EmbeddedResource Include="Resources\project-edit.png" />
-    <EmbeddedResource Include="Resources\project-name-edit.png" />
-    <EmbeddedResource Include="Resources\project.png" />
-    <EmbeddedResource Include="Resources\properties-add.png" />
-    <EmbeddedResource Include="Resources\properties.png" />
-    <EmbeddedResource Include="Resources\publish-check.png" />
-    <EmbeddedResource Include="Resources\publish-pending.png" />
-    <EmbeddedResource Include="Resources\publish-reject.png" />
-    <EmbeddedResource Include="Resources\publish-remove.png" />
-    <EmbeddedResource Include="Resources\publish-schedule.png" />
-    <EmbeddedResource Include="Resources\question.png" />
-    <EmbeddedResource Include="Resources\rail-left.png" />
-    <EmbeddedResource Include="Resources\refresh.png" />
-    <EmbeddedResource Include="Resources\remove-circle.png" />
-    <EmbeddedResource Include="Resources\remove.png" />
-    <EmbeddedResource Include="Resources\replay.png" />
-    <EmbeddedResource Include="Resources\resize.png" />
-    <EmbeddedResource Include="Resources\rotate-ccw-bold.png" />
-    <EmbeddedResource Include="Resources\rotate-ccw.png" />
-    <EmbeddedResource Include="Resources\rotate-cw-bold.png" />
-    <EmbeddedResource Include="Resources\rotate-cw.png" />
-    <EmbeddedResource Include="Resources\select.png" />
-    <EmbeddedResource Include="Resources\selection-checked.png" />
-    <EmbeddedResource Include="Resources\selection-move.png" />
-    <EmbeddedResource Include="Resources\selection.png" />
-    <EmbeddedResource Include="Resources\sentiment-negative.png" />
-    <EmbeddedResource Include="Resources\sentiment-neutral.png" />
-    <EmbeddedResource Include="Resources\sentiment-positive.png" />
-    <EmbeddedResource Include="Resources\settings.png" />
-    <EmbeddedResource Include="Resources\shield.png" />
-    <EmbeddedResource Include="Resources\shuffle.png" />
-    <EmbeddedResource Include="Resources\spellcheck.png" />
-    <EmbeddedResource Include="Resources\spin.png" />
-    <EmbeddedResource Include="Resources\star-filled.png" />
-    <EmbeddedResource Include="Resources\star.png" />
-    <EmbeddedResource Include="Resources\stopwatch.png" />
-    <EmbeddedResource Include="Resources\target.png" />
-    <EmbeddedResource Include="Resources\targeted.png" />
-    <EmbeddedResource Include="Resources\text-add.png" />
-    <EmbeddedResource Include="Resources\text-baseline-shift.png" />
-    <EmbeddedResource Include="Resources\text-color.png" />
-    <EmbeddedResource Include="Resources\text-decrese.png" />
-    <EmbeddedResource Include="Resources\text-edit.png" />
-    <EmbeddedResource Include="Resources\text-exclude.png" />
-    <EmbeddedResource Include="Resources\text-increase.png" />
-    <EmbeddedResource Include="Resources\text-italic.png" />
-    <EmbeddedResource Include="Resources\text-kerning.png" />
-    <EmbeddedResource Include="Resources\text-list-letterlower.png" />
-    <EmbeddedResource Include="Resources\text-list-letterupper.png" />
-    <EmbeddedResource Include="Resources\text-list-number.png" />
-    <EmbeddedResource Include="Resources\text-list-romanlower.png" />
-    <EmbeddedResource Include="Resources\text-list-romanupper.png" />
-    <EmbeddedResource Include="Resources\text-paragraph.png" />
-    <EmbeddedResource Include="Resources\text-script.png" />
-    <EmbeddedResource Include="Resources\text-size-add.png" />
-    <EmbeddedResource Include="Resources\text-strike.png" />
-    <EmbeddedResource Include="Resources\text-stroke.png" />
-    <EmbeddedResource Include="Resources\text-style.png" />
-    <EmbeddedResource Include="Resources\text-superscript.png" />
-    <EmbeddedResource Include="Resources\text-tracking.png" />
-    <EmbeddedResource Include="Resources\text-underline.png" />
-    <EmbeddedResource Include="Resources\text.png" />
-    <EmbeddedResource Include="Resources\textalign-center.png" />
-    <EmbeddedResource Include="Resources\textalign-justify.png" />
-    <EmbeddedResource Include="Resources\textalign-left.png" />
-    <EmbeddedResource Include="Resources\textalign-right.png" />
-    <EmbeddedResource Include="Resources\tip.png" />
-    <EmbeddedResource Include="Resources\tree-collapse.png" />
-    <EmbeddedResource Include="Resources\tree-collapseall.png" />
-    <EmbeddedResource Include="Resources\tree-expand.png" />
-    <EmbeddedResource Include="Resources\tree-expandall.png" />
-    <EmbeddedResource Include="Resources\tree.png" />
-    <EmbeddedResource Include="Resources\unlock.png" />
-    <EmbeddedResource Include="Resources\upload-filled.png" />
-    <EmbeddedResource Include="Resources\upload.png" />
-    <EmbeddedResource Include="Resources\variable.png" />
-    <EmbeddedResource Include="Resources\view-tags.png" />
-    <EmbeddedResource Include="Resources\webpage.png" />
-    <EmbeddedResource Include="Resources\webpages.png" />
-    <EmbeddedResource Include="Resources\workflow-add.png" />
-    <EmbeddedResource Include="Resources\workflow.png" />
-    <EmbeddedResource Include="Resources\wrench.png" />
-    <EmbeddedResource Include="Resources\zoom-in.png" />
-    <EmbeddedResource Include="Resources\zoom-out.png" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BZip2CompressionSettings.xaml.cs">
+      <DependentUpon>BZip2CompressionSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SystemWildcardSelect.xaml.cs">
+      <DependentUpon>SystemWildcardSelect.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Compress.xaml.cs">
+      <DependentUpon>Compress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Extract.xaml.cs">
+      <DependentUpon>Extract.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExtractSpf.xaml.cs">
+      <DependentUpon>ExtractSpf.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FolderSelector.xaml.cs">
+      <DependentUpon>FolderSelector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FileSelector.xaml.cs">
+      <DependentUpon>FileSelector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GZipCompressionSettings.xaml.cs">
+      <DependentUpon>GZipCompressionSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Loader.xaml.cs">
+      <DependentUpon>Loader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="SevenZipCompressionSettings.xaml.cs">
+      <DependentUpon>SevenZipCompressionSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\IconTreeNode.cs" />
+    <Compile Include="UI\LoadingRing.xaml.cs">
+      <DependentUpon>LoadingRing.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ZipCompressionSettings.xaml.cs">
+      <DependentUpon>ZipCompressionSettings.xaml</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Vanara.PInvoke.Shell32" Version="3.4.12" />
-    <PackageReference Include="WindowsAPICodePack-ShellExtensions" Version="1.1.1" />
+    <None Include="App.config" />
   </ItemGroup>
-
   <ItemGroup>
-    <Compile Update="SevenZipCompressionSettings.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="GZipCompressionSettings.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="BZip2CompressionSettings.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="ZipCompressionSettings.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Compress.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="ExtractSpf.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="SevenZipCompressionSettings.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="BZip2CompressionSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="GZipCompressionSettings.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    <Page Include="SystemWildcardSelect.xaml">
+      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="BZip2CompressionSettings.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    <Page Include="Compress.xaml">
+      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="ZipCompressionSettings.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    <Page Include="Extract.xaml">
+      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Compress.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    <Page Include="ExtractSpf.xaml">
+      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="ExtractSpf.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    <Page Include="FolderSelector.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FileSelector.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GZipCompressionSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Loader.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SevenZipCompressionSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\LoadingRing.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ZipCompressionSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\action.png" />
+    <Resource Include="Resources\add-circle.png" />
+    <Resource Include="Resources\add-to-selection.png" />
+    <Resource Include="Resources\add-to.png" />
+    <Resource Include="Resources\ads.png" />
+    <Resource Include="Resources\alert-add.png" />
+    <Resource Include="Resources\alert-check.png" />
+    <Resource Include="Resources\alert-circle-filled.png" />
+    <Resource Include="Resources\alert-circle.png" />
+    <Resource Include="Resources\alert.png" />
+    <Resource Include="Resources\algorithm.png" />
+    <Resource Include="Resources\alias.png" />
+    <Resource Include="Resources\align-bottom.png" />
+    <Resource Include="Resources\align-center.png" />
+    <Resource Include="Resources\align-left.png" />
+    <Resource Include="Resources\align-middle.png" />
+    <Resource Include="Resources\align-right.png" />
+    <Resource Include="Resources\align-top.png" />
+    <Resource Include="Resources\anchor.png" />
+    <Resource Include="Resources\annotate-pen.png" />
+    <Resource Include="Resources\annotate.png" />
+    <Resource Include="Resources\app-delivery.png" />
+    <Resource Include="Resources\app-refresh.png" />
+    <Resource Include="Resources\app.png" />
+    <Resource Include="Resources\apple-files.png" />
+    <Resource Include="Resources\approve-reject.png" />
+    <Resource Include="Resources\apps.png" />
+    <Resource Include="Resources\archieve-remove.png" />
+    <Resource Include="Resources\archieve.png" />
+    <Resource Include="Resources\article.png" />
+    <Resource Include="Resources\asset-add.png" />
+    <Resource Include="Resources\asset-alert.png" />
+    <Resource Include="Resources\asset-check.png" />
+    <Resource Include="Resources\asset-download.png" />
+    <Resource Include="Resources\asset-publish.png" />
+    <Resource Include="Resources\asset.png" />
+    <Resource Include="Resources\at.png" />
+    <Resource Include="Resources\attach-exclude.png" />
+    <Resource Include="Resources\attach.png" />
+    <Resource Include="Resources\beaker-checked.png" />
+    <Resource Include="Resources\beaker.png" />
+    <Resource Include="Resources\bell.png" />
+    <Resource Include="Resources\bidrule-add.png" />
+    <Resource Include="Resources\bidrule.png" />
+    <Resource Include="Resources\book.png" />
+    <Resource Include="Resources\bookmark-single-filled.png" />
+    <Resource Include="Resources\bookmark-single.png" />
+    <Resource Include="Resources\bookmark.png" />
+    <Resource Include="Resources\boolean.png" />
+    <Resource Include="Resources\border.png" />
+    <Resource Include="Resources\box-add.png" />
+    <Resource Include="Resources\box-export.png" />
+    <Resource Include="Resources\box-import.png" />
+    <Resource Include="Resources\box.png" />
+    <Resource Include="Resources\bracket-square.png" />
+    <Resource Include="Resources\bracket.png" />
+    <Resource Include="Resources\branch-circle.png" />
+    <Resource Include="Resources\branch.png" />
+    <Resource Include="Resources\breadcrumb.png" />
+    <Resource Include="Resources\briefcase.png" />
+    <Resource Include="Resources\browse.png" />
+    <Resource Include="Resources\bug.png" />
+    <Resource Include="Resources\calendar-add.png" />
+    <Resource Include="Resources\calendar-lock.png" />
+    <Resource Include="Resources\calendar-unlock.png" />
+    <Resource Include="Resources\calendar.png" />
+    <Resource Include="Resources\camera-flip.png" />
+    <Resource Include="Resources\camera-refresh.png" />
+    <Resource Include="Resources\camera.png" />
+    <Resource Include="Resources\chat-add.png" />
+    <Resource Include="Resources\chat.png" />
+    <Resource Include="Resources\check-circle-filled.png" />
+    <Resource Include="Resources\check-circle.png" />
+    <Resource Include="Resources\check-pause.png" />
+    <Resource Include="Resources\check.png" />
+    <Resource Include="Resources\checkbox.png" />
+    <Resource Include="Resources\chevron-double-left.png" />
+    <Resource Include="Resources\chevron-double-right.png" />
+    <Resource Include="Resources\chevron-down.png" />
+    <Resource Include="Resources\chevron-left.png" />
+    <Resource Include="Resources\chevron-right.png" />
+    <Resource Include="Resources\chevron-up.png" />
+    <Resource Include="Resources\chevron-updown.png" />
+    <Resource Include="Resources\circle-filled.png" />
+    <Resource Include="Resources\clock-check.png" />
+    <Resource Include="Resources\close-circle.png" />
+    <Resource Include="Resources\close.png" />
+    <Resource Include="Resources\cloud-disconnect.png" />
+    <Resource Include="Resources\cloud-error.png" />
+    <Resource Include="Resources\cloud-outline.png" />
+    <Resource Include="Resources\cloud.png" />
+    <Resource Include="Resources\code.png" />
+    <Resource Include="Resources\colorwheel.png" />
+    <Resource Include="Resources\compare.png" />
+    <Resource Include="Resources\compass.png" />
+    <Resource Include="Resources\condition.png" />
+    <Resource Include="Resources\copy.png" />
+    <Resource Include="Resources\crop-rotate.png" />
+    <Resource Include="Resources\crop.png" />
+    <Resource Include="Resources\cut.png" />
+    <Resource Include="Resources\dashboard.png" />
+    <Resource Include="Resources\data-add.png" />
+    <Resource Include="Resources\data-check.png" />
+    <Resource Include="Resources\data-refresh.png" />
+    <Resource Include="Resources\data-remove.png" />
+    <Resource Include="Resources\data-setting.png" />
+    <Resource Include="Resources\data-unavailable.png" />
+    <Resource Include="Resources\data.png" />
+    <Resource Include="Resources\date-input.png" />
+    <Resource Include="Resources\date.png" />
+    <Resource Include="Resources\delete-filled.png" />
+    <Resource Include="Resources\delete.png" />
+    <Resource Include="Resources\desktop-mobile.png" />
+    <Resource Include="Resources\desktop.png" />
+    <Resource Include="Resources\device-rotate.png" />
+    <Resource Include="Resources\document-filled.png" />
+    <Resource Include="Resources\document-refresh.png" />
+    <Resource Include="Resources\document.png" />
+    <Resource Include="Resources\download-fromcloud-filled.png" />
+    <Resource Include="Resources\download-fromcloud.png" />
+    <Resource Include="Resources\draft.png" />
+    <Resource Include="Resources\draw.png" />
+    <Resource Include="Resources\dropdown.png" />
+    <Resource Include="Resources\effect.png" />
+    <Resource Include="Resources\exposure.png" />
+    <Resource Include="Resources\extension.png" />
+    <Resource Include="Resources\file-code.png" />
+    <Resource Include="Resources\file-data.png" />
+    <Resource Include="Resources\file-gear.png" />
+    <Resource Include="Resources\file-key.png" />
+    <Resource Include="Resources\file-workflow.png" />
+    <Resource Include="Resources\file-zip.png" />
+    <Resource Include="Resources\filter-add.png" />
+    <Resource Include="Resources\filter-check.png" />
+    <Resource Include="Resources\filter-delete.png" />
+    <Resource Include="Resources\find-replace.png" />
+    <Resource Include="Resources\flag-exclude.png" />
+    <Resource Include="Resources\flag.png" />
+    <Resource Include="Resources\flash-off.png" />
+    <Resource Include="Resources\flash.png" />
+    <Resource Include="Resources\folder-add.png" />
+    <Resource Include="Resources\folder-addto.png" />
+    <Resource Include="Resources\folder-delete.png" />
+    <Resource Include="Resources\folder-gear.png" />
+    <Resource Include="Resources\folder-lock.png" />
+    <Resource Include="Resources\folder-search.png" />
+    <Resource Include="Resources\folder.png" />
+    <Resource Include="Resources\fullscreen.png" />
+    <Resource Include="Resources\function.png" />
+    <Resource Include="Resources\help.png" />
+    <Resource Include="Resources\history.png" />
+    <Resource Include="Resources\home.png" />
+    <Resource Include="Resources\homepage.png" />
+    <Resource Include="Resources\identity-service.png" />
+    <Resource Include="Resources\image-add.png" />
+    <Resource Include="Resources\image-album.png" />
+    <Resource Include="Resources\image-check.png" />
+    <Resource Include="Resources\info-filled.png" />
+    <Resource Include="Resources\info.png" />
+    <Resource Include="Resources\invite.png" />
+    <Resource Include="Resources\key-clock.png" />
+    <Resource Include="Resources\key-exclude.png" />
+    <Resource Include="Resources\key.png" />
+    <Resource Include="Resources\label-exclude.png" />
+    <Resource Include="Resources\label.png" />
+    <Resource Include="Resources\labels.png" />
+    <Resource Include="Resources\launch.png" />
+    <Resource Include="Resources\link-checked.png" />
+    <Resource Include="Resources\link-off.png" />
+    <Resource Include="Resources\location.png" />
+    <Resource Include="Resources\lock.png" />
+    <Resource Include="Resources\login.png" />
+    <Resource Include="Resources\logout.png" />
+    <Resource Include="Resources\mobile.png" />
+    <Resource Include="Resources\more-h.png" />
+    <Resource Include="Resources\more-v-small.png" />
+    <Resource Include="Resources\more-v.png" />
+    <Resource Include="Resources\multiple-add.png" />
+    <Resource Include="Resources\multiple-check.png" />
+    <Resource Include="Resources\multiple-exclude.png" />
+    <Resource Include="Resources\multiple.png" />
+    <Resource Include="Resources\new.png" />
+    <Resource Include="Resources\note-add.png" />
+    <Resource Include="Resources\note.png" />
+    <Resource Include="Resources\notification.png" />
+    <Resource Include="Resources\offer.png" />
+    <Resource Include="Resources\orbit.png" />
+    <Resource Include="Resources\os.png" />
+    <Resource Include="Resources\page-exclude.png" />
+    <Resource Include="Resources\page-gear.png" />
+    <Resource Include="Resources\page-tag.png" />
+    <Resource Include="Resources\pages-exclude.png" />
+    <Resource Include="Resources\palette.png" />
+    <Resource Include="Resources\paste-list.png" />
+    <Resource Include="Resources\paste-text.png" />
+    <Resource Include="Resources\paste.png" />
+    <Resource Include="Resources\pause-circle.png" />
+    <Resource Include="Resources\pause.png" />
+    <Resource Include="Resources\pending.png" />
+    <Resource Include="Resources\pin-off.png" />
+    <Resource Include="Resources\pin-on.png" />
+    <Resource Include="Resources\placeholder.png" />
+    <Resource Include="Resources\play-circle.png" />
+    <Resource Include="Resources\play.png" />
+    <Resource Include="Resources\plug.png" />
+    <Resource Include="Resources\preview.png" />
+    <Resource Include="Resources\print-preview.png" />
+    <Resource Include="Resources\print.png" />
+    <Resource Include="Resources\profile.png" />
+    <Resource Include="Resources\project-add.png" />
+    <Resource Include="Resources\project-edit.png" />
+    <Resource Include="Resources\project-name-edit.png" />
+    <Resource Include="Resources\project.png" />
+    <Resource Include="Resources\properties-add.png" />
+    <Resource Include="Resources\properties.png" />
+    <Resource Include="Resources\publish-check.png" />
+    <Resource Include="Resources\publish-pending.png" />
+    <Resource Include="Resources\publish-reject.png" />
+    <Resource Include="Resources\publish-remove.png" />
+    <Resource Include="Resources\publish-schedule.png" />
+    <Resource Include="Resources\question.png" />
+    <Resource Include="Resources\rail-left.png" />
+    <Resource Include="Resources\refresh.png" />
+    <Resource Include="Resources\remove-circle.png" />
+    <Resource Include="Resources\remove.png" />
+    <Resource Include="Resources\replay.png" />
+    <Resource Include="Resources\resize.png" />
+    <Resource Include="Resources\rotate-ccw-bold.png" />
+    <Resource Include="Resources\rotate-ccw.png" />
+    <Resource Include="Resources\rotate-cw-bold.png" />
+    <Resource Include="Resources\rotate-cw.png" />
+    <Resource Include="Resources\select.png" />
+    <Resource Include="Resources\selection-checked.png" />
+    <Resource Include="Resources\selection-move.png" />
+    <Resource Include="Resources\selection.png" />
+    <Resource Include="Resources\sentiment-negative.png" />
+    <Resource Include="Resources\sentiment-neutral.png" />
+    <Resource Include="Resources\sentiment-positive.png" />
+    <Resource Include="Resources\settings.png" />
+    <Resource Include="Resources\shield.png" />
+    <Resource Include="Resources\shuffle.png" />
+    <Resource Include="Resources\spellcheck.png" />
+    <Resource Include="Resources\spin.png" />
+    <Resource Include="Resources\star-filled.png" />
+    <Resource Include="Resources\star.png" />
+    <Resource Include="Resources\stopwatch.png" />
+    <Resource Include="Resources\target.png" />
+    <Resource Include="Resources\targeted.png" />
+    <Resource Include="Resources\text-add.png" />
+    <Resource Include="Resources\text-baseline-shift.png" />
+    <Resource Include="Resources\text-color.png" />
+    <Resource Include="Resources\text-decrese.png" />
+    <Resource Include="Resources\text-edit.png" />
+    <Resource Include="Resources\text-exclude.png" />
+    <Resource Include="Resources\text-increase.png" />
+    <Resource Include="Resources\text-italic.png" />
+    <Resource Include="Resources\text-kerning.png" />
+    <Resource Include="Resources\text-list-letterlower.png" />
+    <Resource Include="Resources\text-list-letterupper.png" />
+    <Resource Include="Resources\text-list-number.png" />
+    <Resource Include="Resources\text-list-romanlower.png" />
+    <Resource Include="Resources\text-list-romanupper.png" />
+    <Resource Include="Resources\text-paragraph.png" />
+    <Resource Include="Resources\text-script.png" />
+    <Resource Include="Resources\text-size-add.png" />
+    <Resource Include="Resources\text-strike.png" />
+    <Resource Include="Resources\text-stroke.png" />
+    <Resource Include="Resources\text-style.png" />
+    <Resource Include="Resources\text-superscript.png" />
+    <Resource Include="Resources\text-tracking.png" />
+    <Resource Include="Resources\text-underline.png" />
+    <Resource Include="Resources\text.png" />
+    <Resource Include="Resources\textalign-center.png" />
+    <Resource Include="Resources\textalign-justify.png" />
+    <Resource Include="Resources\textalign-left.png" />
+    <Resource Include="Resources\textalign-right.png" />
+    <Resource Include="Resources\tip.png" />
+    <Resource Include="Resources\tree-collapse.png" />
+    <Resource Include="Resources\tree-collapseall.png" />
+    <Resource Include="Resources\tree-expand.png" />
+    <Resource Include="Resources\tree-expandall.png" />
+    <Resource Include="Resources\tree.png" />
+    <Resource Include="Resources\unlock.png" />
+    <Resource Include="Resources\upload-filled.png" />
+    <Resource Include="Resources\upload.png" />
+    <Resource Include="Resources\variable.png" />
+    <Resource Include="Resources\view-tags.png" />
+    <Resource Include="Resources\webpage.png" />
+    <Resource Include="Resources\webpages.png" />
+    <Resource Include="Resources\workflow-add.png" />
+    <Resource Include="Resources\workflow.png" />
+    <Resource Include="Resources\wrench.png" />
+    <Resource Include="Resources\zoom-in.png" />
+    <Resource Include="Resources\zoom-out.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

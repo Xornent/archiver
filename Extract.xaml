@@ -94,7 +94,7 @@
         <Grid Grid.Row="1" Background="#fafafa">
             <Grid Margin="20">
                 <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Visibility="Collapsed">
                         <TextBlock Foreground="gray" Text="Source" HorizontalAlignment="Left"
                                VerticalAlignment="Top" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
@@ -109,13 +109,13 @@
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
-                    <Grid Height="15"/>
+                    <Grid Height="15" Visibility="Collapsed"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Foreground="gray" Text="Destination" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                         <ComboBox Width="225" SelectedIndex="0">
-                            <ComboBoxItem Content="Same directory with the archives"/>
+                            <ComboBoxItem Content="Same directory with the archive"/>
                         </ComboBox>
                         <Button Content="Select ..." Padding="10 0"/>
                     </StackPanel>
@@ -127,7 +127,7 @@
                         <StackPanel Orientation="Vertical">
                             <RadioButton Content="Extract all files" IsChecked="True"/>
                             <RadioButton Content="Exclude the following files"/>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Visibility="Collapsed">
                                 <ComboBox IsEnabled="False" SelectedIndex="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200"
                                       Margin="25 0 0 0">
                                     <ComboBoxItem>No exclusion</ComboBoxItem>
@@ -144,7 +144,7 @@
                         <StackPanel Orientation="Vertical">
                             <RadioButton Content="No password" IsChecked="True"/>
                             <RadioButton Content="Specify password to extract this archive"/>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Visibility="Collapsed">
                                 <TextBox Width="200" Margin="25 0 0 0"></TextBox>
                             </StackPanel>
                         </StackPanel>

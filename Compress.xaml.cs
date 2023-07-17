@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.WindowsAPICodePack;
+using System.IO;
 
 namespace Archiver
 {
@@ -28,6 +29,17 @@ namespace Archiver
             this.selectSource.Click += (s, e) => {
                 FileSelector selector = new FileSelector();
                 selector.ShowDialog();
+                if (selector.DialogResult == true) {
+                    
+                }
+            };
+
+            this.selectWildMask.Click += (s, e) => {
+                SystemWildcardSelect selector = new SystemWildcardSelect();
+                selector.ShowDialog();
+                if (selector.DialogResult == true) {
+
+                }
             };
         }
 
@@ -50,5 +62,26 @@ namespace Archiver
             }
             this.WindowState = WindowState.Minimized;
         }
+    }
+
+    public class FileSystemTree : SystemDirectory
+    {
+    }
+    
+    public abstract class SystemItem 
+    {
+        public string FullName { get; set; }
+        public string DisplayName { get; set; }
+    }
+
+    public class SystemFile : SystemItem
+    {
+        public string Extension { get; set; }
+    }
+
+    public class SystemDirectory : SystemItem
+    {
+        public List<SystemFile> Files { get; set; } = new List<SystemFile>();
+        public List<SystemDirectory> Directories { get; set; } = new List<SystemDirectory>();
     }
 }
