@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Archiver.UI"
-             mc:Ignorable="d" 
-             d:DesignHeight="32" d:DesignWidth="32">
+             mc:Ignorable="d">
     <UserControl.Resources>
         <Storyboard x:Key="storyBoard" RepeatBehavior="Forever">
             <DoubleAnimationUsingKeyFrames x:Name="animation" Storyboard.TargetName="globalRotate">
@@ -25,7 +24,8 @@
         </Storyboard>
     </UserControl.Resources>
     <Grid>
-        <Canvas Width="32" Height="32" RenderTransformOrigin="0.51 0.51">
+        <Canvas Width="32" Height="32" HorizontalAlignment="Left" VerticalAlignment="Top"
+                RenderTransformOrigin="0.50 0.50">
             <Canvas.RenderTransform>
                 <TransformGroup>
                     <RotateTransform x:Name="globalRotate" Angle="0"/>

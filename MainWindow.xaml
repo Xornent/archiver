@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Archiver"
-        mc:Ignorable="d" FontFamily="Adobe Clean" Background="#ffffff"
+        mc:Ignorable="d" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
         Title="Archiver" Height="650" Width="900" UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen" Icon="pack://siteoforigin:,,,/resources/defrag.ico">
 
@@ -38,8 +38,8 @@
                 <Label Content="Drag files and folders you want to compress" HorizontalAlignment="Center" VerticalAlignment="Center" 
                    FontStyle="Normal" FontWeight="Light" FontSize="32" Foreground="#60ffffff"/>
                 <Grid Height="30"/>
-                <Label Content="[α] 0.4.0b154" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                   FontStyle="Normal" FontWeight="Normal" FontSize="16" FontFamily="SF Mono" Foreground="#60ffffff"/>
+                <Label Content="[α] 0.4.1b181" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   FontStyle="Normal" FontWeight="Normal" FontSize="16" FontFamily="{StaticResource fixedWidthFont}" Foreground="#60ffffff"/>
             </StackPanel>
         </Grid>
 
@@ -165,7 +165,7 @@
                        Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
                         <Grid Width="10"/>
                         <TextBlock x:Name="lblTitle" Text="Archiver · Startup" VerticalAlignment="Center"
-                           FontWeight="Bold" FontFamily="SF Pro Text"/>
+                           FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
                     </StackPanel>
                 </Grid>
             </DockPanel>
@@ -410,7 +410,7 @@
                 </MenuItem>
                 <MenuItem Header="_Help">
                     <MenuItem Header="About 7-zip ..."/>
-                    <MenuItem Header="About Archiver ..."/>
+                    <MenuItem x:Name="mnuAbout" Header="About Archiver ..."/>
                 </MenuItem>
             </Menu>
         </Grid>

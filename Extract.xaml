@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Archiver"
-        mc:Ignorable="d" Title="Extract Archive" FontFamily="Adobe Clean" Background="#ffffff"
+        xmlns:io="clr-namespace:System.IO;assembly=mscorlib"
+        mc:Ignorable="d" Title="Extract Archive" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
         Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico">
@@ -85,7 +86,7 @@
                        Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
                         <Grid Width="10"/>
                         <TextBlock Text="Extract Archive" VerticalAlignment="Center"
-                           FontWeight="Bold" FontFamily="SF Pro Text"/>
+                           FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
                     </StackPanel>
                 </Grid>
             </DockPanel>
@@ -114,10 +115,19 @@
                         <TextBlock Foreground="gray" Text="Destination" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <ComboBox Width="225" SelectedIndex="0">
+                        <ComboBox x:Name="comboBoxDest" Width="225" SelectedIndex="0">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type io:DirectoryInfo}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="pack://siteoforigin:,,,/resources/folder.ico" Width="16" Height="16"/>
+                                        <Grid Width="5"/>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
                             <ComboBoxItem Content="Same directory with the archive"/>
                         </ComboBox>
-                        <Button Content="Select ..." Padding="10 0"/>
+                        <Button x:Name="btnSelectDest" Content="Select ..." Padding="10 0"/>
                     </StackPanel>
                     <Grid Height="15"/>
                     <StackPanel Orientation="Horizontal">
@@ -125,14 +135,15 @@
                                VerticalAlignment="Top" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                         <StackPanel Orientation="Vertical">
-                            <RadioButton Content="Extract all files" IsChecked="True"/>
-                            <RadioButton Content="Exclude the following files"/>
-                            <StackPanel Orientation="Horizontal" Visibility="Collapsed">
-                                <ComboBox IsEnabled="False" SelectedIndex="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200"
-                                      Margin="25 0 0 0">
+                            <RadioButton x:Name="radioExtractAll" Content="Extract all files" IsChecked="True"/>
+                            <RadioButton x:Name="radioExclude" Content="Exclude the following files"/>
+                            <StackPanel x:Name="panelExclusion" Orientation="Horizontal" Visibility="Collapsed">
+                                <ComboBox IsEnabled="False" SelectedIndex="0" HorizontalAlignment="Left" 
+                                          VerticalAlignment="Top" Width="200" Name="comboExclue"
+                                          Margin="25 0 0 0">
                                     <ComboBoxItem>No exclusion</ComboBoxItem>
                                 </ComboBox>
-                                <Button IsEnabled="False" Content="Select ..." Padding="10 0 10 0"/>
+                                <Button x:Name="btnSelectExclusion" IsEnabled="False" Content="Select ..." Padding="10 0 10 0"/>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -142,10 +153,10 @@
                                VerticalAlignment="Top" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                         <StackPanel Orientation="Vertical">
-                            <RadioButton Content="No password" IsChecked="True"/>
-                            <RadioButton Content="Specify password to extract this archive"/>
-                            <StackPanel Orientation="Horizontal" Visibility="Collapsed">
-                                <TextBox Width="200" Margin="25 0 0 0"></TextBox>
+                            <RadioButton x:Name="radioNoPass" Content="No password" IsChecked="True"/>
+                            <RadioButton x:Name="radioPass" Content="Specify password to extract this archive"/>
+                            <StackPanel x:Name="panelPass" Orientation="Horizontal" Visibility="Collapsed">
+                                <TextBox x:Name="txtPass" Width="200" Margin="25 0 0 0"></TextBox>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -222,8 +233,8 @@
         <Grid Grid.Row="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-                <Button Content="Cancel" Margin="20 15 0 15" Padding="10 0 10 0"/>
-                <Button Content="Decompress" Margin="5 15 15 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnCancel" Content="Cancel" Margin="20 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnOK" Content="Decompress" Margin="5 15 15 15" Padding="10 0 10 0"/>
             </StackPanel>
         </Grid>
     </Grid>

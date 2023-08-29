@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Archiver"
         xmlns:apiwpf="clr-namespace:Microsoft.WindowsAPICodePack.Controls.WindowsPresentationFoundation;assembly=Microsoft.WindowsAPICodePack.Shell"
-        mc:Ignorable="d" FontFamily="Adobe Clean"
+        mc:Ignorable="d" FontFamily="{StaticResource bodyFont}"
         Title="Select files and folders" Height="550" Width="900">
     <Grid>
         <Grid.RowDefinitions>
@@ -83,7 +83,7 @@
                        Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
                         <Grid Width="10"/>
                         <TextBlock Text="Select Files and Folders" VerticalAlignment="Center"
-                           FontWeight="Bold" FontFamily="SF Pro Text"/>
+                           FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
                     </StackPanel>
                 </Grid>
             </DockPanel>
@@ -99,7 +99,7 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
                 <Button x:Name="btnCancel"  Content="Cancel" Margin="20 15 0 15" Padding="10 0 10 0"/>
-                <Button x:Name="btnOK"  Content="Select" Margin="5 15 15 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnOK" IsEnabled="True" Content="Select" Margin="5 15 15 15" Padding="10 0 10 0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <Button x:Name="btnOptions" Content="View Options" Margin="15 15 0 15" Padding="10 0 10 0"/>

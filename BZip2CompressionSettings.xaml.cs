@@ -17,7 +17,7 @@ namespace Archiver
     /// <summary>
     /// Interaction logic for Extract.xaml
     /// </summary>
-    public partial class BZip2CompressionSettings : Window
+    public partial class BZip2CompressionSettings : CompressionSettingWindow
     {
         public BZip2CompressionSettings()
         {

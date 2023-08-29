@@ -20,17 +20,26 @@ namespace Archiver
     /// </summary>
     public partial class Loader : Window
     {
-        public Loader(BackgroundWorker worker)
+        public Loader(BackgroundWorker worker, bool showProgress = false)
         {
             InitializeComponent();
             this.ring.Scale = 0.8f;
+
+            if (showProgress) {
+                this.progress.Visibility = Visibility.Visible;
+            }
             worker.WorkerReportsProgress = true;
             worker.ProgressChanged += (s, e) => {
                 (string title, string desc, string progress) loaderInfo =
                     ((string title, string desc, string progress)?)e.UserState ?? ("", "", "");
                 this.Title = loaderInfo.title;
                 this.lblTitle.Content = loaderInfo.title;
-                this.lblDesc.Text = loaderInfo.desc + "\n" + loaderInfo.progress;
+                this.lblDesc.Text = loaderInfo.desc;
+                this.lblDetail.Text = loaderInfo.progress;
+
+                if (showProgress) {
+                    this.progress.Value = e.ProgressPercentage;
+                }
             };
 
             worker.RunWorkerCompleted += (s, e) => {

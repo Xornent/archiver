@@ -250,6 +250,10 @@ namespace Archiver
                     }
                 }
             };
+
+            this.mnuAbout.Click += (s, e) => {
+                (new About()).ShowDialog();
+            };
         }
 
         public static Vanara.PInvoke.HICON GetIconDefault(string fileName)
@@ -346,7 +350,7 @@ namespace Archiver
         private void openFile(string path)
         {
             string startup = System.Windows.Forms.Application.StartupPath;
-            string zpath = startup + @"\7z\x64\7za.exe";
+            string zpath = startup + @"\7z\x64\7z.exe";
             string param = "l \"" + path + "\" -slt -y";
 
             Process proc = new Process();
@@ -912,7 +916,8 @@ namespace Archiver
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            (new Extract()).Show();
+            if (currentArchive != null)
+                (new Extract(this.currentArchive)).ShowDialog();
         }
 
         private void menuCreate_Click(object sender, RoutedEventArgs e)

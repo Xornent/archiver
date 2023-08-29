@@ -2,7 +2,18 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:ui="clr-namespace:Archiver.UI">
-    
+
+    <FontFamily x:Key="fixedWidthFont">
+        Cascadia Code, SF Mono, Consolas
+    </FontFamily>
+
+    <FontFamily x:Key="windowTitleFont">
+        Roboto
+    </FontFamily>
+
+    <FontFamily x:Key="bodyFont">
+        Roboto
+    </FontFamily>
     <!-- Colors -->
     
     <Color x:Key="enabledButtonFaceC">
@@ -216,16 +227,25 @@
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource stressed}"></Setter>
                             <Setter TargetName="Border" Property="TextElement.Foreground" Value="{StaticResource stressedText}"/>
                         </Trigger>
+                        
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation From="LightGray" To="{StaticResource enabledButtonFaceC}"
+                                                        Duration="0:0:0.2" Storyboard.TargetName="Border" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"/>
+                                        <ColorAnimation From="{StaticResource disabledTextC}" To="{StaticResource enabledTextC}"
+                                                        Duration="0:0:0.2" Storyboard.TargetName="Border" Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                            <Setter TargetName="Border" Property="Background" Value="LightGray"></Setter>
+                            <Setter TargetName="Border" Property="TextElement.Foreground" Value="{StaticResource disabledText}"/>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Foreground" Value="White"/>
-                <Setter Property="Background" Value="Gray"/>
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
     <Style x:Key="{x:Type CheckBox}"

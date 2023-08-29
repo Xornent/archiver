@@ -1,10 +1,10 @@
-﻿<Window x:Class="Archiver.BZip2CompressionSettings"
+﻿<local:CompressionSettingWindow x:Class="Archiver.BZip2CompressionSettings"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Archiver"
-        mc:Ignorable="d" Title="BZip2 Compression Settings" FontFamily="Adobe Clean" Background="#ffffff"
+        mc:Ignorable="d" Title="BZip2 Compression Settings" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
         Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico">
@@ -85,7 +85,7 @@
                        Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
                         <Grid Width="10"/>
                         <TextBlock Text="BZip2 Compression Settings" VerticalAlignment="Center"
-                           FontWeight="Bold" FontFamily="SF Pro Text"/>
+                           FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
                     </StackPanel>
                 </Grid>
             </DockPanel>
@@ -173,4 +173,4 @@
                       NonClientFrameEdges="Top"
                       CaptionHeight="0.1"/>
     </WindowChrome.WindowChrome>
-</Window>
+</local:CompressionSettingWindow>

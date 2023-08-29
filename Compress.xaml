@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Archiver"
-        mc:Ignorable="d" Title="Compress Archive" FontFamily="Adobe Clean" Background="#ffffff"
+        xmlns:io="clr-namespace:System.IO;assembly=mscorlib"
+        mc:Ignorable="d" Title="Compress Archive" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
         Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico">
@@ -85,7 +86,7 @@
                        Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
                         <Grid Width="10"/>
                         <TextBlock Text="Compress Archive" VerticalAlignment="Center"
-                           FontWeight="Bold" FontFamily="SF Pro Text"/>
+                           FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
                     </StackPanel>
                 </Grid>
             </DockPanel>
@@ -100,18 +101,15 @@
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                         <StackPanel Orientation="Vertical">
                             <StackPanel Orientation="Horizontal">
-                                <ComboBox x:Name="comboBoxSource" IsEnabled="True" 
+                                <ComboBox x:Name="comboBoxSource" IsEnabled="False" 
                                           SelectedIndex="0" HorizontalAlignment="Left" 
-                                          VerticalAlignment="Top" Width="225">
+                                          VerticalAlignment="Top" Width="300">
                                 </ComboBox>
                                 <Button x:Name="selectSource" IsEnabled="True" Padding="4 0 4 0">
                                     <Image Width="12" Height="12"  Source="Resources/apple-files.png"/>
                                 </Button>
                                 <Button x:Name="selectWildMask" IsEnabled="True" Padding="4 0 4 0">
                                     <Image Width="12" Height="12"  Source="Resources/compare.png"/>
-                                </Button>
-                                <Button x:Name="fileSystemTree" IsEnabled="False" Padding="4 0 4 0">
-                                    <Image Width="12" Height="12"  Source="Resources/tree.png"/>
                                 </Button>
                             </StackPanel>
                         </StackPanel>
@@ -123,8 +121,17 @@
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                         <StackPanel Orientation="Vertical">
                             <StackPanel Orientation="Horizontal">
-                                <ComboBox x:Name="comboBoxDest"  Width="225" SelectedIndex="0">
-                                    <ComboBoxItem Content="Same directory with the archives"/>
+                                <ComboBox x:Name="comboBoxDest" Width="300" SelectedIndex="0"
+                                          IsEnabled="False">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type io:DirectoryInfo}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="pack://siteoforigin:,,,/resources/folder.ico" Width="16" Height="16"/>
+                                                <Grid Width="5"/>
+                                                <TextBlock Text="{Binding Name}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
                                 </ComboBox>
                                 <Button x:Name="selectDest" Padding="4 0">
                                     <Image Width="12" Height="12"  Source="Resources/apple-files.png"/>
@@ -165,12 +172,6 @@
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox x:Name="chkDeleteFiles"  Content="Delete files after adding to archive"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
-                               VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                         <CheckBox x:Name="chkRestoreNTSecurity"  Content="Restore NT security information"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -207,7 +208,7 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
                 <Button x:Name="btnCancel"  Content="Cancel" Margin="20 15 0 15" Padding="10 0 10 0"/>
-                <Button x:Name="btnOK"  Content="Compress" Margin="5 15 15 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnOK" IsEnabled="False" Content="Compress" Margin="5 15 15 15" Padding="10 0 10 0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
 

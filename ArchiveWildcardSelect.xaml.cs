@@ -23,32 +23,13 @@ namespace Archiver
     /// <summary>
     /// Interaction logic for Extract.xaml
     /// </summary>
-    public partial class SystemWildcardSelect : Window
+    public partial class ArchiveWildcardSelect : Window
     {
-        public SystemWildcardSelect()
+        MainWindow.Archive archive = null;
+        public ArchiveWildcardSelect(MainWindow.Archive _arch)
         {
             InitializeComponent();
-            this.comboBoxDest.ItemTemplate = (DataTemplate)this.Resources["dirTemplate"];
-            this.loadingRing.Scale = 0.5f;
-            this.selectDest.Click += (s, e) => {
-                FolderSelector folderSelect = new FolderSelector();
-                if (folderSelect.ShowDialog() == true) {
-                    this.WorkingDirectory = folderSelect.SelectedDirectory;
-                    this.ParentalDirectory = this.WorkingDirectory;
-                    this.comboBoxDest.Items.Add(folderSelect.SelectedDirectory);
-                    this.comboBoxDest.SelectedIndex = this.comboBoxDest.Items.Count - 1;
-                    updatedSearch = false;
-                    this.updatedExecution = false;
-                }
-            };
-
-            this.comboBoxDest.SelectionChanged += (s, e) => {
-                this.WorkingDirectory = this.comboBoxDest.SelectedItem as DirectoryInfo;
-                this.ParentalDirectory = this.WorkingDirectory;
-                this.updatedSearch = false;
-                this.updatedExecution = false;
-            };
-
+            this.archive = _arch;
             BackgroundWorker worker = new BackgroundWorker();
             worker.RunWorkerCompleted += (s, e) => {
                 if(this.txtWildcard.Text.Trim() == this.lastExecuteWildcast) {
@@ -67,10 +48,8 @@ namespace Archiver
                         }
                     }
 
-                    if (this.WorkingDirectory != null) {
-                        lastExecuteWildcast = this.txtWildcard.Text.Trim();
-                        worker.RunWorkerAsync();
-                    }
+                    lastExecuteWildcast = this.txtWildcard.Text.Trim();
+                    worker.RunWorkerAsync();
                 }
             };
 
@@ -83,52 +62,30 @@ namespace Archiver
                 foreach (var line in excludeRules)
                     matcher.AddExclude(line.Replace("\r", "").Trim());
 
-                List<string> placeholders = new List<string>();
+                if (this.availableFiles.Count == 0)
+                    walkDirectory(this.archive);
 
-                int walkDirectory(DirectoryInfo info)
+                void walkDirectory(Archiver.MainWindow.FileSystemNode info, string basepath = "")
                 {
-                    int error = 0;
-                    foreach (var dirs in info.GetDirectories()) {
-                        try {
-                            if (!dirs.Attributes.HasFlag(FileAttributes.System))
-                                error += walkDirectory(dirs);
-                        } catch { error += 1; }
+                    if(info is MainWindow.Archive arch) {
+                        foreach (var item in arch.Children) 
+                            walkDirectory(item);
+                    } else if (info is MainWindow.FolderItem folder) {
+                        foreach(var item in folder.Children)
+                            walkDirectory(item, basepath + folder.Name + "/");
+                    } else if (info is MainWindow.FileItem file) {
+                        this.availableFiles.Add(basepath + file.Name);
                     }
-
-                    foreach (var files in info.GetFiles()) {
-                        try {
-                            if (!files.Attributes.HasFlag(FileAttributes.System))
-                                availableFiles.Add(files.FullName);
-                        } catch { error += 1; }
-                    }
-
-                    return error;
                 }
 
                 this.Dispatcher.Invoke(() => {
                     this.fileTree.IsEnabled = false;
                 });
 
-                if (!updatedSearch) {
-                    this.Dispatcher.Invoke(() => {
-                        this.loadingRing.Visibility = Visibility.Visible;
-                        this.lblMessage.Content = "Generating Indices ...";
-                    });
-                    availableFiles.Clear();
-                    errors = 0;
-                    errors = walkDirectory(this.WorkingDirectory);
-                    updatedSearch = true;
-                }
-
-                PatternMatchingResult results = matcher.Match(this.WorkingDirectory.FullName, availableFiles);
+                PatternMatchingResult results = matcher.Match(availableFiles);
 
                 this.Dispatcher.Invoke(() => {
-                    this.loadingRing.Visibility = Visibility.Collapsed;
                     this.lblMessage.Content = $"{results.Files.Count()} matches, in {availableFiles.Count} files";
-                    if (errors > 0) {
-                        this.lblError.Visibility = Visibility.Visible;
-                        this.lblError.Content = $"{errors} unauthorized touches";
-                    } else this.lblError.Visibility = Visibility.Collapsed;
                 });
 
                 this.Dispatcher.Invoke(() => {
@@ -140,13 +97,8 @@ namespace Archiver
                         
                         List<string> directories = new List<string>();
 
-                        if (!(checkShowAsFileSystem.IsChecked ?? false)) {
-                            directories = item.Stem.Split('/').ToList();
-                            this.lastExecutionResult.Add(item.Stem);
-                        } else { 
-                            directories = item.Path.Split('/').ToList();
-                            this.lastExecutionResult.Add(item.Path);
-                        }
+                        directories = item.Path.Split('/').ToList();
+                        this.lastExecutionResult.Add(item.Path);
 
                         ImageSourceConverter isc = new ImageSourceConverter();
 
@@ -212,10 +164,8 @@ namespace Archiver
                         }
                     }
 
-                    if (this.WorkingDirectory != null) {
-                        lastExecuteWildcast = this.txtWildcard.Text.Trim();
-                        worker.RunWorkerAsync();
-                    }
+                    lastExecuteWildcast = this.txtWildcard.Text.Trim();
+                    worker.RunWorkerAsync();
                 }
             };
 
@@ -223,16 +173,8 @@ namespace Archiver
                 wildCardUpdate.Invoke(s, e);
             };
 
-            this.checkShowAsFileSystem.Checked += (s, e) => {
-                wildCardUpdate.Invoke(s, e);
-            };
-
-            this.checkShowAsFileSystem.Unchecked += (s, e) => {
-                wildCardUpdate.Invoke(s, e);
-            };
-
             this.btnOK.Click += (s, e) => {
-                if (updatedSearch && updatedExecution) {
+                if (updatedExecution) {
                     List<(string dir, string stem)> tuples = new List<(string, string)>();
 
                     Microsoft.Extensions.FileSystemGlobbing.Matcher matcher =
@@ -241,11 +183,11 @@ namespace Archiver
                         matcher.AddInclude(line.Replace("\r", "").Trim());
                     foreach (var line in excludeRules)
                         matcher.AddExclude(line.Replace("\r", "").Trim());
-                    PatternMatchingResult results = matcher.Match(this.WorkingDirectory.FullName, availableFiles);
+                    PatternMatchingResult results = matcher.Match(availableFiles);
 
                     foreach (var item in results.Files) {
                         tuples.Add((
-                            Path.Combine(this.WorkingDirectory.FullName, item.Path), item.Stem));
+                            Path.Combine(item.Path), item.Stem));
                     }
 
                     this.SelectedEntries = new FileEntryCollection(tuples);
@@ -267,15 +209,12 @@ namespace Archiver
         private List<string> includeRules = new List<string>();
         private List<string> excludeRules = new List<string>();
         private List<string> matches = new List<string>();
-        private bool updatedSearch = false;
-        private int errors = 0;
         private string lastExecuteWildcast = "";
         private List<string> lastExecutionResult = new List<string>();
         private bool updatedExecution = false;
 
         private List<string> availableFiles = new List<string>();
         public FileEntryCollection SelectedEntries = new FileEntryCollection();
-        public DirectoryInfo ParentalDirectory = null;
 
         private void DockPanel_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -296,8 +235,6 @@ namespace Archiver
             }
             this.WindowState = WindowState.Minimized;
         }
-
-        public DirectoryInfo WorkingDirectory { get; private set; } = null;
 
         private void treeViewItemExpanded(object sender, RoutedEventArgs e)
         {

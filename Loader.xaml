@@ -5,16 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Archiver"
         xmlns:ui="clr-namespace:Archiver.UI"
-        mc:Ignorable="d" FontFamily="Adobe Clean" Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"
-        Title="Loading ..." Height="95" Width="390">
+        mc:Ignorable="d" FontFamily="{StaticResource bodyFont}" Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"
+        Title="Loading ..." Height="100" Width="400">
     <Grid>
         <StackPanel Margin="16" Orientation="Horizontal">
-            <ui:LoadingRing x:Name="ring" Scale="0.8"/>
+            <ui:LoadingRing x:Name="ring" Margin="0" Padding="0" Width="32" Height="32"/>
             <StackPanel Orientation="Vertical" Margin="16 0 0 0">
                 <Label Name="lblTitle" Visibility="Visible" Width="308" TextElement.FontWeight="Bold" TextElement.FontSize="12" 
                        Content="Opening archive ..."/>
                 <TextBlock x:Name="lblDesc" Width="308" Foreground="Gray" TextElement.FontSize="12" Padding="5 0 5 0" LineHeight="18"
                            TextWrapping="NoWrap" Text="Reading archived content information from"/>
+                <ProgressBar Visibility="Collapsed" x:Name="progress" Maximum="100" Value="0" Height="5" Margin="5"/>
+                <TextBlock x:Name="lblDetail" Width="308" Foreground="Gray" TextElement.FontSize="12" Padding="5 0 5 0" LineHeight="18"
+                           TextWrapping="NoWrap" Text="a.png"/>
             </StackPanel>
         </StackPanel>
     </Grid>

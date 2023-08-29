@@ -17,9 +17,9 @@ namespace Archiver
     /// <summary>
     /// Interaction logic for Extract.xaml
     /// </summary>
-    public partial class GZipCompressionSettings : CompressionSettingWindow
+    public partial class About : Window
     {
-        public GZipCompressionSettings()
+        public About()
         {
             InitializeComponent();
         }
