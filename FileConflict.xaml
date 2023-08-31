@@ -1,25 +1,13 @@
-﻿<Window x:Class="Archiver.SystemWildcardSelect"
+﻿<Window x:Class="Archiver.FileConflict"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Archiver"
-        xmlns:ui="clr-namespace:Archiver.UI"
-        mc:Ignorable="d" Title="Compress Archive" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
+        mc:Ignorable="d" Title="File Conflict" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
         Icon="pack://siteoforigin:,,,/resources/Defrag.ico">
-
-    <Window.Resources>
-        <DataTemplate x:Key="dirTemplate">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="pack://siteoforigin:,,,/resources/folder.ico" Width="16" Height="16"/>
-                <Grid Width="5"/>
-                <TextBlock Text="{Binding Name}"/>
-            </StackPanel>
-        </DataTemplate>
-    </Window.Resources>
-    
     <Grid x:Name="windowGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -96,7 +84,7 @@
                         <Image Width="16" Height="16"
                        Source="pack://siteoforigin:,,,/resources/Defrag.ico"/>
                         <Grid Width="10"/>
-                        <TextBlock Text="Select Files by Wildcard (Preview) " VerticalAlignment="Center"
+                        <TextBlock Text="File Overwrite Conflict" VerticalAlignment="Center"
                            FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
                     </StackPanel>
                 </Grid>
@@ -106,78 +94,45 @@
         <Grid Grid.Row="1" Background="#fafafa">
             <Grid Margin="20">
                 <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Foreground="gray" Text="Working Folder" HorizontalAlignment="Left"
-                               VerticalAlignment="Top" Width="130" Height="23" TextAlignment="Right"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <StackPanel Orientation="Vertical">
-                            <StackPanel Orientation="Horizontal">
-                                <ComboBox x:Name="comboBoxDest"  Width="268" SelectedIndex="0">
-                                </ComboBox>
-                                <Button x:Name="selectDest" Padding="4 0">
-                                    <Image Width="12" Height="12"  Source="Resources/apple-files.png"/>
-                                </Button>
-                            </StackPanel>
-
-                        </StackPanel>
-                    </StackPanel>
-
-
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Foreground="gray" Text="Wildcard Mask" HorizontalAlignment="Left"
-                               VerticalAlignment="Top" Width="130" Height="23" TextAlignment="Right"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <StackPanel Orientation="Vertical">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBox x:Name="txtWildcard" Width="300" Height="100" 
-                                         TextWrapping="NoWrap" AcceptsReturn="True"
-                                         HorizontalScrollBarVisibility="Auto"
-                                         VerticalScrollBarVisibility="Auto"></TextBox>
-                            </StackPanel>
-
-                        </StackPanel>
-                    </StackPanel>
+                    <TextBlock Foreground="Black" Text="Would you like to replace the following file existed on the destination" HorizontalAlignment="Left"
+                               VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                               TextWrapping="Wrap" LineHeight="17" Padding="5" FontWeight="Bold"/>
+                    <TextBlock Foreground="gray" Text="Path: /" HorizontalAlignment="Left"
+                               x:Name="oPath" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
+                    <TextBlock Foreground="gray" Text="Size: " HorizontalAlignment="Left"
+                               x:Name="oSize" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
+                    <TextBlock Foreground="gray" Text="Modified Date: " HorizontalAlignment="Left"
+                               x:Name="oModif" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
                     
-                    <Grid Height="15"/>
-                    <Grid Height="1" Background="LightGray"/>
-
-                    <Grid Height="15"/>
-                    <TreeView x:Name="fileTree" Height="200" Width="440"
-                              TreeViewItem.Expanded="treeViewItemExpanded">
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate DataType="{x:Type ui:IconTreeNode}" 
-                                                      ItemsSource="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="{Binding Icon}" Width="16" Height="16"/>
-                                    <Grid Width="5"/>
-                                    <TextBlock Text="{Binding Caption}"/>
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
-                    </TreeView>
-                    <Grid Height="15"/>
-                    <CheckBox x:Name="checkShowAsFileSystem" Content="Show file locations as it is in file system" IsChecked="False"/>
+                    <TextBlock Foreground="Black" Text="With the one with the same name in the archive" HorizontalAlignment="Left"
+                               VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                               TextWrapping="Wrap" LineHeight="17" Padding="5" FontWeight="Bold"/>
+                    <TextBlock Foreground="gray" Text="Path: /" HorizontalAlignment="Left"
+                               x:Name="nPath" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
+                    <TextBlock Foreground="gray" Text="Size: " HorizontalAlignment="Left"
+                               x:Name="nSize" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
+                    <TextBlock Foreground="gray" Text="Modified Date: " HorizontalAlignment="Left"
+                               x:Name="nModif" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
                 </StackPanel>
             </Grid>
         </Grid>
 
         <Grid Grid.Row="2">
-            <DockPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                    <Button x:Name="btnCancel"  Content="Cancel" Margin="20 15 0 15" Padding="10 0 10 0"/>
-                    <Button x:Name="btnOK"  Content="Select" Margin="5 15 15 15" Padding="10 0 10 0"/>
-                </StackPanel>
-                <Grid>
-                    <StackPanel Margin="16 0 0 0" Orientation="Horizontal" HorizontalAlignment="Left">
-                        <ui:LoadingRing x:Name="loadingRing" Width="32" Height="32" Margin="0 0 0 0" Scale="0.5" Visibility="Visible"/>
-                        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                            <Label Name="lblMessage" Foreground="Gray" Padding="5 5 5 3" Content="Working directory not specified"/>
-                            <Label Name="lblError" FontSize="11" Padding="5 0 0 0" Foreground="OrangeRed" Content="Working directory not specified" Visibility="Collapsed"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-            </DockPanel>
+                <Button x:Name="btnY" Content="Yes" Margin="20 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnN" Content="No" Margin="5 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnA" Content="Always" Margin="5 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnS" Content="Skip all" Margin="5 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnU" Content="Auto rename all" Margin="5 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnQ" Content="Abort" Margin="5 15 20 15" Padding="10 0 10 0"/>
+            </StackPanel>
         </Grid>
     </Grid>
 

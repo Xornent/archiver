@@ -26,6 +26,7 @@ namespace Archiver
     public partial class ArchiveWildcardSelect : Window
     {
         MainWindow.Archive archive = null;
+        bool isSPF = false;
         public ArchiveWildcardSelect(MainWindow.Archive _arch)
         {
             InitializeComponent();
@@ -74,7 +75,8 @@ namespace Archiver
                         foreach(var item in folder.Children)
                             walkDirectory(item, basepath + folder.Name + "/");
                     } else if (info is MainWindow.FileItem file) {
-                        this.availableFiles.Add(basepath + file.Name);
+                        if (basepath.Contains(":")) this.isSPF = true;
+                        this.availableFiles.Add(basepath.Replace(":","") + file.Name);
                     }
                 }
 
@@ -186,8 +188,12 @@ namespace Archiver
                     PatternMatchingResult results = matcher.Match(availableFiles);
 
                     foreach (var item in results.Files) {
-                        tuples.Add((
-                            Path.Combine(item.Path), item.Stem));
+                        string spath = item.Path;
+                        if(this.isSPF) {
+                            int ind = spath.IndexOf('/');
+                            spath = spath.Insert(ind, ":");
+                        }
+                        tuples.Add((spath, item.Stem));
                     }
 
                     this.SelectedEntries = new FileEntryCollection(tuples);

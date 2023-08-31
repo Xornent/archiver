@@ -8,7 +8,7 @@
         mc:Ignorable="d" Title="Extract Archive" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
-        Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico">
+        Icon="pack://siteoforigin:,,,/resources/Defrag.ico">
     <Grid x:Name="windowGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -83,7 +83,7 @@
                 <Grid>
                     <StackPanel IsHitTestVisible="False" Margin="2 5 2 2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
                         <Image Width="16" Height="16"
-                       Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
+                       Source="pack://siteoforigin:,,,/resources/Defrag.ico"/>
                         <Grid Width="10"/>
                         <TextBlock Text="About" VerticalAlignment="Center"
                            FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
@@ -95,7 +95,6 @@
         <Grid Grid.Row="1" Background="#fafafa">
             <Grid Margin="20">
                 <StackPanel Orientation="Vertical">
-                    <ui:LoadingRing Width="16" Height="16" Scale="0.5" Padding="0" Margin="16" RenderTransformOrigin="16 16"/>
                     <TextBlock Foreground="black" Text="Archiver: A Graphic User Interface of 7-Zip Software"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Top" TextAlignment="Left" Width="400"

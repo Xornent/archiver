@@ -8,7 +8,7 @@
         mc:Ignorable="d" Title="Extract Archive" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
-        Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico">
+        Icon="pack://siteoforigin:,,,/resources/Defrag.ico">
     <Grid x:Name="windowGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -83,7 +83,7 @@
                 <Grid>
                     <StackPanel IsHitTestVisible="False" Margin="2 5 2 2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
                         <Image Width="16" Height="16"
-                       Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
+                       Source="pack://siteoforigin:,,,/resources/Defrag.ico"/>
                         <Grid Width="10"/>
                         <TextBlock Text="Extract Archive" VerticalAlignment="Center"
                            FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
@@ -167,7 +167,7 @@
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                         <StackPanel Orientation="Vertical">
                             <ComboBox IsEnabled="True" SelectedIndex="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300"
-                                      Margin="0">
+                                      Margin="0" Name="comboTypenames">
                                 <ComboBoxItem>Any available, depending on the extension (*)</ComboBoxItem>
                                 <ComboBoxItem>Opens file in Parser mode (#)</ComboBoxItem>
                                 <ComboBoxItem>Bzip2</ComboBoxItem>
@@ -181,19 +181,19 @@
                                 <ComboBoxItem>Zip</ComboBoxItem>
                                 <ComboBoxItem>Tar</ComboBoxItem>
                             </ComboBox>
-                            <CheckBox Content="Set upper limit for start of archive position"/>
+                            <CheckBox x:Name="chkUpperLimit" Content="Set upper limit for start of archive position"/>
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Text="8" Margin="25 0 0 0"/>
-                                <ComboBox IsEnabled="False" SelectedIndex="2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50">
+                                <TextBox x:Name="txtUpperLimit" Text="8" Margin="25 0 0 0"/>
+                                <ComboBox x:Name="comboUpperLimitUnit" IsEnabled="False" SelectedIndex="2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="50">
                                     <ComboBoxItem>Bytes</ComboBoxItem>
                                     <ComboBoxItem>Kilobytes</ComboBoxItem>
                                     <ComboBoxItem>Megabytes</ComboBoxItem>
                                     <ComboBoxItem>Gigabytes</ComboBoxItem>
                                 </ComboBox>
                             </StackPanel>
-                            <CheckBox Content="Do not ignore file contents (a)"/>
-                            <CheckBox IsChecked="True" Content="Recursive if available (r)"/>
-                            <CheckBox Content="Check all byte positions as start of archive (e)"/>
+                            <CheckBox x:Name="chkTypeA" Content="Do not ignore file contents (a)"/>
+                            <CheckBox x:Name="chkTypeR" IsChecked="True" Content="Recursive if available (r)"/>
+                            <CheckBox x:Name="chkTypeE" Content="Check all byte positions as start of archive (e)"/>
                         </StackPanel>
                     </StackPanel>
                     <Grid Height="15"/>
@@ -201,30 +201,40 @@
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox Content="Recurse subdirectories"/>
+                        <CheckBox x:Name="chkRecurse" Content="Recurse subdirectories"/>
+                    </StackPanel> 
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
+                               VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
+                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                        <CheckBox x:Name="chkSNI" Content="Restore NT security information"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox Content="Restore NT security information"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
-                               VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox IsChecked="True" Content="Include alternative NTFS data streams"/>
+                        <CheckBox x:Name="chkSNS" IsChecked="True" Content="Include alternative NTFS data streams"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Foreground="gray" Text="Overwritting mode" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <ComboBox SelectedIndex="0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300">
+                        <ComboBox x:Name="comboAO" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300"
+                                  SelectedIndex="4">
                             <ComboBoxItem>Overwrite All existing files without prompt</ComboBoxItem>
                             <ComboBoxItem>Skip extracting of existing files</ComboBoxItem>
                             <ComboBoxItem>Auto rename extracting file</ComboBoxItem>
                             <ComboBoxItem>Auto rename existing file</ComboBoxItem>
+                            <ComboBoxItem>Remind me</ComboBoxItem>
                         </ComboBox>
+                    </StackPanel>
+
+                    <Grid Height="15"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
+                                   VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
+                                   TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                        <CheckBox x:Name="chkSPF" Content="Use full paths (-spf)"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>

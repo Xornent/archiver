@@ -8,7 +8,7 @@
         mc:Ignorable="d" Title="Compress Archive" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
-        Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico">
+        Icon="pack://siteoforigin:,,,/resources/Defrag.ico">
     <Grid x:Name="windowGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -83,7 +83,7 @@
                 <Grid>
                     <StackPanel IsHitTestVisible="False" Margin="2 5 2 2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
                         <Image Width="16" Height="16"
-                       Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
+                       Source="pack://siteoforigin:,,,/resources/Defrag.ico"/>
                         <Grid Width="10"/>
                         <TextBlock Text="Compress Archive" VerticalAlignment="Center"
                            FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
@@ -178,13 +178,13 @@
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox x:Name="chkIncludeNTFS"  IsChecked="True" Content="Include alternative NTFS data streams"/>
+                        <CheckBox x:Name="chkIncludeNTFS"  IsChecked="False" Content="Include alternative NTFS data streams"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="130" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                        <CheckBox x:Name="chkCompressShared"  IsChecked="True" Content="Compress shared files (files that are open for read)"/>
+                        <CheckBox x:Name="chkCompressShared"  IsChecked="False" Content="Compress shared files (files that are open for read)"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"

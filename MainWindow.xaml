@@ -33,12 +33,10 @@
 
                 <Label Content="Archiver" HorizontalAlignment="Center" VerticalAlignment="Center" 
                    FontStyle="Normal" FontWeight="Black" FontSize="100" Foreground="#80ffffff"/>
-                <Label Content="Drag an archive here to open, or" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                   FontStyle="Normal" FontWeight="Light" FontSize="32" Foreground="#60ffffff"/>
-                <Label Content="Drag files and folders you want to compress" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                <Label Content="Drag an archive here to open" HorizontalAlignment="Center" VerticalAlignment="Center" 
                    FontStyle="Normal" FontWeight="Light" FontSize="32" Foreground="#60ffffff"/>
                 <Grid Height="30"/>
-                <Label Content="[α] 0.4.1b181" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                <Label Content="[α] 0.4.4b204" HorizontalAlignment="Center" VerticalAlignment="Center" 
                    FontStyle="Normal" FontWeight="Normal" FontSize="16" FontFamily="{StaticResource fixedWidthFont}" Foreground="#60ffffff"/>
             </StackPanel>
         </Grid>
@@ -162,7 +160,7 @@
                 <Grid>
                     <StackPanel IsHitTestVisible="False" Margin="2 5 2 2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
                         <Image Width="16" Height="16"
-                       Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
+                       Source="pack://siteoforigin:,,,/resources/Defrag.ico"/>
                         <Grid Width="10"/>
                         <TextBlock x:Name="lblTitle" Text="Archiver · Startup" VerticalAlignment="Center"
                            FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
@@ -360,7 +358,7 @@
                     <MenuItem x:Name="menuCreate" Header="Create new archive from ..." Click="menuCreate_Click" InputGestureText="Ctrl + N"/>
                     <Separator/>
                     <MenuItem IsEnabled="False" Header="Decompress to current path" InputGestureText="Ctrl + D"/>
-                    <MenuItem IsEnabled="True" Header="Decompress ..." Click="MenuItem_Click"/>
+                    <MenuItem x:Name="mnuDecompress" IsEnabled="False" Header="Decompress ..."/>
                     <MenuItem IsEnabled="False" Header="Decompress selected files ..." InputGestureText="Ctrl + Shift + D"/>
                     <Separator/>
                     <MenuItem IsEnabled="False" Header="Open archive location in Windows Explorer ..."/>

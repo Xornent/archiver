@@ -8,7 +8,7 @@
         mc:Ignorable="d" Title="Compress Archive" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
-        Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico">
+        Icon="pack://siteoforigin:,,,/resources/Defrag.ico">
 
     <Window.Resources>
         <DataTemplate x:Key="dirTemplate">
@@ -94,7 +94,7 @@
                 <Grid>
                     <StackPanel IsHitTestVisible="False" Margin="2 5 2 2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
                         <Image Width="16" Height="16"
-                       Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
+                       Source="pack://siteoforigin:,,,/resources/Defrag.ico"/>
                         <Grid Width="10"/>
                         <TextBlock Text="Select Files Inside Archive" VerticalAlignment="Center"
                            FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>

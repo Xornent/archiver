@@ -7,7 +7,7 @@
         mc:Ignorable="d" Title="Extract Archive" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
-        Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico">
+        Icon="pack://siteoforigin:,,,/resources/Defrag.ico">
     <Grid x:Name="windowGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -82,7 +82,7 @@
                 <Grid>
                     <StackPanel IsHitTestVisible="False" Margin="2 5 2 2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
                         <Image Width="16" Height="16"
-                       Source="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"/>
+                       Source="pack://siteoforigin:,,,/resources/Defrag.ico"/>
                         <Grid Width="10"/>
                         <TextBlock Text="Extract Archive" VerticalAlignment="Center"
                            FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
@@ -98,7 +98,7 @@
                                VerticalAlignment="Top" TextAlignment="Left" Width="400"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" FontWeight="Regular"/>
                     <Grid Height="15"/>
-                    <CheckBox Content="I know what I am doing."/>
+                    <CheckBox x:Name="chkConfirm" Content="I know what I am doing."/>
                 </StackPanel>
             </Grid>
         </Grid>
@@ -106,8 +106,8 @@
         <Grid Grid.Row="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-                <Button Content="Cancel" Margin="20 15 0 15" Padding="10 0 10 0"/>
-                <Button Content="Decompress" Margin="5 15 20 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnCancel" Content="Cancel" Margin="20 15 0 15" Padding="10 0 10 0"/>
+                <Button IsEnabled="False" x:Name="btnOK" Content="Decompress" Margin="5 15 20 15" Padding="10 0 10 0"/>
             </StackPanel>
         </Grid>
     </Grid>

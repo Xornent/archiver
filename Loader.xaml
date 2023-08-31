@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Archiver"
         xmlns:ui="clr-namespace:Archiver.UI"
-        mc:Ignorable="d" FontFamily="{StaticResource bodyFont}" Icon="C:\Users\yang-z\Downloads\Sun Valley Icons\ICO\Defrag.ico"
+        mc:Ignorable="d" FontFamily="{StaticResource bodyFont}" Icon="pack://siteoforigin:,,,/resources/Defrag.ico"
         Title="Loading ..." Height="100" Width="400">
     <Grid>
         <StackPanel Margin="16" Orientation="Horizontal">

@@ -16,6 +16,7 @@ using Microsoft.WindowsAPICodePack;
 using System.IO;
 using System.Diagnostics;
 using System.ComponentModel;
+using static Archiver.MainWindow;
 
 namespace Archiver
 {
@@ -75,7 +76,7 @@ namespace Archiver
                     this.comboBoxDest.Items.Add(selector.SelectedDirectory);
                     dest = selector.SelectedDirectory;
                     this.comboBoxDest.IsEnabled = true;
-                    this.comboBoxSource.SelectedIndex = this.comboBoxDest.Items.Count - 1;
+                    this.comboBoxDest.SelectedIndex = this.comboBoxDest.Items.Count - 1;
                 }
             };
 
@@ -107,9 +108,9 @@ namespace Archiver
 
             this.btnCompressionSettings.Click += (s, e) => {
                 CompressionSettingWindow window = null;
-                switch((comboArchiveType.SelectedItem as ComboBoxItem).Content.ToString().ToLower()) {
+                switch ((comboArchiveType.SelectedItem as ComboBoxItem).Content.ToString().ToLower()) {
                     case "zip":
-                        window = new ZipCompressionSettings(); 
+                        window = new ZipCompressionSettings();
                         break;
                     case "bzip2":
                         window = new BZip2CompressionSettings();
@@ -128,8 +129,7 @@ namespace Archiver
                         break;
                 }
 
-                if (window == null) { }
-                else {
+                if (window == null) { } else {
                     window.ShowDialog();
                     this.methodArgs = window.OptionString;
                 }
@@ -138,71 +138,109 @@ namespace Archiver
             this.btnOK.Click += (s, e) => {
                 this.isSPF = chkSPF.IsChecked ?? false;
                 string archiveName = txtArchiveName.Text.Trim();
-                string archiveType = (comboArchiveType.SelectedItem as ComboBoxItem).Content.ToString();
+                string archiveType = (comboArchiveType.SelectedItem as ComboBoxItem).Content.ToString().ToLower();
 
-                BackgroundWorker worker = new BackgroundWorker();
-                worker.DoWork += (wsender, wargs) => {
-                    string startup = System.Windows.Forms.Application.StartupPath + @"\";
-                    if(!Directory.Exists(startup + @"temp"))
-                        Directory.CreateDirectory(startup + @"temp");
-                    if (!Directory.Exists(startup + @"working"))
-                        Directory.CreateDirectory(startup + @"working");
+                string startup = System.Windows.Forms.Application.StartupPath + @"\";
+                if (!Directory.Exists(startup + @"temp"))
+                    Directory.CreateDirectory(startup + @"temp");
+                if (!Directory.Exists(startup + @"working"))
+                    Directory.CreateDirectory(startup + @"working");
 
-                    Guid taskGUID = Guid.NewGuid();
-                    var tempDir = Directory.CreateDirectory(startup + @"temp\" + taskGUID);
-                    var workingDir = Directory.CreateDirectory(startup + @"working\" + taskGUID);
-                    string param = $"a {archiveName}.{archiveType} " + 
-                                   $"-o\"{dest.FullName}\"";
-                    string zpath = startup + @"\7z\x64\7za.exe";
+                Guid taskGUID = Guid.NewGuid();
+                var tempDir = Directory.CreateDirectory(startup + @"temp\" + taskGUID);
+                var workingDir = Directory.CreateDirectory(startup + @"working\" + taskGUID);
+                string param = $"a \"{dest.FullName}\\{archiveName}.{archiveType}\"";
 
-                    if (isSPF) {
-
-                        // generate list file containing all the absolute paths to the
-                        // compressed contents.
-
-                        using(FileStream listfile = new FileStream(workingDir.FullName + @"\listfile.txt", FileMode.OpenOrCreate)) {
-                            using(StreamWriter writer = new StreamWriter(listfile)) {
-                                foreach (var item in source) {
-                                    writer.WriteLine(item.FileSystemPath);
-                                }
-
-                                writer.Flush();
-                            }
-                        }
-
-                        param += " -spf @\"" + workingDir.FullName + "\\listfile.txt\""; 
-
-                        Process proc = new Process();
-                        proc.StartInfo.UseShellExecute = false;
-                        proc.StartInfo.CreateNoWindow = true;
-                        proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                        proc.StartInfo.FileName = "cmd.exe";
-                        proc.StartInfo.Arguments = zpath + " " + param;
-                        proc.StartInfo.RedirectStandardOutput = true;
-                        proc.StartInfo.RedirectStandardInput = true;
-                        proc.StartInfo.RedirectStandardError = true;
-                        proc.EnableRaisingEvents = true;
-
-                        proc.Start();
-
-                        bool isOver = false;
-                        while (!isOver) {
-                            string line = proc.StandardOutput.ReadLine();
-                            if (line == null) { isOver = true; continue; }
-
-                            MessageBox.Show(line);
-                        }
-                    } else {
-
+                if(this.radioWithPassword.IsChecked ?? false) {
+                    if(this.txtPassword.Text.Contains(" ")) {
+                        MessageBox.Show("The password contains invalid characters. Generation cancelled.");
+                        return;
                     }
-                };
 
-                worker.RunWorkerAsync();
+                    param += $" -p{this.txtPassword.Text}";
+                }
+
+                if (this.chkRestoreNTSecurity.IsChecked ?? false)
+                    param += " -sni";
+                if (this.chkIncludeNTFS.IsChecked ?? false)
+                    param += " -sns";
+                if (this.chkCompressShared.IsChecked ?? false)
+                    param += " -ssw";
+                if (this.chkSetTimestamp.IsChecked ?? false)
+                    param += " -stl";
+
+                if (isSPF) {
+
+                    // generate list file containing all the absolute paths to the
+                    // compressed contents.
+
+                    using (FileStream listfile = new FileStream(workingDir.FullName + @"\listfile.txt", FileMode.OpenOrCreate)) {
+                        using (StreamWriter writer = new StreamWriter(listfile, Encoding.UTF8)) {
+                            foreach (var item in source) {
+                                writer.WriteLine(item.FileSystemPath);
+                            }
+
+                            writer.Flush();
+                        }
+                    }
+
+                    param += " -spf -scsUTF-8 @\"" + workingDir.FullName + "\\listfile.txt\"";
+
+                    ActionProcess proc = new ActionProcess(param,
+                    $"Compressing {archiveName}.{archiveType} ...",
+                    $"Compressing archive file with command line options '{param}'"
+                    );
+
+                    proc.Run();
+
+                } else {
+
+                    // copying files
+
+                    BackgroundWorker worker = new BackgroundWorker();
+                    worker.DoWork += (sworker, eworker) => {
+                        int id = 0;
+                        int full = source.Count;
+                        foreach (var item in source) {
+                            System.IO.FileInfo fi = new FileInfo(workingDir.FullName + "\\" + item.ArchivePath);
+                            System.IO.Directory.CreateDirectory(fi.Directory.FullName);
+                            File.Copy(item.FileSystemPath, workingDir.FullName + "\\" + item.ArchivePath);
+                            worker.ReportProgress(
+                                Convert.ToInt32(100 * (float)id / full),
+                                ("Copying files", "Copying file to temporary archive destination ...",
+                                 item.ArchivePath)
+                                );
+                        }
+                    };
+
+                    Loader loader = new Loader(worker, true);
+                    loader.ShowDialog();
+
+                    param += $" \"{workingDir.FullName}\\*\" -r";
+                    ActionProcess proc = new ActionProcess(param,
+                    $"Compressing {archiveName}.{archiveType} ...",
+                    $"Compressing archive file with command line options '{param}'"
+                    );
+
+                    proc.Run();
+                }
+
+                if (Directory.Exists(startup + @"temp\" + taskGUID))
+                    Directory.Delete(startup + @"temp\" + taskGUID, true);
+                if (Directory.Exists(startup + @"working\" + taskGUID))
+                    Directory.Delete(startup + @"working\" + taskGUID, true);
             };
 
             this.btnCancel.Click += (s, e) => {
-                this.DialogResult = false;
                 this.Close();
+            };
+
+            this.radioWithPassword.Checked += (s, e) => {
+                this.panelPassword.Visibility = Visibility.Visible;
+            };
+
+            this.radioNoPassword.Checked += (s, e) => {
+                this.panelPassword.Visibility = Visibility.Collapsed;
             };
         }
 

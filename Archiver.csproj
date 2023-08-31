@@ -53,7 +53,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationIcon>defrag.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ActionProcess.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -65,6 +69,12 @@
     </Compile>
     <Compile Include="ArchiveWildcardSelect.xaml.cs">
       <DependentUpon>ArchiveWildcardSelect.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FileConflict.xaml.cs">
+      <DependentUpon>FileConflict.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PasswordInput.xaml.cs">
+      <DependentUpon>PasswordInput.xaml</DependentUpon>
     </Compile>
     <Compile Include="SystemWildcardSelect.xaml.cs">
       <DependentUpon>SystemWildcardSelect.xaml</DependentUpon>
@@ -143,6 +153,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ArchiveWildcardSelect.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="FileConflict.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PasswordInput.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -644,6 +662,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="defrag.ico" />
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>call $(SolutionDir)post-build.bat</PreBuildEvent>

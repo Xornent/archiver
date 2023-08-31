@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,23 +18,20 @@ namespace Archiver
     /// <summary>
     /// Interaction logic for Extract.xaml
     /// </summary>
-    public partial class ExtractSpf : Window
+    public partial class PasswordInput : Window
     {
-        public ExtractSpf()
+        public PasswordInput()
         {
             InitializeComponent();
 
-            this.chkConfirm.Checked += (s, e) => {
-                this.btnOK.IsEnabled = this.chkConfirm.IsChecked ?? false;
-            };
-
-            this.btnOK.Click += (s, e) => {
-                this.DialogResult = true;
+            this.btnCancel.Click += (s, e) => {
+                this.DialogResult = false;
                 this.Close();
             };
 
-            this.btnCancel.Click += (s, e) => {
-                this.DialogResult = false;
+            this.btnOK.Click += (s, e) => {
+                this.DialogResult= true;
+                this.Password = this.txtPass.Text;
                 this.Close();
             };
         }
@@ -47,7 +45,9 @@ namespace Archiver
         private void bdClose_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.DialogResult = false;
-            this.Close();
+            // do not call 'close' here, because the window if closed without specifying
+            // an option will show repeatedly until one option is selected.
+            this.Hide();
         }
 
         private void bdMinimize_MouseDown(object sender, MouseButtonEventArgs e)
@@ -58,5 +58,7 @@ namespace Archiver
             }
             this.WindowState = WindowState.Minimized;
         }
+
+        public string Password { get; set; }
     }
 }

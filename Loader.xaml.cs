@@ -28,6 +28,7 @@ namespace Archiver
             if (showProgress) {
                 this.progress.Visibility = Visibility.Visible;
             }
+
             worker.WorkerReportsProgress = true;
             worker.ProgressChanged += (s, e) => {
                 (string title, string desc, string progress) loaderInfo =

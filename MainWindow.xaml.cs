@@ -254,6 +254,11 @@ namespace Archiver
             this.mnuAbout.Click += (s, e) => {
                 (new About()).ShowDialog();
             };
+
+            this.mnuDecompress.Click += (s, e) => {
+                if (currentArchive != null)
+                    (new Extract(this.currentArchive)).ShowDialog();
+            };
         }
 
         public static Vanara.PInvoke.HICON GetIconDefault(string fileName)
@@ -350,7 +355,7 @@ namespace Archiver
         private void openFile(string path)
         {
             string startup = System.Windows.Forms.Application.StartupPath;
-            string zpath = startup + @"\7z\x64\7z.exe";
+            string zpath = startup + @"\7z\x64\7z-unicode.exe";
             string param = "l \"" + path + "\" -slt -y";
 
             Process proc = new Process();
@@ -369,6 +374,8 @@ namespace Archiver
                 string output = proc.StandardOutput.ReadToEnd();
                 proc.WaitForExit();
 
+                output = output.Parse7zUnicode();
+
                 System.IO.FileInfo info = new FileInfo(path);
 
                 BackgroundWorker worker = new BackgroundWorker();
@@ -382,6 +389,7 @@ namespace Archiver
                     bool beginArchiveHeader = false;
                     bool beginContentHeader = false;
                     Item item = null;
+
                     foreach (var line in output.Replace("\r\n", "\n").Split('\n')) {
                         if (line == "--") {
                             beginArchiveHeader = true;
@@ -610,6 +618,8 @@ namespace Archiver
                         this.splashScreen.Visibility = Visibility.Hidden;
                         this.gridList.Visibility = Visibility.Visible;
                         this.gridDetails.Visibility = Visibility.Visible;
+
+                        this.mnuDecompress.IsEnabled = true;
                     }));
                 };
 
@@ -914,12 +924,6 @@ namespace Archiver
             public ImageSource Icon { get; set; }
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (currentArchive != null)
-                (new Extract(this.currentArchive)).ShowDialog();
-        }
-
         private void menuCreate_Click(object sender, RoutedEventArgs e)
         {
             (new Compress()).Show();
@@ -947,6 +951,47 @@ namespace Archiver
             }
 
             return wpfBitmap;
+        }
+
+        public static string Parse7zUnicode(this string output)
+        {
+            // parse unicode out
+            List<char> unicode = new List<char>();
+            char lastChar = (char)0;
+            bool isNumericMode = false;
+            for (int i = 0; i < output.Length; i++) {
+                char c = output[i];
+                if (c == '?') {
+                    if (i + 1 < output.Length)
+                        if (output[i + 1] == '#') {
+                            isNumericMode = true;
+                            i++;
+                            continue;
+                        }
+                }
+
+                if (c == '#') {
+                    if (i + 1 < output.Length)
+                        if (output[i + 1] == '?') {
+                            isNumericMode = false;
+                            i++;
+                            continue;
+                        }
+                }
+
+                if (isNumericMode) {
+                    if (c >= '0' && c <= '9') {
+                        lastChar = Convert.ToChar(lastChar * 10 + (c - '0'));
+                    } else if (c == ' ') {
+                        if (lastChar != 0)
+                            unicode.Add(lastChar);
+                        lastChar = (char)0;
+                    }
+                } else {
+                    unicode.Add(c);
+                }
+            }
+            return new string(unicode.ToArray());
         }
     }
 }
