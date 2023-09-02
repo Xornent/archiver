@@ -42,7 +42,11 @@ namespace Archiver
                         if (item is ShellFile file) {
                             this.SelectedFiles.Add(new FileInfo(file.ParsingName));
                         } else if (item is ShellFolder folder) {
-                            this.SelectedDirectories.Add(new DirectoryInfo(folder.ParsingName));
+                            // zip files are considered shell folders!
+                            if (File.Exists(folder.ParsingName))
+                                this.SelectedFiles.Add(new FileInfo(folder.ParsingName));
+                            else
+                                this.SelectedDirectories.Add(new DirectoryInfo(folder.ParsingName));
                         }
                     }
                 }
@@ -130,8 +134,20 @@ namespace Archiver
             {
                 foreach (var item in dir.GetDirectories()) {
                     try {
-                        if (!item.Attributes.HasFlag(FileAttributes.System))
-                            walkDirectory(relativeRoot, item);
+                        if (!item.Attributes.HasFlag(FileAttributes.System)) {
+                            // windows 11 regards .zip, .7z etc as directories, this will
+                            // trigger unexpected behavior
+                            if (item.Attributes.HasFlag(FileAttributes.Archive)) {
+                                if (item.FullName.StartsWith(relativeRoot))
+                                    this.Add(new FileEntry(item.FullName,
+                                        item.FullName.Substring(relativeRoot.Length).Replace('\\', '/')));
+                                else throw new Exception("Assertion Failed: the child directory doesn't contain the parent root.");
+                            } 
+                            else {
+                                walkDirectory(relativeRoot, item); 
+                            }
+                        }
+
                     } catch { }
                 }
 
@@ -148,9 +164,13 @@ namespace Archiver
             }
 
             foreach (var directory in dirs) {
-                string parentalDirectoryPath = directory.Parent.FullName;
-                if (!parentalDirectoryPath.EndsWith("\\")) parentalDirectoryPath += "\\";
-                walkDirectory(parentalDirectoryPath, directory);
+                if (directory.Attributes.HasFlag(FileAttributes.Archive)) {
+                    this.Add(new FileEntry(directory.FullName, directory.Name));
+                } else {
+                    string parentalDirectoryPath = directory.Parent.FullName;
+                    if (!parentalDirectoryPath.EndsWith("\\")) parentalDirectoryPath += "\\";
+                    walkDirectory(parentalDirectoryPath, directory);
+                }
             }
         }
 

@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Archiver"
-        xmlns:ui="clr-namespace:Archiver.UI"
+        xmlns:ui="clr-namespace:Archiver.UI" WindowStartupLocation="CenterScreen" 
         mc:Ignorable="d" FontFamily="{StaticResource bodyFont}" Icon="pack://siteoforigin:,,,/resources/Defrag.ico"
         Title="Loading ..." Height="100" Width="400">
     <Grid>

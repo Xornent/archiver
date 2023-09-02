@@ -42,6 +42,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>MSB3277</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -72,6 +73,9 @@
     </Compile>
     <Compile Include="FileConflict.xaml.cs">
       <DependentUpon>FileConflict.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Rename.xaml.cs">
+      <DependentUpon>Rename.xaml</DependentUpon>
     </Compile>
     <Compile Include="PasswordInput.xaml.cs">
       <DependentUpon>PasswordInput.xaml</DependentUpon>
@@ -157,6 +161,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="FileConflict.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Rename.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

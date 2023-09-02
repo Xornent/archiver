@@ -8,16 +8,6 @@
         Title="Archiver" Height="650" Width="900" UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen" Icon="pack://siteoforigin:,,,/resources/defrag.ico">
 
-    <Window.Resources>
-        <DataTemplate x:Key="dirTemplate">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="{Binding Icon}" Width="16" Height="16"/>
-                <Grid Width="5"/>
-                <TextBlock Text="{Binding Name}"/>
-            </StackPanel>
-        </DataTemplate>
-    </Window.Resources>
-
     <Grid x:Name="windowGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -218,8 +208,6 @@
                 TextWrapping="Wrap" LineHeight="17" Padding="5" FontWeight="Regular"/>
             </Grid>
 
-
-
         </Grid>
         
         <Grid x:Name="gridDetails" Grid.Row="4" Visibility="Collapsed">
@@ -348,43 +336,43 @@
         <Grid Grid.Row="1">
             <Border BorderThickness="0 0 0 1" BorderBrush="#e3e3e3"/>
             <Menu Height="30" VerticalAlignment="Top">
-                <MenuItem Header="_File">
+                <MenuItem x:Name="hFile" Header="_File">
                     <MenuItem x:Name="menuOpen" Click="menuOpen_Click" Header="Open from archive ..." InputGestureText="Ctrl + O"/>
-                    <MenuItem Header="Recent">
-                        <MenuItem Header="Manage file history ..." InputGestureText="Ctrl + Shift + H"/>
+                    <MenuItem x:Name="mnuRecent" Header="Recent">
+                        <MenuItem x:Name="mnuNoHistory" Header="No file history" IsEnabled="False"/>
                         <Separator/>
-                        <MenuItem Header="Clear history"/>
+                        <MenuItem x:Name="mnuClearHistory" Header="Clear history"/>
                     </MenuItem>
                     <MenuItem x:Name="menuCreate" Header="Create new archive from ..." Click="menuCreate_Click" InputGestureText="Ctrl + N"/>
                     <Separator/>
-                    <MenuItem IsEnabled="False" Header="Decompress to current path" InputGestureText="Ctrl + D"/>
+                    <MenuItem x:Name="mnuDecompCurrent" IsEnabled="False" Header="Decompress to current path" InputGestureText="Ctrl + D"/>
                     <MenuItem x:Name="mnuDecompress" IsEnabled="False" Header="Decompress ..."/>
-                    <MenuItem IsEnabled="False" Header="Decompress selected files ..." InputGestureText="Ctrl + Shift + D"/>
+                    <MenuItem x:Name="mnuDecompSelected" IsEnabled="False" Header="Decompress selected files ..." InputGestureText="Ctrl + Shift + D"/>
                     <Separator/>
-                    <MenuItem IsEnabled="False" Header="Open archive location in Windows Explorer ..."/>
-                    <MenuItem IsEnabled="False" Header="Close archive"/>
+                    <MenuItem x:Name="mnuOpenInExplorer" IsEnabled="False" Header="Open archive location in Windows Explorer ..."/>
+                    <MenuItem x:Name="mnuCloseArch" IsEnabled="False" Header="Close archive"/>
                     <Separator/>
-                    <MenuItem Header="Exit Application" InputGestureText="Alt + F4"/>
+                    <MenuItem x:Name="mnuQuit" Header="Exit Application" InputGestureText="Alt + F4"/>
                 </MenuItem>
-                <MenuItem Header="_Edit">
-                    <MenuItem Header="Append files into archive ..." InputGestureText="Ctrl + P"/>
-                    <MenuItem Header="Delete selection" InputGestureText="Del"/>
-                    <MenuItem Header="Delete files ..." InputGestureText="Ctrl + Del"/>
+                <MenuItem x:Name="hEdit" Header="_Edit">
+                    <MenuItem x:Name="mnuAppend" Header="Append files into archive ..." InputGestureText="Ctrl + P"/>
+                    <MenuItem x:Name="mnuDeleteSelection" Header="Delete selection" InputGestureText="Del"/>
+                    <MenuItem Visibility="Collapsed" x:Name="mnuDelete" Header="Delete files ..." InputGestureText="Ctrl + Del"/>
                     <Separator/>
-                    <MenuItem Header="Rename ..." InputGestureText="F2"/>
-                    <MenuItem Header="Copy" InputGestureText="Ctrl + C"/>
-                    <MenuItem Header="Paste" InputGestureText="Ctrl + V"/>
-                    <MenuItem Header="Cut" InputGestureText="Ctrl + X"/>
+                    <MenuItem x:Name="mnuRename" Header="Rename ..." InputGestureText="F2"/>
+                    <MenuItem x:Name="mnuCopy" Header="Copy" InputGestureText="Ctrl + C"/>
+                    <MenuItem x:Name="mnuPaste" Header="Paste" InputGestureText="Ctrl + V"/>
+                    <MenuItem x:Name="mnuCut" Header="Cut" InputGestureText="Ctrl + X"/>
                     <Separator/>
-                    <MenuItem Header="Find ..." InputGestureText="Ctrl + F"/>
+                    <MenuItem x:Name="mnuFind" Header="Find ..." InputGestureText="Ctrl + F"/>
                     <Separator/>
-                    <MenuItem Header="Select all" InputGestureText="Ctrl + A"/>
-                    <MenuItem Header="Deselect all" InputGestureText="Ctrl + Shift + A"/>
-                    <MenuItem Header="Reverse selection" InputGestureText="Ctrl + R"/>
-                    <MenuItem Header="Select from wildcast ..."/>
-                    <MenuItem Header="Select by extension"/>
+                    <MenuItem x:Name="mnuSelectAll" Header="Select all" InputGestureText="Ctrl + A"/>
+                    <MenuItem x:Name="mnuDeselect" Header="Unselect all" InputGestureText="Ctrl + Shift + A"/>
+                    <MenuItem x:Name="mnuReverse" Header="Reverse selection" InputGestureText="Ctrl + R"/>
+                    <MenuItem Visibility="Collapsed" x:Name="mnuSelectWildcard" Header="Select from wildcard ..."/>
+                    <MenuItem x:Name="mnuSelectExt" Header="Select by extension"/>
                 </MenuItem>
-                <MenuItem Header="_View">
+                <MenuItem x:Name="hView" Header="_View">
                     <MenuItem Header="Sort by">
                         <MenuItem x:Name="menuSortbyName" IsCheckable="True" IsChecked="True" Header="Name"/>
                         <MenuItem x:Name="menuSortbyModified" IsCheckable="True" IsChecked="False" Header="Date modified"/>
@@ -400,14 +388,14 @@
                     <MenuItem IsEnabled="False" x:Name="menuRootdir" Header="Archive root directory" InputGestureText="Ctrl + ."/>
                     <MenuItem IsEnabled="False" x:Name="menuUplevel" Header="Up one level" InputGestureText="Backspace"/>
                 </MenuItem>
-                <MenuItem Header="_Tools">
+                <MenuItem x:Name="hTools" Header="_Tools" Visibility="Collapsed">
                     <MenuItem Header="Test archive ..." InputGestureText="Ctrl + T"/>
                     <MenuItem Header="Decrypt archive ..."/>
                     <MenuItem Header="Comment ..."/>
                     <MenuItem Header="Properties ..." InputGestureText="F7"/>
                 </MenuItem>
-                <MenuItem Header="_Help">
-                    <MenuItem Header="About 7-zip ..."/>
+                <MenuItem x:Name="hHelp" Header="_Help">
+                    <MenuItem x:Name="mnuAbout7z" Header="About 7-zip ..."/>
                     <MenuItem x:Name="mnuAbout" Header="About Archiver ..."/>
                 </MenuItem>
             </Menu>
@@ -415,6 +403,80 @@
 
         <GridSplitter HorizontalAlignment="Stretch" Background="White" Grid.Row="3"/>
     </Grid>
+
+
+    <Window.Resources>
+        <ContextMenu x:Key="ctxMenu">
+        </ContextMenu>
+
+        <DataTemplate x:Key="dirTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding Icon}" Width="16" Height="16"/>
+                <Grid Width="5"/>
+                <TextBlock Text="{Binding Name}"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <RoutedUICommand x:Key="rcOpen"/>
+        <RoutedUICommand x:Key="rcCreate"/>
+        <RoutedUICommand x:Key="rcDecompressSelected"/>
+        <RoutedUICommand x:Key="rcDecompress"/>
+
+        <RoutedUICommand x:Key="rcRoot"/>
+        <RoutedUICommand x:Key="rcUpOneLevel"/>
+
+        <RoutedUICommand x:Key="rcAppend"/>
+        <RoutedUICommand x:Key="rcDelete"/>
+        <RoutedUICommand x:Key="rcRename"/>
+        <RoutedUICommand x:Key="rcCopy"/>
+        <RoutedUICommand x:Key="rcPaste"/>
+        <RoutedUICommand x:Key="rcCut"/>
+        <RoutedUICommand x:Key="rcFind"/>
+
+        <RoutedUICommand x:Key="rcSelect"/>
+        <RoutedUICommand x:Key="rcUnselect"/>
+        <RoutedUICommand x:Key="rcReverse"/>
+
+        <CommandBinding x:Key="cbOpen" Command="{StaticResource rcOpen}"/>
+        <CommandBinding Command="{StaticResource rcCreate}" x:Key="cbCreate"/>
+        <CommandBinding Command="{StaticResource rcDecompressSelected}" x:Key="cbDecompressSelected"/>
+        <CommandBinding Command="{StaticResource rcDecompress}" x:Key="cbDecompress"/>
+        <CommandBinding Command="{StaticResource rcRoot}" x:Key="cbRoot"/>
+        <CommandBinding Command="{StaticResource rcUpOneLevel}" x:Key="cbUpOneLevel"/>
+        <CommandBinding Command="{StaticResource rcAppend}" x:Key="cbAppend"/>
+        <CommandBinding Command="{StaticResource rcDelete}" x:Key="cbDelete"/>
+        <CommandBinding Command="{StaticResource rcRename}" x:Key="cbRename"/>
+        <CommandBinding Command="{StaticResource rcCopy}" x:Key="cbCopy"/>
+        <CommandBinding Command="{StaticResource rcPaste}" x:Key="cbPaste"/>
+        <CommandBinding Command="{StaticResource rcCut}" x:Key="cbCut"/>
+        <CommandBinding Command="{StaticResource rcFind}" x:Key="cbFind"/>
+        <CommandBinding Command="{StaticResource rcSelect}" x:Key="cbSelect"/>
+        <CommandBinding Command="{StaticResource rcUnselect}" x:Key="cbUnselect"/>
+        <CommandBinding Command="{StaticResource rcReverse}" x:Key="cbReverse"/>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl + O" Command="{StaticResource rcOpen}"/>
+        <KeyBinding Gesture="Ctrl + N" Command="{StaticResource rcCreate}"/>
+        <KeyBinding Gesture="Ctrl + D" Command="{StaticResource rcDecompressSelected}"/>
+        <KeyBinding Gesture="Ctrl + Shift + D" Command="{StaticResource rcDecompress}"/>
+
+        <KeyBinding Gesture="Ctrl + Decimal" Command="{StaticResource rcRoot}"/>
+        <KeyBinding Gesture="Backspace" Command="{StaticResource rcUpOneLevel}"/>
+
+        <KeyBinding Gesture="Ctrl + P" Command="{StaticResource rcAppend}"/>
+        <KeyBinding Gesture="Del" Command="{StaticResource rcDelete}"/>
+
+        <KeyBinding Gesture="F2" Command="{StaticResource rcRename}"/>
+        <KeyBinding Gesture="Ctrl + C" Command="{StaticResource rcCopy}"/>
+        <KeyBinding Gesture="Ctrl + V" Command="{StaticResource rcPaste}"/>
+        <KeyBinding Gesture="Ctrl + X" Command="{StaticResource rcCut}"/>
+        <KeyBinding Gesture="Ctrl + F" Command="{StaticResource rcFind}"/>
+
+        <KeyBinding Gesture="Ctrl + A" Command="{StaticResource rcSelect}"/>
+        <KeyBinding Gesture="Ctrl + Shift + A" Command="{StaticResource rcUnselect}"/>
+        <KeyBinding Gesture="Ctrl + R" Command="{StaticResource rcReverse}"/>
+    </Window.InputBindings>
 
     <WindowChrome.WindowChrome>
         <WindowChrome CornerRadius="0"

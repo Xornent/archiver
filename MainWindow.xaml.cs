@@ -19,7 +19,10 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Windows.Interop;
 using System.ComponentModel;
-using System.Security.Cryptography;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using Archiver.Properties;
+using static Archiver.MainWindow;
 
 namespace Archiver
 {
@@ -29,9 +32,16 @@ namespace Archiver
     public partial class MainWindow : Window
     {
         public List<ComboBox> comboDirs = new List<ComboBox>();
+        public ContextMenu ctxMenu;
+        public List<Guid> delayedWorkingDir = new List<Guid>();
         public MainWindow()
         {
             InitializeComponent();
+
+            ctxMenu = this.Resources["ctxMenu"] as ContextMenu;
+            ctxMenu.PlacementTarget = this.list;
+            this.list.ContextMenu = ctxMenu;
+
             this.StateChanged += (s, e) => {
                 if (this.WindowState == WindowState.Maximized)
                     windowGrid.Margin = new Thickness(8);
@@ -89,42 +99,150 @@ namespace Archiver
                 this.sort();
             };
 
-            this.menuPrev.Click += (s, e) => {
+            RoutedEventHandler delPrev = (s, e) => {
                 var last = this.previous.Last();
                 this.next.Insert(0, last);
                 this.previous.RemoveAt(this.previous.Count - 1);
                 this.menuPrev.IsEnabled = this.previous.Count > 1;
+                (ctxMenu.Items[21] as MenuItem).IsEnabled = this.menuPrev.IsEnabled;
                 this.menuNext.IsEnabled = this.next.Count > 0;
 
                 this.Navigate(this.previous.Last(), true);
             };
+
+            this.menuPrev.Click += delPrev;
 
             this.menuNext.Click += (s, e) => {
                 var first = this.next[0];
                 this.previous.Add(first);
                 this.next.RemoveAt(0);
                 this.menuPrev.IsEnabled = this.previous.Count > 1;
+                (ctxMenu.Items[21] as MenuItem).IsEnabled = this.menuPrev.IsEnabled;
                 this.menuNext.IsEnabled = this.next.Count > 0;
 
                 this.Navigate(first, true);
             };
 
-            this.menuUplevel.Click += (s, e) => {
+            RoutedEventHandler delUpOneLevel = (s, e) => {
                 if (currentArchive == null) return;
                 if (comboDirs.Count > 1) {
                     this.Navigate((FileSystemNode)comboDirs[comboDirs.Count - 2].SelectedItem, true);
                 } else this.Navigate(currentArchive, true);
             };
 
-            this.menuRootdir.Click += (s, e) => {
+            this.menuUplevel.Click += delUpOneLevel;
+
+            RoutedEventHandler delRoot = (s, e) => {
                 if (currentArchive == null) return;
                 this.Navigate(currentArchive, true);
             };
 
-            this.list.SelectionChanged += (s, e) => {
+            this.menuRootdir.Click += delRoot;
+
+            this.hEdit.SubmenuOpened += (s, e) => {
+                if (Clipboard.ContainsFileDropList() &&
+                    this.currentArchive != null &&
+                    this.currentNavigation != null) {
+                    this.mnuPaste.IsEnabled = true;
+                    (ctxMenu.Items[12] as MenuItem).IsEnabled = true;
+                } else {
+                    this.mnuPaste.IsEnabled = false;
+                    (ctxMenu.Items[12] as MenuItem).IsEnabled = false;
+                }
+            };
+
+            void updateMenuItems()
+            {
+                (ctxMenu.Items[0] as MenuItem).IsEnabled = false;
+                (ctxMenu.Items[1] as MenuItem).IsEnabled = false;
+
+                this.mnuDecompSelected.IsEnabled = false;
+                (ctxMenu.Items[4] as MenuItem).IsEnabled = false;
+
+                this.mnuDeleteSelection.IsEnabled = false;
+                (ctxMenu.Items[10] as MenuItem).IsEnabled = false;
+                this.mnuCopy.IsEnabled = false;
+                (ctxMenu.Items[11] as MenuItem).IsEnabled = false;
+                this.mnuPaste.IsEnabled = false;
+                (ctxMenu.Items[12] as MenuItem).IsEnabled = false;
+                this.mnuCut.IsEnabled = false;
+                (ctxMenu.Items[13] as MenuItem).IsEnabled = false;
+                this.mnuRename.IsEnabled = false;
+                (ctxMenu.Items[14] as MenuItem).IsEnabled = false;
+
+                (ctxMenu.Items[19] as MenuItem).IsEnabled = false;
+
                 if (currentArchive == null) return;
-                if (this.list.SelectedItems.Count == 0) return;
+                if (this.list.SelectedItem == null) return;
+                if (this.list.SelectedItems.Count == 0) {
+                    return;
+                }
+
+                if (this.list.SelectedItems.Count >= 1) {
+                    this.mnuDecompSelected.IsEnabled = true;
+                    (ctxMenu.Items[4] as MenuItem).IsEnabled = true;
+
+                    this.mnuDeleteSelection.IsEnabled = true;
+                    (ctxMenu.Items[10] as MenuItem).IsEnabled = true;
+                    this.mnuCopy.IsEnabled = true;
+                    (ctxMenu.Items[11] as MenuItem).IsEnabled = true;
+                    if (Clipboard.ContainsFileDropList()) {
+                        this.mnuPaste.IsEnabled = true;
+                        (ctxMenu.Items[12] as MenuItem).IsEnabled = true;
+                    }
+                    this.mnuCut.IsEnabled = true;
+                    (ctxMenu.Items[13] as MenuItem).IsEnabled = true;
+
+                    this.mnuSelectExt.IsEnabled = true;
+                    (ctxMenu.Items[19] as MenuItem).IsEnabled = true;
+                }
+
                 if (this.list.SelectedItems.Count == 1) {
+                    (ctxMenu.Items[0] as MenuItem).IsEnabled = true;
+                    (ctxMenu.Items[1] as MenuItem).IsEnabled = true;
+
+                    this.mnuRename.IsEnabled = true;
+                    (ctxMenu.Items[14] as MenuItem).IsEnabled = true;
+                }
+            }
+
+            this.ctxMenu.Opened += (s, e) => {
+                updateMenuItems();
+            };
+
+            this.list.SelectionChanged += (s, e) => {
+
+                if (currentArchive == null) return;
+                if (this.list.SelectedItems.Count == 0) {
+                    return; 
+                }
+
+                if (this.list.SelectedItems.Count >= 1) {
+                    this.mnuDecompSelected.IsEnabled = true;
+                    (ctxMenu.Items[4] as MenuItem).IsEnabled = true;
+
+                    this.mnuDeleteSelection.IsEnabled = true;
+                    (ctxMenu.Items[10] as MenuItem).IsEnabled = true;
+                    this.mnuCopy.IsEnabled = true;
+                    (ctxMenu.Items[11] as MenuItem).IsEnabled = true;
+                    if (Clipboard.ContainsFileDropList()) {
+                        this.mnuPaste.IsEnabled = true;
+                        (ctxMenu.Items[12] as MenuItem).IsEnabled = true;
+                    }
+                    this.mnuCut.IsEnabled = true;
+                    (ctxMenu.Items[13] as MenuItem).IsEnabled = true;
+
+                    this.mnuSelectExt.IsEnabled = true;
+                    (ctxMenu.Items[19] as MenuItem).IsEnabled = true;
+                }
+
+                if (this.list.SelectedItems.Count == 1) {
+                    (ctxMenu.Items[0] as MenuItem).IsEnabled = true;
+                    (ctxMenu.Items[1] as MenuItem).IsEnabled = true;
+
+                    this.mnuRename.IsEnabled = true;
+                    (ctxMenu.Items[14] as MenuItem).IsEnabled = true;
+
                     FileSystemNode node = this.list.SelectedItems[0] as FileSystemNode ?? currentArchive;
 
                     this.imgIcon.Source = node.Icon;
@@ -251,14 +369,611 @@ namespace Archiver
                 }
             };
 
-            this.mnuAbout.Click += (s, e) => {
+            RoutedEventHandler delAbout = (s, e) => {
                 (new About()).ShowDialog();
             };
 
-            this.mnuDecompress.Click += (s, e) => {
+            this.mnuAbout.Click += delAbout;
+
+            RoutedEventHandler delDecompress = (s, e) => {
                 if (currentArchive != null)
                     (new Extract(this.currentArchive)).ShowDialog();
             };
+
+            this.mnuDecompress.Click += delDecompress;
+
+            this.mnuAbout7z.Click += (s, e) => {
+                System.Diagnostics.Process.Start("https://www.7-zip.org/");
+            };
+
+            this.mnuClearHistory.Click += (s, e) => {
+                Properties.Settings.Default.History.Clear();
+                Properties.Settings.Default.Save();
+                this.mnuNoHistory.Visibility = Visibility.Visible;
+                this.mnuRecent.Items.Clear();
+                this.mnuRecent.Items.Add(this.mnuNoHistory);
+                this.mnuRecent.Items.Add(new Separator());
+                this.mnuRecent.Items.Add(this.mnuClearHistory);
+            };
+
+            if(Properties.Settings.Default.History == null) {
+                Settings.Default.History = new System.Collections.Specialized.StringCollection();
+                Settings.Default.Save();
+            }
+                
+            foreach (var item in Properties.Settings.Default.History) {
+                MenuItem mi = new MenuItem();
+                mi.Header = item;
+                mi.Click += (s, e) => {
+                    this.openFile(item);
+                };
+                this.mnuRecent.Items.Insert(1, mi);
+                this.mnuNoHistory.Visibility = Visibility.Collapsed;
+            }
+
+            bool isSPF()
+            {
+                if (currentArchive.Children.Any()) {
+                    if (currentArchive.Children[0].IsFolder &&
+                    currentArchive.Children[0].Name.EndsWith(":")) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            RoutedEventHandler delDecompressCurrent = (s, e) => {
+                if (currentArchive == null) return;
+                string destination = new FileInfo(currentArchive.FullName).Directory.FullName;
+                string arguments = $"x \"{currentArchive.FullName}\"";
+                bool _isSpf = false;
+
+                if (currentArchive.Children.Any()) {
+                    if (currentArchive.Children[0].IsFolder &&
+                    currentArchive.Children[0].Name.EndsWith(":")) {
+                        // spf
+                        arguments += " -spf";
+                        _isSpf = true;
+                    }
+                }
+                if(!_isSpf)
+                    arguments += $" -o\"{destination}\"";
+                
+                ActionProcess proc = new ActionProcess(
+                    arguments,
+                    $"Decompressing {currentArchive.Name} ...",
+                    $"Decompressing archive file with command line options '{arguments}'"
+                    );
+
+                proc.Run();
+            };
+
+            this.mnuDecompCurrent.Click += delDecompressCurrent;
+
+            RoutedEventHandler delReveal= (s, e) => {
+                if (currentArchive == null) return;
+                System.Diagnostics.Process.Start(
+                    (new System.IO.FileInfo(this.currentArchive.FullName)).Directory.FullName);
+            };
+
+            this.mnuOpenInExplorer.Click += delReveal;
+
+            RoutedEventHandler delDecompressSelected = (s, e) => {
+                if (currentArchive == null) return;
+                string destination = new FileInfo(currentArchive.FullName).Directory.FullName;
+
+                // exclude working directory
+                Guid taskGUID = Guid.NewGuid();
+                string arguments = $"x \"{currentArchive.FullName}\"";
+                string startup = System.Windows.Forms.Application.StartupPath + @"\";
+                var workingDir = Directory.CreateDirectory(startup + @"working\" + taskGUID);
+
+                if (isSPF())
+                    arguments += " -spf";
+                else
+                    arguments += $" -o\"{destination}\"";
+
+                using (FileStream listfile = new FileStream(workingDir.FullName + @"\selected.txt",
+                       FileMode.OpenOrCreate)) {
+                    using (StreamWriter writer = new StreamWriter(listfile, Encoding.UTF8)) {
+                        foreach (Item item in this.list.SelectedItems) {
+                            writer.WriteLine(item.FullName);
+                        }
+
+                        writer.Flush();
+                    }
+                }
+
+                arguments += $" @\"{workingDir.FullName + @"\selected.txt"}\"";
+
+                ActionProcess proc = new ActionProcess(
+                    arguments,
+                    $"Decompressing {currentArchive.Name} ...",
+                    $"Decompressing archive file with command line options '{arguments}'"
+                    );
+
+                proc.Run();
+                if (Directory.Exists(startup + @"working\" + taskGUID))
+                    Directory.Delete(startup + @"working\" + taskGUID, true);
+            };
+
+            this.mnuDecompSelected.Click += delDecompressSelected;
+
+            RoutedEventHandler delClose = (s, e) => {
+                this.backToInitial();
+            };
+
+            this.mnuCloseArch.Click += delClose;
+
+            RoutedEventHandler delDeselect = (s, e) => {
+                this.list.UnselectAll();
+            };
+
+            RoutedEventHandler delSelectAll = (s, e) => {
+                this.list.SelectAll();
+            };
+
+            RoutedEventHandler delReverseSelect = (s, e) => {
+                List<object> objs = new List<object>();
+                foreach(var x in list.Items) {
+                    if (list.SelectedItems.Contains(x)) { }
+                    else { objs.Add(x); }
+                }
+
+                this.list.UnselectAll();
+                foreach (var x in objs) {
+                    this.list.SelectedItems.Add(x);
+                }
+            };
+
+            RoutedEventHandler delSelectExt = (s, e) => {
+                string name = (this.list.SelectedItem as Item).Name;
+                string ext = "." + name.Split('.').Last();
+                if (!name.Contains(".")) ext = "";
+                List<object> objs = new List<object>();
+                foreach (Item x in list.Items) {
+                    if (ext == "") {
+                        if (!x.Name.Contains("."))
+                            objs.Add(x);
+                    }  else {
+                        if (x.Name.EndsWith(ext))
+                            objs.Add(x);
+                    }
+                }
+
+                this.list.UnselectAll();
+                foreach (var x in objs) {
+                    this.list.SelectedItems.Add(x);
+                }
+            };
+
+            this.mnuSelectAll.Click += delSelectAll;
+            this.mnuSelectExt.Click += delSelectExt;
+            this.mnuDeselect.Click += delDeselect;
+            this.mnuReverse.Click += delReverseSelect;
+
+            this.ctxMenu.Opened += (s, e) => {
+                if (_initial_close_popup) {
+                    this.ctxMenu.IsOpen = false;
+                    _initial_close_popup = false;
+                }
+            };
+
+            RoutedEventHandler delDeleteSelection = (s, e) => {
+                if (currentArchive == null) return;
+                string destination = new FileInfo(currentArchive.FullName).Directory.FullName;
+
+                // exclude working directory
+                Guid taskGUID = Guid.NewGuid();
+                string arguments = $"d \"{currentArchive.FullName}\"";
+                string startup = System.Windows.Forms.Application.StartupPath + @"\";
+                var workingDir = Directory.CreateDirectory(startup + @"working\" + taskGUID);
+
+                using (FileStream listfile = new FileStream(workingDir.FullName + @"\selected.txt",
+                       FileMode.OpenOrCreate)) {
+                    using (StreamWriter writer = new StreamWriter(listfile, Encoding.UTF8)) {
+                        foreach (Item item in this.list.SelectedItems) {
+                            writer.WriteLine(item.FullName);
+                        }
+
+                        writer.Flush();
+                    }
+                }
+
+                arguments += $" @\"{workingDir.FullName + @"\selected.txt"}\"";
+
+                ActionProcess proc = new ActionProcess(
+                    arguments,
+                    $"Deleting files from {currentArchive.Name} ...",
+                    $"Deleting archive file with command line options '{arguments}'"
+                    );
+
+                proc.Run();
+
+                // reopen and redirect
+                string archivepath = currentArchive.FullName;
+                string direc = getNavigationCascade();
+                this.backToInitial();
+                this.openFile(archivepath);
+                this.Navigate(direc, this.currentArchive);
+
+                if (Directory.Exists(startup + @"working\" + taskGUID))
+                    Directory.Delete(startup + @"working\" + taskGUID, true);
+            };
+
+            void copyDirectory(DirectoryInfo src, DirectoryInfo working, string root = "")
+            {
+                foreach (var item in src.GetDirectories()) {
+                    copyDirectory(item, working, src.Name + "\\");
+                }
+
+                foreach(var item in src.GetFiles()) {
+                    copyFile(item, working, root + src.Name + "\\");
+                }
+            }
+
+            void copyFile(FileInfo file, DirectoryInfo working, string root = "")
+            {
+                Directory.CreateDirectory(working.FullName + "\\" + root);
+                File.Copy(file.FullName, working.FullName + "\\" + root + file.Name);
+            }
+
+            string getNavigationCascade()
+            {
+                if (currentNavigation == null) return "";
+                if (this.currentNavigation is Archive a) {
+                    return "";
+                } else if (this.currentNavigation is FolderItem f) {
+                    return f.FullName;
+                } else throw new Exception("unexpected type of current navigation");
+            }
+
+            RoutedEventHandler delAdd = (s, e) => {
+                if (currentArchive == null) return;
+                if (currentNavigation == null) throw new Exception("current navigation not set.");
+
+                // copy directories and files
+                Guid taskGUID = Guid.NewGuid();
+                string arguments = $"a \"{currentArchive.FullName}\"";
+                string startup = System.Windows.Forms.Application.StartupPath + @"\";
+                var workingDir = Directory.CreateDirectory(startup + @"working\" + taskGUID);
+
+                FileSelector selector = new FileSelector();
+                if(selector.ShowDialog() == true) {
+                    foreach (var item in selector.SelectedDirectories) {
+                        copyDirectory(item, new DirectoryInfo(
+                            workingDir.FullName + "\\" + 
+                            getNavigationCascade().Replace("/","\\") ));
+                    }
+
+                    foreach(var item in selector.SelectedFiles) {
+                        copyFile(item, new DirectoryInfo(
+                            workingDir.FullName + "\\" +
+                            getNavigationCascade().Replace("/", "\\")));
+                    }
+
+                    using (FileStream listfile = new FileStream(workingDir.FullName + @"\selected.txt",
+                       FileMode.OpenOrCreate)) {
+                        using (StreamWriter writer = new StreamWriter(listfile, Encoding.UTF8)) {
+                            foreach (var item in selector.SelectedDirectories) {
+                                if (getNavigationCascade() != "")
+                                    writer.WriteLine($"{getNavigationCascade().Replace("/", "\\") + "\\" + item.Name}\\");
+                                else writer.WriteLine($"{item.Name}\\");
+                            }
+
+                            foreach (var item in selector.SelectedFiles) {
+                                if (getNavigationCascade() != "")
+                                    writer.WriteLine($"{getNavigationCascade().Replace("/", "\\") + "\\" + item.Name}");
+                                else writer.WriteLine($"{item.Name}");
+                            }
+
+                            writer.Flush();
+                        }
+                    }
+
+                    arguments += $" @\"{workingDir.FullName + @"\selected.txt"}\"";
+                    ActionProcess proc = new ActionProcess(
+                        arguments,
+                        $"Updating files to {currentArchive.Name} ...",
+                        $"Updating archive file with command line options '{arguments}'",
+                        specifiedId: taskGUID
+                    );
+
+                    proc.Run();
+
+                    // reopen and redirect
+                    string archivepath = currentArchive.FullName;
+                    string direc = getNavigationCascade();
+                    this.backToInitial();
+                    this.openFile(archivepath);
+                    this.Navigate(direc, this.currentArchive);
+                }
+
+                if (Directory.Exists(startup + @"working\" + taskGUID))
+                    Directory.Delete(startup + @"working\" + taskGUID, true);
+            };
+
+            this.mnuDeleteSelection.Click += delDeleteSelection;
+            this.mnuAppend.Click += delAdd;
+
+            RoutedEventHandler delCopy = (s, e) => {
+                if (currentArchive == null) return;
+                string destination = new FileInfo(currentArchive.FullName).Directory.FullName;
+
+                // exclude working directory
+                Guid taskGUID = Guid.NewGuid();
+                string arguments = $"x \"{currentArchive.FullName}\"";
+                string startup = System.Windows.Forms.Application.StartupPath + @"\";
+                var workingDir = Directory.CreateDirectory(startup + @"working\" + taskGUID);
+
+                // specify the working directory whether it is spf or not.
+                arguments += $" -o\"{workingDir.FullName}\"";
+                System.Collections.Specialized.StringCollection clipboardStrings = new System.Collections.Specialized.StringCollection();
+                using (FileStream listfile = new FileStream(workingDir.FullName + @"\selected.txt",
+                       FileMode.OpenOrCreate)) {
+                    using (StreamWriter writer = new StreamWriter(listfile, Encoding.UTF8)) {
+
+                        string basepath = workingDir.FullName + "\\" + getNavigationCascade().Replace("/", "\\") + "\\";
+                        if (isSPF())
+                            basepath = basepath.Replace(":", "_");
+
+                        foreach (Item item in this.list.SelectedItems) {
+                            writer.WriteLine(item.FullName);
+                            clipboardStrings.Add(basepath + item.Name);
+                        }
+
+                        writer.Flush();
+                    }
+                }
+
+                arguments += $" @\"{workingDir.FullName + @"\selected.txt"}\"";
+
+                ActionProcess proc = new ActionProcess(
+                    arguments,
+                    $"Decompressing {currentArchive.Name} ...",
+                    $"Decompressing archive file with command line options '{arguments}'"
+                    );
+
+                proc.Run();
+
+                // set to clipboard
+                Clipboard.SetFileDropList(clipboardStrings);
+
+                // delay deletion of the working directory
+                this.delayedWorkingDir.Add(taskGUID);
+            };
+
+            RoutedEventHandler delCut = (s, e) => {
+                delCopy(s, e);
+                delDeleteSelection(s, e);
+            };
+
+            RoutedEventHandler delPaste = (s, e) => {
+                // is actually a modified version of delAdd.
+                if (currentArchive == null) return;
+                if (currentNavigation == null) throw new Exception("current navigation not set.");
+
+                // copy directories and files
+                Guid taskGUID = Guid.NewGuid();
+                string arguments = $"a \"{currentArchive.FullName}\"";
+                string startup = System.Windows.Forms.Application.StartupPath + @"\";
+                var workingDir = Directory.CreateDirectory(startup + @"working\" + taskGUID);
+
+                if (Clipboard.ContainsFileDropList()) {
+                    foreach (var item in Clipboard.GetFileDropList()) {
+                        if (Directory.Exists(item)) {
+                            copyDirectory(new DirectoryInfo(item), new DirectoryInfo(
+                                workingDir.FullName + "\\" +
+                                getNavigationCascade().Replace("/", "\\")));
+                        } else if (File.Exists(item)) {
+                            copyFile(new FileInfo(item), new DirectoryInfo(
+                                workingDir.FullName + "\\" +
+                                getNavigationCascade().Replace("/", "\\")));
+                        } else {
+                            MessageBox.Show("The path in the clipboard is invalid, probably the source is moved or deleted: \n" + item);
+                        }
+                    }
+
+                    using (FileStream listfile = new FileStream(workingDir.FullName + @"\selected.txt",
+                       FileMode.OpenOrCreate)) {
+                        using (StreamWriter writer = new StreamWriter(listfile, Encoding.UTF8)) {
+
+                            foreach (var item in Clipboard.GetFileDropList()) {
+                                if (Directory.Exists(item)) {
+                                    if (getNavigationCascade() != "")
+                                        writer.WriteLine($"{getNavigationCascade().Replace("/", "\\") + "\\" + new DirectoryInfo(item).Name}\\");
+                                    else writer.WriteLine($"{new DirectoryInfo(item).Name}\\");
+                                } else if (File.Exists(item)) {
+                                    if (getNavigationCascade() != "")
+                                        writer.WriteLine($"{getNavigationCascade().Replace("/", "\\") + "\\" + new FileInfo(item).Name}");
+                                    else writer.WriteLine($"{new FileInfo(item).Name}");
+                                } 
+                            }
+
+                            writer.Flush();
+                        }
+                    }
+
+                    arguments += $" @\"{workingDir.FullName + @"\selected.txt"}\"";
+                    ActionProcess proc = new ActionProcess(
+                        arguments,
+                        $"Updating files to {currentArchive.Name} ...",
+                        $"Updating archive file with command line options '{arguments}'",
+                        specifiedId: taskGUID
+                    );
+
+                    proc.Run();
+
+                    // reopen and redirect
+                    string archivepath = currentArchive.FullName;
+                    string direc = getNavigationCascade();
+                    this.backToInitial();
+                    this.openFile(archivepath);
+                    this.Navigate(direc, this.currentArchive);
+                }
+
+                if (Directory.Exists(startup + @"working\" + taskGUID))
+                    Directory.Delete(startup + @"working\" + taskGUID, true);
+            };
+
+            this.mnuCopy.Click += delCopy;
+            this.mnuCut.Click += delCut;
+            this.mnuPaste.Click += delPaste;
+
+            RoutedEventHandler delRename = (s, e) => {
+                if (currentArchive == null) return;
+
+                string arguments = $"rn \"{currentArchive.FullName}\"";
+                string startup = System.Windows.Forms.Application.StartupPath + @"\";
+
+                string basepath = getNavigationCascade();
+                string renfile = (this.list.SelectedItem as Item).Name;
+                if (basepath != "") basepath = basepath + "/";
+
+                Rename rn = new Rename(renfile);
+                if (rn.ShowDialog() == true) {
+                    arguments += $" \"{basepath}{renfile}\" \"{basepath}{rn.NewName}\"";
+
+                    ActionProcess proc = new ActionProcess(
+                        arguments,
+                        $"Renaming ...",
+                        $"Renaming {renfile} with {rn.NewName}"
+                        );
+
+                    proc.Run();
+
+                    // reopen and redirect
+                    string archivepath = currentArchive.FullName;
+                    string direc = getNavigationCascade();
+                    this.backToInitial();
+                    this.openFile(archivepath);
+                    this.Navigate(direc, this.currentArchive);
+                }
+            };
+
+            this.mnuRename.Click += delRename;
+
+            ctxMenu.IsOpen = true;
+            ctxMenu.Items.Add((new MenuItem { Header = "Open" })); // [0]
+            ctxMenu.Items.Add((new MenuItem { Header = "Open with", IsEnabled = false }));
+            ctxMenu.Items.Add((new Separator()));
+            ctxMenu.Items.Add((new MenuItem { Header = "Decompress all to current path", InputGestureText = "Ctrl + D" }).attachEvent(delDecompressCurrent)); // [3]
+            ctxMenu.Items.Add((new MenuItem { Header = "Decompress selected items", InputGestureText = "Ctrl + Shift + D" }).attachEvent(delDecompressSelected));
+            ctxMenu.Items.Add((new MenuItem { Header = "Decompress ..." }).attachEvent(delDecompress));
+            ctxMenu.Items.Add((new Separator()));
+            ctxMenu.Items.Add((new MenuItem { Header = "Reveal in file explorer ...", InputGestureText = "Ctrl + D" }).attachEvent(delReveal));
+            ctxMenu.Items.Add((new MenuItem { Header = "Append files into archive ...", InputGestureText = "Ctrl + P" }).attachEvent(delAdd));
+            ctxMenu.Items.Add((new Separator()));
+            ctxMenu.Items.Add((new MenuItem { Header = "Delete", InputGestureText = "Del" }).attachEvent(delDeleteSelection));
+            ctxMenu.Items.Add((new MenuItem { Header = "Copy", InputGestureText = "Ctrl + C" }).attachEvent(delCopy));
+            ctxMenu.Items.Add((new MenuItem { Header = "Paste", InputGestureText = "Ctrl + V" }).attachEvent(delPaste));
+            ctxMenu.Items.Add((new MenuItem { Header = "Cut", InputGestureText = "Ctrl + D" }).attachEvent(delCut));
+            ctxMenu.Items.Add((new MenuItem { Header = "Rename ...", InputGestureText = "F2" }).attachEvent(delRename));
+            ctxMenu.Items.Add((new Separator()));
+            ctxMenu.Items.Add((new MenuItem { Header = "Unselect all", InputGestureText = "Ctrl + Shift + A" }).attachEvent(delDeselect));
+            ctxMenu.Items.Add((new MenuItem { Header = "Select all", InputGestureText = "Ctrl + A" }).attachEvent(delSelectAll));
+            ctxMenu.Items.Add((new MenuItem { Header = "Reverse selection", InputGestureText = "Ctrl + R" }).attachEvent(delReverseSelect));
+            ctxMenu.Items.Add((new MenuItem { Header = "Select by extension"}).attachEvent(delSelectExt));
+            ctxMenu.Items.Add((new Separator()));
+            ctxMenu.Items.Add((new MenuItem { Header = "Previous" }).attachEvent(delPrev));
+            ctxMenu.Items.Add((new MenuItem { Header = "Up one level", InputGestureText = "Backspace" }).attachEvent(delUpOneLevel));
+
+            closeFile();
+
+            this.Closed += (s, e) => {
+                foreach (var taskGUID in this.delayedWorkingDir) {
+                    string startup = System.Windows.Forms.Application.StartupPath + @"\";
+                    if (Directory.Exists(startup + @"working\" + taskGUID))
+                        Directory.Delete(startup + @"working\" + taskGUID, true);
+                }
+            };
+
+            registerInputGesture("UpOneLevel",
+                () => { updateMenuItems(); return this.menuUplevel.IsEnabled; },
+                delUpOneLevel);
+            registerInputGesture("Root",
+                () => { updateMenuItems(); return this.menuRootdir.IsEnabled; },
+                delRoot);
+
+            registerInputGesture("Open",
+                () => { updateMenuItems(); return this.menuOpen.IsEnabled; },
+                menuOpen_Click);
+            registerInputGesture("Create",
+                () => { updateMenuItems(); return this.menuCreate.IsEnabled; },
+                menuCreate_Click);
+            registerInputGesture("DecompressSelected",
+                () => { updateMenuItems(); return this.mnuDecompSelected.IsEnabled; },
+                delDecompressSelected);
+            registerInputGesture("Decompress",
+                () => { updateMenuItems(); return this.mnuDecompCurrent.IsEnabled; },
+                delDecompressCurrent);
+
+            registerInputGesture("Append",
+                () => { updateMenuItems(); return this.mnuAppend.IsEnabled; },
+                delAdd);
+            registerInputGesture("Cut",
+                () => { updateMenuItems(); return this.mnuCut.IsEnabled; },
+                delCut);
+            registerInputGesture("Copy",
+                () => { updateMenuItems(); return this.mnuCopy.IsEnabled; },
+                delCopy);
+            registerInputGesture("Paste",
+                () => { updateMenuItems(); return this.mnuPaste.IsEnabled; },
+                delPaste);
+            registerInputGesture("Rename",
+                () => { updateMenuItems(); return this.mnuRename.IsEnabled; },
+                delRename);
+            registerInputGesture("Delete",
+                () => { updateMenuItems(); return this.mnuDeleteSelection.IsEnabled; },
+                delDeleteSelection);
+
+            registerInputGesture("Select",
+                () => { updateMenuItems(); return this.mnuSelectAll.IsEnabled; },
+                delSelectAll);
+            registerInputGesture("Unselect",
+                () => { updateMenuItems(); return this.mnuDeselect.IsEnabled; },
+                delDeselect);
+            registerInputGesture("Reverse",
+                () => { updateMenuItems(); return this.mnuReverse.IsEnabled; },
+                delReverseSelect);
+
+            registerInputGesture(verb: "Find",
+                () => { return this.currentArchive != null; },
+                (s, e) => { MessageBox.Show("Hello, world!"); });
+        }
+
+        private void registerInputGesture(string verb, Func<bool> predicate, RoutedEventHandler handler)
+        {
+            CommandBinding cb = this.Resources["cb" + verb] as CommandBinding;
+            this.CommandBindings.Add(cb);
+            cb.CanExecute += (s, e) => {
+                e.CanExecute = predicate();
+            };
+
+            cb.Executed += (s, e) => {
+                handler(s, null);
+            };
+        }
+        
+        // black magic :)
+        bool _initial_close_popup = true;
+
+        private void backToInitial()
+        {
+            if (this.currentArchive != null)
+                closeFile();
+        }
+
+        private static object deepCopy(object _object)
+        {
+            Type T = _object.GetType();
+            object o = Activator.CreateInstance(T);
+            PropertyInfo[] PI = T.GetProperties();
+            for (int i = 0; i < PI.Length; i++) {
+                PropertyInfo P = PI[i];
+                P.SetValue(o, P.GetValue(_object));
+            }
+            return o;
         }
 
         public static Vanara.PInvoke.HICON GetIconDefault(string fileName)
@@ -350,6 +1065,88 @@ namespace Archiver
             if (dialog.ShowDialog() == true) {
                 openFile(dialog.FileName);
             }
+        }
+
+        private void closeFile()
+        {
+            this.currentArchive = null;
+            this.currentNavigation = null;
+            this.dirCombo.Content = "(Empty)";
+
+            this.previous.Clear();
+            this.next.Clear();
+            this.menuRootdir.IsEnabled = false;
+            this.menuUplevel.IsEnabled = false;
+            (ctxMenu.Items[22] as MenuItem).IsEnabled = false;
+            this.splashScreen.Visibility = Visibility.Visible;
+            this.gridList.Visibility = Visibility.Hidden;
+            this.gridDetails.Visibility = Visibility.Hidden;
+
+            this.mnuDecompress.IsEnabled = true;
+
+            this.imgIcon.Source = this.Icon;
+            this.lblDesc.Text = "";
+            this.tArchiveType.Text = "";
+            this.sArchiveType.Visibility = Visibility.Collapsed;
+            this.tPhysicalSize.Text = "";
+            this.sPhysicalSize.Visibility = Visibility.Collapsed;
+            this.sActualSize.Visibility = Visibility.Collapsed;
+            this.sAttributes.Visibility = Visibility.Collapsed;
+            this.sChar.Visibility = Visibility.Collapsed;
+            this.sCompressedSize.Visibility = Visibility.Collapsed;
+            this.sCompressionMethod.Visibility = Visibility.Collapsed;
+            this.sCRC.Visibility = Visibility.Collapsed;
+            this.sDateAccessed.Visibility = Visibility.Collapsed;
+            this.sDateCreation.Visibility = Visibility.Collapsed;
+            this.sDateModified.Visibility = Visibility.Collapsed;
+            this.sEncrypted.Visibility = Visibility.Collapsed;
+            this.sHostOS.Visibility = Visibility.Collapsed;
+            this.sVer.Visibility = Visibility.Collapsed;
+            this.sVol.Visibility = Visibility.Collapsed;
+
+            this.lblTitle.Text = "Archiver";
+            this.Title = "Archiver";
+
+            (ctxMenu.Items[0] as MenuItem).IsEnabled = false;
+            (ctxMenu.Items[1] as MenuItem).IsEnabled = false;
+
+            this.mnuDecompCurrent.IsEnabled = false;
+            (ctxMenu.Items[3] as MenuItem).IsEnabled = false;
+            this.mnuDecompSelected.IsEnabled = false;
+            (ctxMenu.Items[4] as MenuItem).IsEnabled = false;
+            this.mnuDecompress.IsEnabled = false;
+            (ctxMenu.Items[5] as MenuItem).IsEnabled = false;
+
+            this.mnuOpenInExplorer.IsEnabled = false;
+            (ctxMenu.Items[7] as MenuItem).IsEnabled = false;
+            this.mnuAppend.IsEnabled = false;
+            (ctxMenu.Items[8] as MenuItem).IsEnabled = false;
+            this.mnuDeleteSelection.IsEnabled = false;
+            (ctxMenu.Items[10] as MenuItem).IsEnabled = false;
+            this.mnuCopy.IsEnabled = false;
+            (ctxMenu.Items[11] as MenuItem).IsEnabled = false;
+            this.mnuPaste.IsEnabled = false;
+            (ctxMenu.Items[12] as MenuItem).IsEnabled = false;
+            this.mnuCut.IsEnabled = false;
+            (ctxMenu.Items[13] as MenuItem).IsEnabled = false;
+            this.mnuRename.IsEnabled = false;
+            (ctxMenu.Items[14] as MenuItem).IsEnabled = false;
+
+            this.mnuDeselect.IsEnabled = false;
+            (ctxMenu.Items[16] as MenuItem).IsEnabled = false;
+            this.mnuSelectAll.IsEnabled = false;
+            (ctxMenu.Items[17] as MenuItem).IsEnabled = false;
+            this.mnuReverse.IsEnabled = false;
+            (ctxMenu.Items[18] as MenuItem).IsEnabled = false;
+            this.mnuSelectExt.IsEnabled = false;
+            (ctxMenu.Items[19] as MenuItem).IsEnabled = false;
+
+            this.menuPrev.IsEnabled = false;
+            (ctxMenu.Items[21] as MenuItem).IsEnabled = false;
+            this.menuUplevel.IsEnabled = false;
+            (ctxMenu.Items[22] as MenuItem).IsEnabled = false;
+
+            this.mnuCloseArch.IsEnabled = false;
         }
 
         private void openFile(string path)
@@ -582,12 +1379,14 @@ namespace Archiver
                         this.currentArchive = tempArchive;
                         this.dirCombo.Content = (currentArchive);
                         this.lblTitle.Text = "Archiver · " + System.IO.Path.GetFileName(path);
+                        this.Title = System.IO.Path.GetFileName(path);
 
                         // now fininshes current archive parsing.
                         Navigate(currentArchive);
 
                         {
                             this.imgIcon.Source = currentArchive.Icon;
+                            currentNavigation = currentArchive;
                             this.lblDesc.Text = currentArchive.Name + " (" + currentArchive.Children.Count + " items)";
                             this.tArchiveType.Text = currentArchive.Type;
                             this.sArchiveType.Visibility = Visibility.Visible;
@@ -613,13 +1412,31 @@ namespace Archiver
                     this.Dispatcher.Invoke(new Action(() => {
                         this.previous.Clear();
                         this.next.Clear();
+
                         this.menuRootdir.IsEnabled = true;
                         this.menuUplevel.IsEnabled = true;
+                        (ctxMenu.Items[22] as MenuItem).IsEnabled = true;
                         this.splashScreen.Visibility = Visibility.Hidden;
                         this.gridList.Visibility = Visibility.Visible;
                         this.gridDetails.Visibility = Visibility.Visible;
 
+                        this.mnuAppend.IsEnabled = true;
+                        (ctxMenu.Items[8] as MenuItem).IsEnabled = true;
                         this.mnuDecompress.IsEnabled = true;
+                        (ctxMenu.Items[5] as MenuItem).IsEnabled = true;
+                        this.mnuDecompCurrent.IsEnabled = true;
+                        (ctxMenu.Items[3] as MenuItem).IsEnabled = true;
+
+                        this.mnuDeselect.IsEnabled = true;
+                        (ctxMenu.Items[16] as MenuItem).IsEnabled = true;
+                        this.mnuSelectAll.IsEnabled = true;
+                        (ctxMenu.Items[17] as MenuItem).IsEnabled = true;
+                        this.mnuReverse.IsEnabled = true;
+                        (ctxMenu.Items[18] as MenuItem).IsEnabled = true;
+
+                        this.mnuOpenInExplorer.IsEnabled = true;
+                        (ctxMenu.Items[7] as MenuItem).IsEnabled = true;
+                        this.mnuCloseArch.IsEnabled = true;
                     }));
                 };
 
@@ -627,9 +1444,22 @@ namespace Archiver
                 loader.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 loader.ResizeMode = ResizeMode.NoResize;
                 loader.ShowDialog();
+
+                if(!Settings.Default.History.Contains(path)) {
+                    MenuItem mi = new MenuItem();
+                    mi.Header = path;
+                    mi.Click += (s, e) => {
+                        this.openFile(path);
+                    };
+                    this.mnuRecent.Items.Insert(1, mi);
+                    this.mnuNoHistory.Visibility = Visibility.Collapsed;
+                    Settings.Default.History.Add(path);
+                    Settings.Default.Save();
+                }
             }
         }
 
+        FileSystemNode currentNavigation;
         bool comboSuppress = false;
         private void Navigate(FileSystemNode directory, bool suppress = false)
         {
@@ -638,6 +1468,7 @@ namespace Archiver
             if (!suppress) {
                 this.previous.Add(directory);
                 this.menuPrev.IsEnabled = this.previous.Count > 1;
+                (ctxMenu.Items[21] as MenuItem).IsEnabled = this.menuPrev.IsEnabled;
                 this.menuNext.IsEnabled = this.next.Count > 0;
             }
 
@@ -657,6 +1488,7 @@ namespace Archiver
                 this.comboDirs.Clear();
                 this.stackDirs.Children.RemoveRange(1, this.stackDirs.Children.Count - 1);
                 this.dirCombo.Content = archive;
+                currentNavigation = archive;
 
             } else if (directory is FolderItem folder) {
                 this.list.Items.Clear();
@@ -671,6 +1503,7 @@ namespace Archiver
                 }
 
                 refreshDirectoryCombo(folder.FullName, currentArchive);
+                currentNavigation = folder;
 
             } else if (directory is FileItem file) {
                 Navigate(file.FullName, currentArchive);
@@ -706,8 +1539,9 @@ namespace Archiver
                     return (x.Name == folderName && x.IsFolder);
                 });
 
-                if (found != null) Navigate(found);
-                else Navigate(parent);
+                if (found != null) { 
+                    Navigate(found);
+                } else Navigate(parent);
 
             } else {
 
@@ -992,6 +1826,13 @@ namespace Archiver
                 }
             }
             return new string(unicode.ToArray());
+        }
+
+
+        public static MenuItem attachEvent(this MenuItem item, RoutedEventHandler handle)
+        {
+            item.Click += handle;
+            return item;
         }
     }
 }

@@ -1,0 +1,122 @@
+﻿<Window x:Class="Archiver.Rename"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Archiver"
+        mc:Ignorable="d" Title="Rename" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
+        UseLayoutRounding="True" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        Icon="pack://siteoforigin:,,,/resources/Defrag.ico">
+    <Grid x:Name="windowGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Rectangle Fill="White" MouseDown="DockPanel_MouseDown"/>
+            <DockPanel>
+                <Border BorderBrush="#e3e3e3" BorderThickness="0 0 0 0"/>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Grid Width="30" Height="30" Margin="5 5 0 5">
+                        <Border x:Name="bdMinimize" CornerRadius="4" BorderBrush="Transparent" Background="#ffffff"
+                                MouseDown="bdMinimize_MouseDown">
+                            <Border.Triggers>
+                                <EventTrigger RoutedEvent="Border.MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Duration="0:0:0.1" Storyboard.TargetName="bdMinimize"
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        From="#ffffff" To="#eeeeee"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="Border.MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Duration="0:0:0.1" Storyboard.TargetName="bdMinimize"
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        From="#eeeeee" To="#ffffff"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Border.Triggers>
+                        </Border>
+                        <TextBlock IsHitTestVisible="False" FontFamily="Segoe Fluent Icons" Text="&#xe1d8;" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14"/>
+                    </Grid>
+                    <Grid Width="40" Height="40">
+                        <Border Margin="5" x:Name="bdClose" CornerRadius="4" BorderBrush="Transparent" Background="#ffffff"
+                                MouseDown="bdClose_MouseDown">
+                            <Border.Triggers>
+                                <EventTrigger RoutedEvent="Border.MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Duration="0:0:0.1" Storyboard.TargetName="bdClose"
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        From="#ffffff" To="#ff0000"/>
+                                            <ColorAnimation Duration="0:0:0.1" Storyboard.TargetName="closeText"
+                                                        Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
+                                                        From="#000000" To="#ffffff"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="Border.MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Duration="0:0:0.1" Storyboard.TargetName="bdClose"
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        From="#ff0000" To="#ffffff"/>
+                                            <ColorAnimation Duration="0:0:0.1" Storyboard.TargetName="closeText"
+                                                        Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
+                                                        From="#ffffff" To="#000000"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Border.Triggers>
+                        </Border>
+                        <TextBlock x:Name="closeText" IsHitTestVisible="False" FontFamily="Segoe Fluent Icons" Text="&#xe10a;" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14"/>
+                    </Grid>
+                </StackPanel>
+                <Grid>
+                    <StackPanel IsHitTestVisible="False" Margin="2 5 2 2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                        <Image Width="16" Height="16"
+                       Source="pack://siteoforigin:,,,/resources/Defrag.ico"/>
+                        <Grid Width="10"/>
+                        <TextBlock Text="Rename" VerticalAlignment="Center"
+                           FontWeight="Bold" FontFamily="{StaticResource windowTitleFont}" FontSize="13"/>
+                    </StackPanel>
+                </Grid>
+            </DockPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" Background="#fafafa">
+            <Grid Margin="20">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Foreground="gray" Text="Rename ____ with:" HorizontalAlignment="Left"
+                               VerticalAlignment="Top" TextAlignment="Left" Width="400" Name="lbl"
+                               TextWrapping="Wrap" LineHeight="17" Padding="5" FontWeight="Regular"/>
+                    <Grid Height="0"/>
+                    <TextBox x:Name="txtPass"></TextBox>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                <Button x:Name="btnCancel" Content="Cancel" Margin="20 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnOK" Content="Rename" Margin="5 15 20 15" Padding="10 0 10 0"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CornerRadius="0"
+                      GlassFrameThickness="0.1"
+                      UseAeroCaptionButtons="True"
+                      NonClientFrameEdges="Top"
+                      CaptionHeight="0.1"/>
+    </WindowChrome.WindowChrome>
+</Window>

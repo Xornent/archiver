@@ -901,6 +901,42 @@
         </Grid>
     </ControlTemplate>
 
+    <Style x:Key="{x:Type ContextMenu}" TargetType="{x:Type ContextMenu}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="FontWeight" Value="Regular"/>
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ContextMenu}">
+                    <Popup x:Name="Popup" SnapsToDevicePixels="True" UseLayoutRounding="True"
+                                   Placement="Bottom" HorizontalOffset="-4" VerticalOffset="0" IsOpen="{TemplateBinding IsOpen}"
+                                   AllowsTransparency="True" Focusable="True" PopupAnimation="Fade">
+
+                        <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True" BorderThickness="1"
+                                        Background="White" BorderBrush="{StaticResource menuArrow}" CornerRadius="8" 
+                                        Margin="20" Effect="{StaticResource dropShadowPopup}">
+                            <Grid Margin="0 5 0 5">
+                                <ScrollViewer CanContentScroll="True" Style="{StaticResource MenuScrollViewer}">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Border>
+
+                    </Popup>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger SourceName="Popup" Property="AllowsTransparency" Value="True">
+                            <Setter TargetName="SubmenuBorder" Property="CornerRadius" Value="8 8 8 8" />
+                            <Setter TargetName="SubmenuBorder" Property="Padding" Value="0,0,0,0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <ControlTemplate x:Key="ComboBoxTextBox"
                  TargetType="{x:Type TextBox}">
         <Border x:Name="PART_ContentHost"

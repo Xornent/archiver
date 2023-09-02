@@ -28,8 +28,9 @@ namespace Archiver
         string _description = "";
         Process _process = null;
 
-        public ActionProcess(string arguments, string title, string description)
+        public ActionProcess(string arguments, string title, string description, Guid? specifiedId = null)
         {
+            if (specifiedId != null) id = specifiedId.Value;
             this._title = title;
             this._description = description;
 
@@ -37,11 +38,12 @@ namespace Archiver
             string zpath = startup + @"\7z\x64\7z.exe";
 
             string wd = startup + @"\working\" + id.ToString().ToLower() + "\\";
-            if (Directory.Exists(wd)) {
+            if (Directory.Exists(wd) && specifiedId == null) {
                 Directory.Delete(wd, true);
             }
 
-            Directory.CreateDirectory(wd);
+            if (specifiedId == null)
+                Directory.CreateDirectory(wd);
 
             worker.DoWork += (s, e) => {
                 worker.ReportProgress(0, (_title, _description, "0% Preparing ..."));
@@ -91,7 +93,7 @@ namespace Archiver
             };
 
             worker.RunWorkerCompleted += (s, e) => {
-                if (Directory.Exists(wd)) {
+                if (Directory.Exists(wd) && specifiedId == null) {
                     Directory.Delete(wd, true);
                 }
             };
@@ -108,88 +110,99 @@ namespace Archiver
         void percentilePrompt(object sender, FileSystemEventArgs e)
         {
             Thread.Sleep(100);
-            using (FileStream stream = new FileStream(e.FullPath, FileMode.Open)) {
-                using (StreamReader reader = new StreamReader(stream)) {
-                    string s_ = reader.ReadToEnd();
-                    s_ = s_.Replace("\r", "").
-                        Replace("\n", "").
-                        Replace("\t", "").
-                        Replace("\b", "");
-                    if (lastPercentile != s_) {
-                        lastPercentile = s_;
-                        try {
-                            worker.ReportProgress(0, (_title, _description, s_.Trim()));
-                        }catch(System.InvalidOperationException ex) {
-                            // may raise System.InvalidOperationException: 'This operation has
-                            // already had OperationCompleted called on it and further calls are illegal.'
+
+            try {
+                if (!File.Exists(e.FullPath)) return;
+                using (FileStream stream = new FileStream(e.FullPath, FileMode.Open)) {
+                    using (StreamReader reader = new StreamReader(stream)) {
+                        string s_ = reader.ReadToEnd();
+                        s_ = s_.Replace("\r", "").
+                            Replace("\n", "").
+                            Replace("\t", "").
+                            Replace("\b", "");
+                        if (lastPercentile != s_) {
+                            lastPercentile = s_;
+                            try {
+                                worker.ReportProgress(0, (_title, _description, s_.Trim()));
+                            } catch {
+                                // may raise System.InvalidOperationException: 'This operation has
+                                // already had OperationCompleted called on it and further calls are illegal.'
+                            }
                         }
                     }
                 }
-            }
+            } catch { }
         }
 
         void fileConflictPrompt(object sender, FileSystemEventArgs e)
         {
             Thread.Sleep(100);
-            using (FileStream stream = new FileStream(e.FullPath, FileMode.Open)) {
-                using (StreamReader reader = new StreamReader(stream)) {
-                    string s_ = reader.ReadToEnd();
-                    s_ = s_.
-                        Replace("\t", "").
-                        Replace("\b", "");
-                    if (lastFc != s_) {
-                        lastFc = s_;
 
-                        Thread t = new Thread(() => {
-                            bool cont = true;
-                            while (cont) {
-                                FileConflict conflict = new FileConflict(s_);
-                                cont = !(conflict.ShowDialog() ?? false);
+            try {
+                if (!File.Exists(e.FullPath)) return;
+                using (FileStream stream = new FileStream(e.FullPath, FileMode.Open)) {
+                    using (StreamReader reader = new StreamReader(stream)) {
+                        string s_ = reader.ReadToEnd();
+                        s_ = s_.
+                            Replace("\t", "").
+                            Replace("\b", "");
+                        if (lastFc != s_) {
+                            lastFc = s_;
 
-                                if (!cont) {
-                                    // respond to the conflict
-                                    this._process.StandardInput.WriteLine(conflict.Response);
+                            Thread t = new Thread(() => {
+                                bool cont = true;
+                                while (cont) {
+                                    FileConflict conflict = new FileConflict(s_);
+                                    cont = !(conflict.ShowDialog() ?? false);
+
+                                    if (!cont) {
+                                        // respond to the conflict
+                                        this._process.StandardInput.WriteLine(conflict.Response);
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        t.SetApartmentState(ApartmentState.STA);
-                        t.Start();
+                            t.SetApartmentState(ApartmentState.STA);
+                            t.Start();
+                        }
                     }
                 }
-            }
+            } catch { }
         }
 
         void passwordPrompt(object sender, FileSystemEventArgs e)
         {
             Thread.Sleep(100);
-            using (FileStream stream = new FileStream(e.FullPath, FileMode.Open)) {
-                using (StreamReader reader = new StreamReader(stream)) {
-                    string s_ = reader.ReadToEnd();
-                    s_ = s_.
-                        Replace("\t", "").
-                        Replace("\b", "");
-                    if (lastPassword != s_) {
-                        lastPassword = s_;
+            try {
+                if (!File.Exists(e.FullPath)) return;
+                using (FileStream stream = new FileStream(e.FullPath, FileMode.Open)) {
+                    using (StreamReader reader = new StreamReader(stream)) {
+                        string s_ = reader.ReadToEnd();
+                        s_ = s_.
+                            Replace("\t", "").
+                            Replace("\b", "");
+                        if (lastPassword != s_) {
+                            lastPassword = s_;
 
-                        Thread t = new Thread(() => {
-                            bool cont = true;
-                            while (cont) {
-                                PasswordInput pwd = new PasswordInput();
-                                cont = !(pwd.ShowDialog() ?? false);
+                            Thread t = new Thread(() => {
+                                bool cont = true;
+                                while (cont) {
+                                    PasswordInput pwd = new PasswordInput();
+                                    cont = !(pwd.ShowDialog() ?? false);
 
-                                if (!cont) {
+                                    if (!cont) {
 
-                                    this._process.StandardInput.WriteLine(pwd.Password);
+                                        this._process.StandardInput.WriteLine(pwd.Password);
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        t.SetApartmentState(ApartmentState.STA);
-                        t.Start();
+                            t.SetApartmentState(ApartmentState.STA);
+                            t.Start();
+                        }
                     }
                 }
-            }
+            } catch { }
         }
     }
 }
