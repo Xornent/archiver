@@ -33,10 +33,20 @@ namespace Archiver
     {
         public List<ComboBox> comboDirs = new List<ComboBox>();
         public ContextMenu ctxMenu;
-        public List<Guid> delayedWorkingDir = new List<Guid>();
+        public static List<Guid> delayedWorkingDir = new List<Guid>();
         public MainWindow()
         {
             InitializeComponent();
+
+            string[] pargs = Environment.GetCommandLineArgs();
+#if false
+            string argsm = "Argument count: " + pargs.Length;
+            for(int i = 0; i < pargs.Length; i++) {
+                argsm += $"\n [{i}] " + pargs[i];
+            }
+
+            MessageBox.Show(argsm);
+#endif
 
             ctxMenu = this.Resources["ctxMenu"] as ContextMenu;
             ctxMenu.PlacementTarget = this.list;
@@ -139,20 +149,10 @@ namespace Archiver
 
             this.menuRootdir.Click += delRoot;
 
-            this.hEdit.SubmenuOpened += (s, e) => {
-                if (Clipboard.ContainsFileDropList() &&
-                    this.currentArchive != null &&
-                    this.currentNavigation != null) {
-                    this.mnuPaste.IsEnabled = true;
-                    (ctxMenu.Items[12] as MenuItem).IsEnabled = true;
-                } else {
-                    this.mnuPaste.IsEnabled = false;
-                    (ctxMenu.Items[12] as MenuItem).IsEnabled = false;
-                }
-            };
-
             void updateMenuItems()
             {
+                this.mnuFind.IsEnabled = (this.currentArchive != null);
+
                 (ctxMenu.Items[0] as MenuItem).IsEnabled = false;
                 (ctxMenu.Items[1] as MenuItem).IsEnabled = false;
 
@@ -163,14 +163,32 @@ namespace Archiver
                 (ctxMenu.Items[10] as MenuItem).IsEnabled = false;
                 this.mnuCopy.IsEnabled = false;
                 (ctxMenu.Items[11] as MenuItem).IsEnabled = false;
-                this.mnuPaste.IsEnabled = false;
-                (ctxMenu.Items[12] as MenuItem).IsEnabled = false;
                 this.mnuCut.IsEnabled = false;
                 (ctxMenu.Items[13] as MenuItem).IsEnabled = false;
                 this.mnuRename.IsEnabled = false;
                 (ctxMenu.Items[14] as MenuItem).IsEnabled = false;
 
                 (ctxMenu.Items[19] as MenuItem).IsEnabled = false;
+
+                if (Clipboard.ContainsFileDropList() &&
+                    this.currentArchive != null &&
+                    this.currentNavigation != null &&
+                    !isSPF()) {
+                    this.mnuPaste.IsEnabled = true;
+                    (ctxMenu.Items[12] as MenuItem).IsEnabled = true;
+                } else {
+                    this.mnuPaste.IsEnabled = false;
+                    (ctxMenu.Items[12] as MenuItem).IsEnabled = false;
+                }
+
+                if (!isSPF() && this.currentArchive != null
+                    && this.currentNavigation != null) {
+                    this.mnuAppend.IsEnabled = true;
+                    (ctxMenu.Items[8] as MenuItem).IsEnabled = true;
+                } else {
+                    this.mnuAppend.IsEnabled = false;
+                    (ctxMenu.Items[8] as MenuItem).IsEnabled = false;
+                }
 
                 if (currentArchive == null) return;
                 if (this.list.SelectedItem == null) return;
@@ -181,17 +199,15 @@ namespace Archiver
                 if (this.list.SelectedItems.Count >= 1) {
                     this.mnuDecompSelected.IsEnabled = true;
                     (ctxMenu.Items[4] as MenuItem).IsEnabled = true;
-
-                    this.mnuDeleteSelection.IsEnabled = true;
-                    (ctxMenu.Items[10] as MenuItem).IsEnabled = true;
                     this.mnuCopy.IsEnabled = true;
                     (ctxMenu.Items[11] as MenuItem).IsEnabled = true;
-                    if (Clipboard.ContainsFileDropList()) {
-                        this.mnuPaste.IsEnabled = true;
-                        (ctxMenu.Items[12] as MenuItem).IsEnabled = true;
+
+                    if (!isSPF()) {
+                        this.mnuDeleteSelection.IsEnabled = true;
+                        (ctxMenu.Items[10] as MenuItem).IsEnabled = true;
+                        this.mnuCut.IsEnabled = true;
+                        (ctxMenu.Items[13] as MenuItem).IsEnabled = true;
                     }
-                    this.mnuCut.IsEnabled = true;
-                    (ctxMenu.Items[13] as MenuItem).IsEnabled = true;
 
                     this.mnuSelectExt.IsEnabled = true;
                     (ctxMenu.Items[19] as MenuItem).IsEnabled = true;
@@ -206,6 +222,10 @@ namespace Archiver
                 }
             }
 
+            this.hEdit.SubmenuOpened += (s, e) => {
+                updateMenuItems();
+            };
+
             this.ctxMenu.Opened += (s, e) => {
                 updateMenuItems();
             };
@@ -217,31 +237,7 @@ namespace Archiver
                     return; 
                 }
 
-                if (this.list.SelectedItems.Count >= 1) {
-                    this.mnuDecompSelected.IsEnabled = true;
-                    (ctxMenu.Items[4] as MenuItem).IsEnabled = true;
-
-                    this.mnuDeleteSelection.IsEnabled = true;
-                    (ctxMenu.Items[10] as MenuItem).IsEnabled = true;
-                    this.mnuCopy.IsEnabled = true;
-                    (ctxMenu.Items[11] as MenuItem).IsEnabled = true;
-                    if (Clipboard.ContainsFileDropList()) {
-                        this.mnuPaste.IsEnabled = true;
-                        (ctxMenu.Items[12] as MenuItem).IsEnabled = true;
-                    }
-                    this.mnuCut.IsEnabled = true;
-                    (ctxMenu.Items[13] as MenuItem).IsEnabled = true;
-
-                    this.mnuSelectExt.IsEnabled = true;
-                    (ctxMenu.Items[19] as MenuItem).IsEnabled = true;
-                }
-
                 if (this.list.SelectedItems.Count == 1) {
-                    (ctxMenu.Items[0] as MenuItem).IsEnabled = true;
-                    (ctxMenu.Items[1] as MenuItem).IsEnabled = true;
-
-                    this.mnuRename.IsEnabled = true;
-                    (ctxMenu.Items[14] as MenuItem).IsEnabled = true;
 
                     FileSystemNode node = this.list.SelectedItems[0] as FileSystemNode ?? currentArchive;
 
@@ -413,6 +409,7 @@ namespace Archiver
 
             bool isSPF()
             {
+                if(currentArchive == null) return false;
                 if (currentArchive.Children.Any()) {
                     if (currentArchive.Children[0].IsFolder &&
                     currentArchive.Children[0].Name.EndsWith(":")) {
@@ -614,8 +611,12 @@ namespace Archiver
 
             void copyFile(FileInfo file, DirectoryInfo working, string root = "")
             {
-                Directory.CreateDirectory(working.FullName + "\\" + root);
-                File.Copy(file.FullName, working.FullName + "\\" + root + file.Name);
+                try {
+                    Directory.CreateDirectory(working.FullName + "\\" + root);
+                    File.Copy(file.FullName, working.FullName + "\\" + root + file.Name);
+                }catch(System.UnauthorizedAccessException) {
+                    MessageBox.Show("Access is denied:\n" + file.FullName);
+                }
             }
 
             string getNavigationCascade()
@@ -740,7 +741,7 @@ namespace Archiver
                 Clipboard.SetFileDropList(clipboardStrings);
 
                 // delay deletion of the working directory
-                this.delayedWorkingDir.Add(taskGUID);
+                delayedWorkingDir.Add(taskGUID);
             };
 
             RoutedEventHandler delCut = (s, e) => {
@@ -881,7 +882,7 @@ namespace Archiver
             closeFile();
 
             this.Closed += (s, e) => {
-                foreach (var taskGUID in this.delayedWorkingDir) {
+                foreach (var taskGUID in delayedWorkingDir) {
                     string startup = System.Windows.Forms.Application.StartupPath + @"\";
                     if (Directory.Exists(startup + @"working\" + taskGUID))
                         Directory.Delete(startup + @"working\" + taskGUID, true);
@@ -937,9 +938,43 @@ namespace Archiver
                 () => { updateMenuItems(); return this.mnuReverse.IsEnabled; },
                 delReverseSelect);
 
+            RoutedEventHandler delFind = (s, e) => {
+                if (currentArchive == null) return;
+                Find f = new Find(this.currentArchive, isSPF());
+                f.ShowDialog();
+
+                // reopen and redirect
+                string archivepath = currentArchive.FullName;
+                string direc = getNavigationCascade();
+                this.backToInitial();
+                this.openFile(archivepath);
+                this.Navigate(direc, this.currentArchive);
+            };
+
+            this.mnuFind.Click += delFind;
+
             registerInputGesture(verb: "Find",
                 () => { return this.currentArchive != null; },
-                (s, e) => { MessageBox.Show("Hello, world!"); });
+                delFind);
+
+            if (pargs.Length == 2) {
+                if (File.Exists(pargs[1]))
+                    this.openFile(pargs[1]);
+                else MessageBox.Show("The file passed by argument is not found:\n" + pargs[1]);
+            }
+
+            splashScreen.AllowDrop = true;
+            splashScreen.Drop += (s, e) => {
+                string path = null;
+                if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
+                    path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+                }
+
+                if (string.IsNullOrEmpty(path)) return;
+                if (File.Exists(path))
+                    this.openFile(path);
+                else MessageBox.Show("The file passed by argument is not found:\n" + path);
+            };
         }
 
         private void registerInputGesture(string verb, Func<bool> predicate, RoutedEventHandler handler)
@@ -1149,6 +1184,7 @@ namespace Archiver
             this.mnuCloseArch.IsEnabled = false;
         }
 
+        bool hasOpenFileError = false;
         private void openFile(string path)
         {
             string startup = System.Windows.Forms.Application.StartupPath;
@@ -1169,7 +1205,17 @@ namespace Archiver
 
             if (proc != null) {
                 string output = proc.StandardOutput.ReadToEnd();
+                string err = proc.StandardError.ReadToEnd();
                 proc.WaitForExit();
+
+                foreach (var line in err.Parse7zUnicode().Replace("\r\n", "\n").Split('\n')) {
+                    if (line.StartsWith("ERROR")) {
+                        MessageBox.Show(line);
+                        hasOpenFileError = true;
+                        backToInitial();
+                        return;
+                    }
+                }
 
                 output = output.Parse7zUnicode();
 
@@ -1420,8 +1466,6 @@ namespace Archiver
                         this.gridList.Visibility = Visibility.Visible;
                         this.gridDetails.Visibility = Visibility.Visible;
 
-                        this.mnuAppend.IsEnabled = true;
-                        (ctxMenu.Items[8] as MenuItem).IsEnabled = true;
                         this.mnuDecompress.IsEnabled = true;
                         (ctxMenu.Items[5] as MenuItem).IsEnabled = true;
                         this.mnuDecompCurrent.IsEnabled = true;
@@ -1444,6 +1488,11 @@ namespace Archiver
                 loader.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 loader.ResizeMode = ResizeMode.NoResize;
                 loader.ShowDialog();
+
+                if (hasOpenFileError) {
+                    backToInitial();
+                    return;
+                }
 
                 if(!Settings.Default.History.Contains(path)) {
                     MenuItem mi = new MenuItem();
