@@ -5,36 +5,6 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archiver", "Archiver.csproj", "{FC321339-D1FB-4D45-8450-CC659BA45D42}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7z-client", "7z-client", "{1C74A81D-E793-457C-9D0C-8F89E0DF7891}"
-	ProjectSection(SolutionItems) = preProject
-		..\7z-x86\CPP\7zip\UI\Console\BenchCon.cpp = ..\7z-x86\CPP\7zip\UI\Console\BenchCon.cpp
-		..\7z-x86\CPP\7zip\UI\Console\BenchCon.h = ..\7z-x86\CPP\7zip\UI\Console\BenchCon.h
-		..\7z-x86\CPP\7zip\UI\Console\Console.mak = ..\7z-x86\CPP\7zip\UI\Console\Console.mak
-		..\7z-x86\CPP\7zip\UI\Console\ConsoleClose.cpp = ..\7z-x86\CPP\7zip\UI\Console\ConsoleClose.cpp
-		..\7z-x86\CPP\7zip\UI\Console\ConsoleClose.h = ..\7z-x86\CPP\7zip\UI\Console\ConsoleClose.h
-		..\7z-x86\CPP\7zip\UI\Console\ExtractCallbackConsole.cpp = ..\7z-x86\CPP\7zip\UI\Console\ExtractCallbackConsole.cpp
-		..\7z-x86\CPP\7zip\UI\Console\ExtractCallbackConsole.h = ..\7z-x86\CPP\7zip\UI\Console\ExtractCallbackConsole.h
-		..\7z-x86\CPP\7zip\UI\Console\HashCon.cpp = ..\7z-x86\CPP\7zip\UI\Console\HashCon.cpp
-		..\7z-x86\CPP\7zip\UI\Console\HashCon.h = ..\7z-x86\CPP\7zip\UI\Console\HashCon.h
-		..\7z-x86\CPP\7zip\UI\Console\List.cpp = ..\7z-x86\CPP\7zip\UI\Console\List.cpp
-		..\7z-x86\CPP\7zip\UI\Console\List.h = ..\7z-x86\CPP\7zip\UI\Console\List.h
-		..\7z-x86\CPP\7zip\UI\Console\Main.cpp = ..\7z-x86\CPP\7zip\UI\Console\Main.cpp
-		..\7z-x86\CPP\7zip\UI\Console\MainAr.cpp = ..\7z-x86\CPP\7zip\UI\Console\MainAr.cpp
-		..\7z-x86\CPP\7zip\UI\Console\makefile = ..\7z-x86\CPP\7zip\UI\Console\makefile
-		..\7z-x86\CPP\7zip\UI\Console\makefile.gcc = ..\7z-x86\CPP\7zip\UI\Console\makefile.gcc
-		..\7z-x86\CPP\7zip\UI\Console\OpenCallbackConsole.cpp = ..\7z-x86\CPP\7zip\UI\Console\OpenCallbackConsole.cpp
-		..\7z-x86\CPP\7zip\UI\Console\OpenCallbackConsole.h = ..\7z-x86\CPP\7zip\UI\Console\OpenCallbackConsole.h
-		..\7z-x86\CPP\7zip\UI\Console\PercentPrinter.cpp = ..\7z-x86\CPP\7zip\UI\Console\PercentPrinter.cpp
-		..\7z-x86\CPP\7zip\UI\Console\PercentPrinter.h = ..\7z-x86\CPP\7zip\UI\Console\PercentPrinter.h
-		..\7z-x86\CPP\7zip\UI\Console\resource.rc = ..\7z-x86\CPP\7zip\UI\Console\resource.rc
-		..\7z-x86\CPP\7zip\UI\Console\StdAfx.cpp = ..\7z-x86\CPP\7zip\UI\Console\StdAfx.cpp
-		..\7z-x86\CPP\7zip\UI\Console\StdAfx.h = ..\7z-x86\CPP\7zip\UI\Console\StdAfx.h
-		..\7z-x86\CPP\7zip\UI\Console\UpdateCallbackConsole.cpp = ..\7z-x86\CPP\7zip\UI\Console\UpdateCallbackConsole.cpp
-		..\7z-x86\CPP\7zip\UI\Console\UpdateCallbackConsole.h = ..\7z-x86\CPP\7zip\UI\Console\UpdateCallbackConsole.h
-		..\7z-x86\CPP\7zip\UI\Console\UserInputUtils.cpp = ..\7z-x86\CPP\7zip\UI\Console\UserInputUtils.cpp
-		..\7z-x86\CPP\7zip\UI\Console\UserInputUtils.h = ..\7z-x86\CPP\7zip\UI\Console\UserInputUtils.h
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
