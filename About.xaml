@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Archiver"
         xmlns:ui="clr-namespace:Archiver.UI"
-        mc:Ignorable="d" Title="Extract Archive" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
+        mc:Ignorable="d" Title="About" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
         Icon="pack://siteoforigin:,,,/resources/Defrag.ico">
@@ -118,8 +118,10 @@
         <Grid Grid.Row="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-                <Button Content="7-Zip official site" Margin="20 15 0 15" Padding="10 0 10 0"/>
-                <Button Content="Close" Margin="5 15 20 15" Padding="10 0 10 0"/>
+                <Button x:Name="btn7Z" Content="7-Zip official site" Margin="20 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnGithub" Content="Github" Margin="5 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnIssue" Content="Issues" Margin="5 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnClose" Content="Close" Margin="5 15 20 15" Padding="10 0 10 0"/>
             </StackPanel>
         </Grid>
     </Grid>

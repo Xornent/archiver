@@ -17,25 +17,21 @@ namespace Archiver
     /// <summary>
     /// Interaction logic for Extract.xaml
     /// </summary>
-    public partial class About : Window
+    public partial class FileUpdateConfirm : Window
     {
-        public About()
+        public FileUpdateConfirm(string label)
         {
             InitializeComponent();
 
-            this.btn7Z.Click += (s, e) => {
-                System.Diagnostics.Process.Start("https://www.7-zip.org/");
+            this.lbl.Text = label;
+
+            this.btnOK.Click += (s, e) => {
+                this.DialogResult = true;
+                this.Close();
             };
 
-            this.btnGithub.Click += (s, e) => {
-                System.Diagnostics.Process.Start("https://github.com/Xornent/archiver");
-            };
-
-            this.btnIssue.Click += (s, e) => {
-                System.Diagnostics.Process.Start("https://github.com/Xornent/archiver/issues");
-            };
-
-            this.btnClose.Click += (s, e) => {
+            this.btnCancel.Click += (s, e) => {
+                this.DialogResult = false;
                 this.Close();
             };
         }
@@ -48,6 +44,7 @@ namespace Archiver
 
         private void bdClose_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            this.DialogResult = false;
             this.Close();
         }
 

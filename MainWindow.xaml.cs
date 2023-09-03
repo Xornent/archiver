@@ -23,6 +23,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Archiver.Properties;
 using static Archiver.MainWindow;
+using static Vanara.PInvoke.Shell32;
 
 namespace Archiver
 {
@@ -34,9 +35,16 @@ namespace Archiver
         public List<ComboBox> comboDirs = new List<ComboBox>();
         public ContextMenu ctxMenu;
         public static List<Guid> delayedWorkingDir = new List<Guid>();
+        public Dictionary<string, DateTime> monitorUpdate = new Dictionary<string, DateTime>();
         public MainWindow()
         {
             InitializeComponent();
+
+            string _env = System.Windows.Forms.Application.StartupPath + @"\";
+            if (!Directory.Exists(_env + @"working"))
+                Directory.CreateDirectory(_env + @"\working\");
+            if (!Directory.Exists(_env + @"temp"))
+                Directory.CreateDirectory(_env + @"\temp\");
 
             string[] pargs = Environment.GetCommandLineArgs();
 #if false
@@ -59,11 +67,112 @@ namespace Archiver
                     windowGrid.Margin = new Thickness(0);
             };
 
+            void listItemOpen(Item item)
+            {
+                if (item is FolderItem folder) {
+                    Navigate(folder);
+                } else if (item is FileItem file) {
+                    // decompress to a runtime permanent temp.
+                    if (currentArchive == null) return;
+
+                    // exclude working directory
+                    Guid taskGUID = Guid.NewGuid();
+                    string arguments = $"x \"{currentArchive.FullName}\"";
+                    string startup = System.Windows.Forms.Application.StartupPath + @"\";
+                    var workingDir = Directory.CreateDirectory(startup + @"working\" + taskGUID);
+
+                    // specify the working directory whether it is spf or not.
+                    arguments += $" -o\"{workingDir.FullName}\"";
+                    arguments += $" \"{file.FullName}\"";
+
+                    ActionProcess proc = new ActionProcess(
+                        arguments,
+                        $"Decompressing {currentArchive.Name} ...",
+                        $"Decompressing archive file with command line options '{arguments}'"
+                        );
+
+                    proc.Run();
+
+                    string path = workingDir.FullName + "\\" + file.FullName.Replace(":", "_");
+                    System.Diagnostics.Process.Start(path);
+
+                    // delay deletion of the working directory
+                    delayedWorkingDir.Add(taskGUID);
+
+                    string[] ps = file.FullName.Split('/');
+                    string currentNav = "";
+                    if (ps.Length > 1)
+                        currentNav = file.FullName.Substring(0, file.FullName.Length - ps.Last().Length - 1);
+
+                    Archive _this_archive = currentArchive;
+
+                    // we should monitor the file change.
+                    FileSystemWatcher watcherPerc = new FileSystemWatcher(
+                        new FileInfo(path).Directory.FullName + "\\", "*");
+                    watcherPerc.EnableRaisingEvents = true;
+                    watcherPerc.Changed += (s, e) => {
+                        if (this.currentArchive.FullName != _this_archive.FullName)
+                            return;
+
+                        try {
+                            FileInfo fileInfo = new FileInfo(path);
+
+                            // test if the file is stable on disk.
+                            using (var fs = File.OpenWrite(e.FullPath)) { }
+
+                            if (!this.monitorUpdate.ContainsKey(path)) {
+                                monitorUpdate.Add(path, fileInfo.LastWriteTime);
+                            } else {
+                                if (fileInfo.LastWriteTime > this.monitorUpdate[path]) {
+                                    monitorUpdate[path] = fileInfo.LastWriteTime;
+                                } else {
+                                    // no new change, skip the event
+                                    return;
+                                }
+                            }
+                        } catch { return; }
+
+                        this.Dispatcher.Invoke(() => {
+                            FileUpdateConfirm conf = new FileUpdateConfirm(
+                                "The file \"" + file.Name + "\" you previewed has just changed. " +
+                                "Would you like to update it into the archive?");
+                            if (conf.ShowDialog() == true) {
+                                // this should update the file on local 'path' to the archive 'file.FullName'
+                                if (currentArchive == null) return;
+                                if (currentNavigation == null) throw new Exception("current navigation not set.");
+
+                                string arg2 = $"a \"{currentArchive.FullName}\"";
+
+                                if (currentNav != "")
+                                    arg2 += ($" {currentNav.Replace(":", "_").Replace("/", "\\") + "\\" + file.Name}");
+                                else arg2 += ($" {file.Name}");
+
+                                ActionProcess proc2 = new ActionProcess(
+                                    arg2,
+                                    $"Updating files to {currentArchive.Name} ...",
+                                    $"Updating archive file with command line options '{arguments}'",
+                                    specifiedId: taskGUID
+                                );
+
+                                proc2.Run();
+
+                                // reopen and redirect
+                                string archivepath = currentArchive.FullName;
+                                string direc = getNavigationCascade();
+                                this.backToInitial();
+                                this.openFile(archivepath);
+                                this.Navigate(direc, this.currentArchive);
+                            }
+                        });
+                    };
+                }
+            }
+
             this.list.MouseDoubleClick += (s, e) => {
                 if (this.list.SelectedItems.Count == 1) {
                     object item = this.list.SelectedItem;
-                    if (item is FolderItem folder) {
-                        Navigate(folder);
+                    if (item is Item it) {
+                        listItemOpen(it);
                     }
                 }
             };
@@ -855,8 +964,15 @@ namespace Archiver
             this.mnuRename.Click += delRename;
 
             ctxMenu.IsOpen = true;
-            ctxMenu.Items.Add((new MenuItem { Header = "Open" })); // [0]
-            ctxMenu.Items.Add((new MenuItem { Header = "Open with", IsEnabled = false }));
+            ctxMenu.Items.Add((new MenuItem { Header = "Open" }).attachEvent((s, e) => {
+                if (this.list.SelectedItems.Count == 1) {
+                    object item = this.list.SelectedItem;
+                    if (item is Item it) {
+                        listItemOpen(it);
+                    }
+                }
+            })); // [0]
+            ctxMenu.Items.Add((new MenuItem { Header = "Open with", IsEnabled = false, Visibility = Visibility.Collapsed }));
             ctxMenu.Items.Add((new Separator()));
             ctxMenu.Items.Add((new MenuItem { Header = "Decompress all to current path", InputGestureText = "Ctrl + D" }).attachEvent(delDecompressCurrent)); // [3]
             ctxMenu.Items.Add((new MenuItem { Header = "Decompress selected items", InputGestureText = "Ctrl + Shift + D" }).attachEvent(delDecompressSelected));
@@ -887,6 +1003,7 @@ namespace Archiver
                     if (Directory.Exists(startup + @"working\" + taskGUID))
                         Directory.Delete(startup + @"working\" + taskGUID, true);
                 }
+                delayedWorkingDir.Clear();
             };
 
             registerInputGesture("UpOneLevel",
@@ -974,6 +1091,10 @@ namespace Archiver
                 if (File.Exists(path))
                     this.openFile(path);
                 else MessageBox.Show("The file passed by argument is not found:\n" + path);
+            };
+
+            this.mnuQuit.Click += (s, e) => {
+                Application.Current.Shutdown();
             };
         }
 
@@ -1251,7 +1372,8 @@ namespace Archiver
                             string content = pair[1].Trim();
                             bool emptyContent = string.IsNullOrEmpty(content);
                             switch (pair[0].Trim().ToLower()) {
-                                case "path": tempArchive.FullName = content; break;
+                                // unify path to '/'
+                                case "path": tempArchive.FullName = content.Replace("\\","/"); break;
                                 case "type": tempArchive.Type = content; break;
                                 case "physical size": tempArchive.PhysicalSize = long.Parse(content); break;
                                 default:
@@ -1384,7 +1506,7 @@ namespace Archiver
                                 if (emptyContent) continue;
                                 switch (pair[0].Trim().ToLower()) {
                                     case "path":
-                                        item.FullName = content;
+                                        item.FullName = content.Replace("\\","/");
                                         var substring = content;
                                         if (substring.Length > 50)
                                             substring = "... " + content.Substring(content.Length - 50);
@@ -1494,15 +1616,15 @@ namespace Archiver
                     return;
                 }
 
-                if(!Settings.Default.History.Contains(path)) {
+                if(!Settings.Default.History.Contains(path.Replace("/","\\"))) {
                     MenuItem mi = new MenuItem();
-                    mi.Header = path;
+                    mi.Header = path.Replace("/", "\\");
                     mi.Click += (s, e) => {
                         this.openFile(path);
                     };
                     this.mnuRecent.Items.Insert(1, mi);
                     this.mnuNoHistory.Visibility = Visibility.Collapsed;
-                    Settings.Default.History.Add(path);
+                    Settings.Default.History.Add(path.Replace("/", "\\"));
                     Settings.Default.Save();
                 }
             }
@@ -1723,6 +1845,8 @@ namespace Archiver
             }
 
             comboSuppress = false;
+
+            
         }
 
         private void comboSelectionChanged(object sender, SelectionChangedEventArgs e)
