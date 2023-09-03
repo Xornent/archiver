@@ -22,9 +22,9 @@
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
 
                 <Label Content="Archiver" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                   FontStyle="Normal" FontWeight="Black" FontSize="100" Foreground="#80ffffff"/>
+                   FontFamily="/Fonts/#Roboto Black" FontSize="100" Foreground="#80ffffff"/>
                 <Label Content="Drag an archive here to open" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                   FontStyle="Normal" FontWeight="Light" FontSize="32" Foreground="#60ffffff"/>
+                   FontFamily="/Fonts/#Roboto Light" FontSize="32" Foreground="#60ffffff"/>
                 <Grid Height="30"/>
                 <Label Content="0.6.0[b319] beta" HorizontalAlignment="Center" VerticalAlignment="Center" 
                    FontStyle="Normal" FontWeight="Normal" FontSize="16" FontFamily="{StaticResource fixedWidthFont}" Foreground="#60ffffff"/>

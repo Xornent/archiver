@@ -8,11 +8,11 @@
     </FontFamily>
 
     <FontFamily x:Key="windowTitleFont">
-        Roboto
+        /Fonts/#Roboto
     </FontFamily>
 
     <FontFamily x:Key="bodyFont">
-        Roboto
+        /Fonts/#Roboto
     </FontFamily>
     <!-- Colors -->
     

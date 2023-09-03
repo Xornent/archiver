@@ -39,3 +39,4 @@ bld/
 
 packages/
 !7z/*
+Output/
