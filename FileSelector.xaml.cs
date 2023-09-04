@@ -42,6 +42,12 @@ namespace Archiver
                         if (item is ShellFile file) {
                             this.SelectedFiles.Add(new FileInfo(file.ParsingName));
                         } else if (item is ShellFolder folder) {
+
+                            if(folder.ParsingName.EndsWith(":\\")) {
+                                MessageBox.Show("You cannot select a drive.");
+                                return;
+                            }
+
                             // zip files are considered shell folders!
                             if (File.Exists(folder.ParsingName))
                                 this.SelectedFiles.Add(new FileInfo(folder.ParsingName));

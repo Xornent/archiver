@@ -71,6 +71,9 @@
     <Compile Include="ArchiveWildcardSelect.xaml.cs">
       <DependentUpon>ArchiveWildcardSelect.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Error.xaml.cs">
+      <DependentUpon>Error.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FileUpdateConfirm.xaml.cs">
       <DependentUpon>FileUpdateConfirm.xaml</DependentUpon>
     </Compile>
@@ -169,6 +172,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ArchiveWildcardSelect.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Error.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

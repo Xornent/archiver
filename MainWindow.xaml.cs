@@ -72,6 +72,7 @@ namespace Archiver
                 if (item is FolderItem folder) {
                     Navigate(folder);
                 } else if (item is FileItem file) {
+
                     // decompress to a runtime permanent temp.
                     if (currentArchive == null) return;
 
@@ -93,78 +94,81 @@ namespace Archiver
 
                     proc.Run();
 
-                    string path = workingDir.FullName + "\\" + file.FullName.Replace(":", "_");
-                    System.Diagnostics.Process.Start(path);
+                    if (!proc.HasError) {
 
-                    // delay deletion of the working directory
-                    delayedWorkingDir.Add(taskGUID);
+                        string path = workingDir.FullName + "\\" + file.FullName.Replace(":", "_");
+                        System.Diagnostics.Process.Start(path);
 
-                    string[] ps = file.FullName.Split('/');
-                    string currentNav = "";
-                    if (ps.Length > 1)
-                        currentNav = file.FullName.Substring(0, file.FullName.Length - ps.Last().Length - 1);
+                        // delay deletion of the working directory
+                        delayedWorkingDir.Add(taskGUID);
 
-                    Archive _this_archive = currentArchive;
+                        string[] ps = file.FullName.Split('/');
+                        string currentNav = "";
+                        if (ps.Length > 1)
+                            currentNav = file.FullName.Substring(0, file.FullName.Length - ps.Last().Length - 1);
 
-                    // we should monitor the file change.
-                    FileSystemWatcher watcherPerc = new FileSystemWatcher(
-                        new FileInfo(path).Directory.FullName + "\\", "*");
-                    watcherPerc.EnableRaisingEvents = true;
-                    watcherPerc.Changed += (s, e) => {
-                        if (this.currentArchive.FullName != _this_archive.FullName)
-                            return;
+                        Archive _this_archive = currentArchive;
 
-                        try {
-                            FileInfo fileInfo = new FileInfo(path);
+                        // we should monitor the file change.
+                        FileSystemWatcher watcherPerc = new FileSystemWatcher(
+                            new FileInfo(path).Directory.FullName + "\\", "*");
+                        watcherPerc.EnableRaisingEvents = true;
+                        watcherPerc.Changed += (s, e) => {
+                            if (this.currentArchive.FullName != _this_archive.FullName)
+                                return;
 
-                            // test if the file is stable on disk.
-                            using (var fs = File.OpenWrite(e.FullPath)) { }
+                            try {
+                                FileInfo fileInfo = new FileInfo(path);
 
-                            if (!this.monitorUpdate.ContainsKey(path)) {
-                                monitorUpdate.Add(path, fileInfo.LastWriteTime);
-                            } else {
-                                if (fileInfo.LastWriteTime > this.monitorUpdate[path]) {
-                                    monitorUpdate[path] = fileInfo.LastWriteTime;
+                                // test if the file is stable on disk.
+                                using (var fs = File.OpenWrite(e.FullPath)) { }
+
+                                if (!this.monitorUpdate.ContainsKey(path)) {
+                                    monitorUpdate.Add(path, fileInfo.LastWriteTime);
                                 } else {
-                                    // no new change, skip the event
-                                    return;
+                                    if (fileInfo.LastWriteTime > this.monitorUpdate[path]) {
+                                        monitorUpdate[path] = fileInfo.LastWriteTime;
+                                    } else {
+                                        // no new change, skip the event
+                                        return;
+                                    }
                                 }
-                            }
-                        } catch { return; }
+                            } catch { return; }
 
-                        this.Dispatcher.Invoke(() => {
-                            FileUpdateConfirm conf = new FileUpdateConfirm(
-                                "The file \"" + file.Name + "\" you previewed has just changed. " +
-                                "Would you like to update it into the archive?");
-                            if (conf.ShowDialog() == true) {
-                                // this should update the file on local 'path' to the archive 'file.FullName'
-                                if (currentArchive == null) return;
-                                if (currentNavigation == null) throw new Exception("current navigation not set.");
+                            this.Dispatcher.Invoke(() => {
+                                FileUpdateConfirm conf = new FileUpdateConfirm(
+                                    "The file \"" + file.Name + "\" you previewed has just changed. " +
+                                    "Would you like to update it into the archive?");
+                                if (conf.ShowDialog() == true) {
+                                    // this should update the file on local 'path' to the archive 'file.FullName'
+                                    if (currentArchive == null) return;
+                                    if (currentNavigation == null) throw new Exception("current navigation not set.");
 
-                                string arg2 = $"a \"{currentArchive.FullName}\"";
+                                    string arg2 = $"a \"{currentArchive.FullName}\"";
 
-                                if (currentNav != "")
-                                    arg2 += ($" {currentNav.Replace(":", "_").Replace("/", "\\") + "\\" + file.Name}");
-                                else arg2 += ($" {file.Name}");
+                                    if (currentNav != "")
+                                        arg2 += ($" {currentNav.Replace(":", "_").Replace("/", "\\") + "\\" + file.Name}");
+                                    else arg2 += ($" {file.Name}");
 
-                                ActionProcess proc2 = new ActionProcess(
-                                    arg2,
-                                    $"Updating files to {currentArchive.Name} ...",
-                                    $"Updating archive file with command line options '{arguments}'",
-                                    specifiedId: taskGUID
-                                );
+                                    ActionProcess proc2 = new ActionProcess(
+                                        arg2,
+                                        $"Updating files to {currentArchive.Name} ...",
+                                        $"Updating archive file with command line options '{arguments}'",
+                                        specifiedId: taskGUID
+                                    );
 
-                                proc2.Run();
+                                    proc2.Run();
 
-                                // reopen and redirect
-                                string archivepath = currentArchive.FullName;
-                                string direc = getNavigationCascade();
-                                this.backToInitial();
-                                this.openFile(archivepath);
-                                this.Navigate(direc, this.currentArchive);
-                            }
-                        });
-                    };
+                                    // reopen and redirect
+                                    string archivepath = currentArchive.FullName;
+                                    string direc = getNavigationCascade();
+                                    this.backToInitial();
+                                    this.openFile(archivepath);
+                                    this.Navigate(direc, this.currentArchive);
+                                }
+                            });
+                        };
+                    }
                 }
             }
 
@@ -806,8 +810,10 @@ namespace Archiver
             this.mnuDeleteSelection.Click += delDeleteSelection;
             this.mnuAppend.Click += delAdd;
 
+            bool _is_last_copy_succeeded = true;
             RoutedEventHandler delCopy = (s, e) => {
                 if (currentArchive == null) return;
+                _is_last_copy_succeeded = true;
                 string destination = new FileInfo(currentArchive.FullName).Directory.FullName;
 
                 // exclude working directory
@@ -846,8 +852,11 @@ namespace Archiver
 
                 proc.Run();
 
-                // set to clipboard
-                Clipboard.SetFileDropList(clipboardStrings);
+                if (!proc.HasError) {
+                    _is_last_copy_succeeded = false;
+                    // set to clipboard
+                    Clipboard.SetFileDropList(clipboardStrings);
+                }
 
                 // delay deletion of the working directory
                 delayedWorkingDir.Add(taskGUID);
@@ -855,7 +864,9 @@ namespace Archiver
 
             RoutedEventHandler delCut = (s, e) => {
                 delCopy(s, e);
-                delDeleteSelection(s, e);
+                if (_is_last_copy_succeeded) {
+                    delDeleteSelection(s, e);
+                }
             };
 
             RoutedEventHandler delPaste = (s, e) => {

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Archiver"
-#define MyAppVersion "0.6.0.319"
+#define MyAppVersion "0.6.1.348"
 #define MyAppPublisher "yang-z."
 #define MyAppURL "https://github.com/Xornent/archiver"
 #define MyAppExeName "Archiver.exe"

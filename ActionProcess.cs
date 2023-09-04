@@ -27,6 +27,7 @@ namespace Archiver
         string _title = "";
         string _description = "";
         Process _process = null;
+        FileSystemWatcher watcherPerc;
 
         public ActionProcess(string arguments, string title, string description, Guid? specifiedId = null)
         {
@@ -35,7 +36,7 @@ namespace Archiver
             this._description = description;
 
             string startup = System.Windows.Forms.Application.StartupPath;
-            string zpath = startup + @"\7z\x64\7z.exe";
+            string zpath = startup + @"\7z\x64\7z-unicode.exe";
 
             string wd = startup + @"\working\" + id.ToString().ToLower() + "\\";
             if (Directory.Exists(wd) && specifiedId == null) {
@@ -64,7 +65,7 @@ namespace Archiver
                 watcher.EnableRaisingEvents = true;
                 watcher.Changed += passwordPrompt;
 
-                FileSystemWatcher watcherPerc = new FileSystemWatcher(wd, "percentile");
+                watcherPerc = new FileSystemWatcher(wd, "percentile");
                 watcherPerc.EnableRaisingEvents = true;
                 watcherPerc.Changed += percentilePrompt;
 
@@ -76,18 +77,29 @@ namespace Archiver
                 process.Start();
                 process.WaitForExit();
 
-                string op = process.StandardError.ReadToEnd();
+                string op = process.StandardError.ReadToEnd().Parse7zUnicode();
                 string[] lines = op.Replace("\r", "").Split('\n');
                 bool displayNext = false;
+
+                int err = 0;
                 foreach (var item in lines) {
                     if (item.StartsWith("System ERROR")) {
                         displayNext = true;
+                        this.HasError = true;
+                        err++;
                         continue;
                     }
 
                     if (displayNext) {
-                        MessageBox.Show(item);
+                        errorSum += "\n" +item ;
                         displayNext = false;
+                    }
+
+                    if (item.StartsWith("ERROR")) {
+                        errorSum += "\n" + item;
+                        this.HasError = true;
+                        err++;
+                        continue;
                     }
                 }
             };
@@ -96,10 +108,24 @@ namespace Archiver
                 if (Directory.Exists(wd) && specifiedId == null) {
                     Directory.Delete(wd, true);
                 }
+
+                if (errorSum != "") {
+                    errorSum = $"In total {errorSum.Split('\n').Count() - 1} errors is caught in the call:" + errorSum;
+                    Error er = new Error(errorSum);
+
+                    er.ShowDialog();
+                }
             };
 
             this.loader = new Loader(this.worker, false);
             this.loader.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            this.loader.btnUserCancel.Visibility = Visibility.Visible;
+            this.loader.Height = 140;
+            this.loader.btnUserCancel.Click += (s, e) => {
+                this.HasError = true;
+                errorSum += "\n" + "User has cancelled execution.";
+                this._process.Kill();
+            };
         }
 
         public void Run()
@@ -107,6 +133,7 @@ namespace Archiver
             this.loader.ShowDialog();
         }
 
+        int _duplicate_prompt = 0;
         void percentilePrompt(object sender, FileSystemEventArgs e)
         {
             Thread.Sleep(100);
@@ -121,12 +148,26 @@ namespace Archiver
                             Replace("\t", "").
                             Replace("\b", "");
                         if (lastPercentile != s_) {
+                            _duplicate_prompt = 0;
                             lastPercentile = s_;
                             try {
                                 worker.ReportProgress(0, (_title, _description, s_.Trim()));
                             } catch {
                                 // may raise System.InvalidOperationException: 'This operation has
                                 // already had OperationCompleted called on it and further calls are illegal.'
+                            }
+                        } else {
+                            _duplicate_prompt++;
+                            worker.ReportProgress(0, (_title, _description, $"Duplicate message {_duplicate_prompt}"));
+                            // this magic number 10 is set:
+                            // when the user gives a wrong password and the error message
+                            // is too long (supposed), the process will never end! and the
+                            // user get stuck. we should find a way out. on my computer, the
+                            // duplicate prompt is stuck at 30-40. the longer the message,
+                            // the smaller the count when it gets stucked.
+                            if (_duplicate_prompt >= 10) {
+                                watcherPerc.Changed -= percentilePrompt;
+                                _process.Kill();
                             }
                         }
                     }
@@ -158,6 +199,8 @@ namespace Archiver
                                     if (!cont) {
                                         // respond to the conflict
                                         this._process.StandardInput.WriteLine(conflict.Response);
+                                    } else {
+
                                     }
                                 }
                             });
@@ -185,16 +228,15 @@ namespace Archiver
                             lastPassword = s_;
 
                             Thread t = new Thread(() => {
-                                bool cont = true;
-                                while (cont) {
-                                    PasswordInput pwd = new PasswordInput();
-                                    cont = !(pwd.ShowDialog() ?? false);
-
-                                    if (!cont) {
-
-                                        this._process.StandardInput.WriteLine(pwd.Password);
-                                    }
+                                PasswordInput pwd = new PasswordInput();
+                                if ((pwd.ShowDialog() ?? false)) {
+                                    this._process.StandardInput.WriteLine(pwd.Password);
+                                } else {
+                                    this.HasError = true;
+                                    errorSum += "\n" + "User has cancelled password input.";
+                                    this._process.Kill();
                                 }
+
                             });
 
                             t.SetApartmentState(ApartmentState.STA);
@@ -204,5 +246,8 @@ namespace Archiver
                 }
             } catch { }
         }
+
+        public bool HasError { get; set; } = false;
+        private string errorSum = "";
     }
 }
