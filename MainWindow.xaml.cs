@@ -24,6 +24,7 @@ using System.Runtime.CompilerServices;
 using Archiver.Properties;
 using static Archiver.MainWindow;
 using static Vanara.PInvoke.Shell32;
+using System.Threading;
 
 namespace Archiver
 {
@@ -36,8 +37,14 @@ namespace Archiver
         public ContextMenu ctxMenu;
         public static List<Guid> delayedWorkingDir = new List<Guid>();
         public Dictionary<string, DateTime> monitorUpdate = new Dictionary<string, DateTime>();
+
         public MainWindow()
         {
+            ResourceDictionary dict = new ResourceDictionary();
+            dict.MergedDictionaries.Add(
+                new ResourceDictionary() { Source = new Uri("pack://application:,,,/UI/Styles.xaml") });
+            Application.Current.Resources = dict;
+
             InitializeComponent();
 
             string _env = System.Windows.Forms.Application.StartupPath + @"\";
@@ -47,7 +54,7 @@ namespace Archiver
                 Directory.CreateDirectory(_env + @"\temp\");
 
             string[] pargs = Environment.GetCommandLineArgs();
-#if false
+#if DEBUG
             string argsm = "Argument count: " + pargs.Length;
             for(int i = 0; i < pargs.Length; i++) {
                 argsm += $"\n [{i}] " + pargs[i];
@@ -1086,9 +1093,16 @@ namespace Archiver
                 delFind);
 
             if (pargs.Length == 2) {
-                if (File.Exists(pargs[1]))
-                    this.openFile(pargs[1]);
-                else MessageBox.Show("The file passed by argument is not found:\n" + pargs[1]);
+                if (File.Exists(pargs[1])) {
+                    FileInfo info = new FileInfo(pargs[1]);
+                    if (info.Extension != ".lnk") {
+                        this.openFile(pargs[1]);
+                    }
+                } else if (pargs[1] == "-context-menu-compress") {
+                    Compress comp = new Compress(true);
+                    comp.ShowDialog();
+                    Application.Current.Shutdown();
+                }
             }
 
             splashScreen.AllowDrop = true;

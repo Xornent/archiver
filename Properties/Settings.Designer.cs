@@ -33,5 +33,17 @@ namespace Archiver.Properties {
                 this["History"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsRegistered {
+            get {
+                return ((bool)(this["IsRegistered"]));
+            }
+            set {
+                this["IsRegistered"] = value;
+            }
+        }
     }
 }

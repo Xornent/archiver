@@ -23,6 +23,23 @@ namespace Archiver
 
             Application.Current.DispatcherUnhandledException += AppOnDispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
+
+            // ResourceDictionary dict = new ResourceDictionary();
+            // dict.MergedDictionaries.Add(
+            //     new ResourceDictionary() { Source = new Uri("UI/Styles.xaml") });
+            // Application.Current.Resources = dict;
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            MainWindow window = new MainWindow();
+            window.Show();
+        }
+
+        public void Activate()
+        {
+            this.MainWindow.Activate();
         }
 
         /// <summary>
@@ -30,6 +47,8 @@ namespace Archiver
         /// </summary>
         private static void AppOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
+#if DEBUG
+#else
             string message = "An unhandled exception is caught in the UI thread.\n\n" +
 
                 "When you see this disclaimer, the program has failed in recovering from exception. " +
@@ -63,6 +82,7 @@ namespace Archiver
             } catch { }
             e.Handled = true;
             Application.Current.Shutdown();
+#endif
         }
 
         /// <summary>
@@ -70,6 +90,8 @@ namespace Archiver
         /// </summary>
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+#if DEBUG
+#else
             string message = "An unhandled exception is caught in the non-UI thread.\n\n" +
 
                 "When you see this disclaimer, the program has failed in recovering from exception. " +
@@ -102,6 +124,7 @@ namespace Archiver
                 }
             } catch { }
             Application.Current.Shutdown();
+#endif
         }
     }
 }

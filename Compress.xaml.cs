@@ -17,6 +17,7 @@ using System.IO;
 using System.Diagnostics;
 using System.ComponentModel;
 using static Archiver.MainWindow;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Archiver
 {
@@ -242,6 +243,45 @@ namespace Archiver
             this.radioNoPassword.Checked += (s, e) => {
                 this.panelPassword.Visibility = Visibility.Collapsed;
             };
+        }
+
+        public Compress(bool fromContextMenu):this()
+        {
+            List<FileInfo> files = new List<FileInfo>();
+            List<DirectoryInfo> directories = new List<DirectoryInfo>();
+
+            if(File.Exists(System.Windows.Forms.Application.StartupPath + @"\" + "context-dirs")) {
+                using(FileStream fs = new FileStream(System.Windows.Forms.Application.StartupPath + @"\" + "context-dirs", FileMode.Open)) {
+                    using(StreamReader sr = new StreamReader(fs)) {
+                        string end = sr.ReadToEnd().Replace("\r","");
+                        foreach(string line in end.Split('\n')) {
+                            if (string.IsNullOrEmpty(line)) continue;
+                            if (File.Exists(line))
+                                files.Add(new FileInfo(line));
+                            else if (Directory.Exists(line))
+                                directories.Add(new DirectoryInfo(line));
+                        }
+                    }
+                }
+            }
+
+            FileEntryCollection coll = new FileEntryCollection(files, directories);
+            DirectoryInfo parental = new DirectoryInfo(SpecialDirectories.MyDocuments);
+            if (files.Any()) { parental = files[0].Directory; }
+            else if (directories.Any()) { parental = directories[0].Parent; }
+            this.comboBoxSource.Items.Clear();
+            this.comboBoxSource.Items.Add(coll.ToString());
+            this.comboBoxSource.SelectedIndex = 0;
+
+            source = coll;
+
+            sourceParentalDirectory = parental;
+
+            this.comboBoxDest.Items.Add(parental);
+            dest = parental;
+            this.comboBoxDest.IsEnabled = true;
+            this.comboBoxDest.SelectedIndex = this.comboBoxDest.Items.Count - 1;
+            this.btnOK.IsEnabled = true;
         }
 
         private FileEntryCollection source = null;

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Archiver"
-#define MyAppVersion "0.6.1.348"
+#define MyAppVersion "0.7.0.392"
 #define MyAppPublisher "yang-z."
 #define MyAppURL "https://github.com/Xornent/archiver"
 #define MyAppExeName "Archiver.exe"
@@ -51,53 +51,36 @@ Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Archiver.exe"; DestDi
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Archiver.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Archiver.pdb"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Microsoft.Extensions.FileSystemGlobbing.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Microsoft.Extensions.FileSystemGlobbing.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Microsoft.WindowsAPICodePack.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Microsoft.WindowsAPICodePack.ExtendedLinguisticServices.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Microsoft.WindowsAPICodePack.Sensors.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Microsoft.WindowsAPICodePack.ShellExtensions.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.Buffers.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.Buffers.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.Memory.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.Memory.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.Numerics.Vectors.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.Numerics.Vectors.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.Runtime.CompilerServices.Unsafe.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.Runtime.CompilerServices.Unsafe.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.ValueTuple.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.ValueTuple.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.Windows.Forms.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\System.Windows.Forms.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.Core.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.ComCtl32.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.ComCtl32.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Cryptography.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Cryptography.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Gdi32.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Gdi32.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Kernel32.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Kernel32.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Ole.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Ole.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Rpc.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Rpc.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Security.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Security.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Shared.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Shared.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Shell32.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.Shell32.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.ShlwApi.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.ShlwApi.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.User32.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.User32.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\WindowsFormsIntegration.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\projects\xornent\archiver\Archiver\bin\Release\WindowsFormsIntegration.xml"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Archiver.ContextMenu.dll"; DestDir: "{app}"; Flags: ignoreversion 
+Source: "D:\projects\xornent\archiver\Archiver\bin\Release\archiver.msix"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\7z\*"; DestDir: "{app}\7z"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\fr\*"; DestDir: "{app}\fr"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "D:\projects\xornent\archiver\Archiver\bin\Release\resources\*"; DestDir: "{app}\assets"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; Source: "D:\projects\xornent\archiver\Archiver\bin\Release\roboto\*"; DestDir: "{app}\roboto"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 ; Source: "D:\projects\xornent\archiver\Archiver\bin\Release\roboto\Roboto-Black.ttf"; DestDir: "{fonts}"; FontInstall: "Roboto Black"; Flags: uninsneveruninstall onlyifdoesntexist
@@ -184,4 +167,7 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+[UninstallRun]
+Filename: "powershell"; Parameters:"-c get-appxpackage -name *Archiver* | remove-appxpackage"; Flags: runascurrentuser waituntilterminated runhidden; RunOnceId:"Uninstall"
 
