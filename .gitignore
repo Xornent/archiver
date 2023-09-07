@@ -38,5 +38,10 @@ bld/
 #wwwroot/
 
 packages/
-!7z/*
+!Archiver/7z/*
 Output/
+*.msix
+*.cer 
+*.pfx
+*.pvk
+7z-x86

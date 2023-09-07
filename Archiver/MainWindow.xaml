@@ -26,7 +26,7 @@
                 <Label Content="Drag an archive here to open" HorizontalAlignment="Center" VerticalAlignment="Center" 
                    FontFamily="/Fonts/#Roboto Light" FontSize="32" Foreground="#60ffffff"/>
                 <Grid Height="30"/>
-                <Label Content="0.7.0[b392] beta" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                <Label Content="0.7.2[b397] beta" HorizontalAlignment="Center" VerticalAlignment="Center" 
                    FontStyle="Normal" FontWeight="Normal" FontSize="16" FontFamily="{StaticResource fixedWidthFont}" Foreground="#60ffffff"/>
             </StackPanel>
         </Grid>

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Archiver"
-#define MyAppVersion "0.7.0.392"
+#define MyAppVersion "0.7.2.397"
 #define MyAppPublisher "yang-z."
 #define MyAppURL "https://github.com/Xornent/archiver"
 #define MyAppExeName "Archiver.exe"
@@ -29,7 +29,7 @@ DisableDirPage=yes
 ChangesAssociations=yes
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=D:\projects\xornent\archiver\Archiver\LICENSE
+LicenseFile=D:\projects\xornent\archiver\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 ;PrivilegesRequiredOverridesAllowed=dialog
@@ -77,6 +77,8 @@ Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Vanara.PInvoke.User32
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\WindowsFormsIntegration.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\Archiver.ContextMenu.dll"; DestDir: "{app}"; Flags: ignoreversion 
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\archiver.msix"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\projects\xornent\archiver\Archiver\bin\Release\should-register"; DestDir: "{app}"; Flags: ignoreversion   
+Source: "D:\projects\xornent\archiver\Archiver\bin\Release\yang-z-cert.cer"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\7z\*"; DestDir: "{app}\7z"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\fr\*"; DestDir: "{app}\fr"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\projects\xornent\archiver\Archiver\bin\Release\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -166,8 +168,8 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
+Filename: "certutil.exe"; Parameters: "-addstore ""TrustedPublisher"" {app}\yang-z-cert.cer"; StatusMsg: "Adding trusted publisher..." 
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallRun]
 Filename: "powershell"; Parameters:"-c get-appxpackage -name *Archiver* | remove-appxpackage"; Flags: runascurrentuser waituntilterminated runhidden; RunOnceId:"Uninstall"
-

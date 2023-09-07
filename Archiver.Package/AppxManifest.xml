@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  IgnorableNamespaces="uap uap2 uap3 rescap desktop desktop4 desktop5 uap10 com">
+  <Identity Name="Archiver" ProcessorArchitecture="neutral" 
+            Publisher="O=YangZIndividual, C=WuhanPrChina" 
+            Version="0.7.0.0" />
+  <Properties>
+    <DisplayName>Archiver</DisplayName>
+    <PublisherDisplayName>Individual Developer</PublisherDisplayName>
+    <Logo>Assets\storelogo.png</Logo>
+    <uap10:AllowExternalContent>true</uap10:AllowExternalContent>
+  </Properties>
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.18950.0" MaxVersionTested="10.0.19000.0" />
+  </Dependencies>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="unvirtualizedResources"/>
+  </Capabilities>
+  <Applications>
+    <Application Id="Archiver" Executable="Archiver.exe" uap10:TrustLevel="mediumIL" uap10:RuntimeBehavior="win32App">
+      <uap:VisualElements AppListEntry="none" DisplayName="Archiver" 
+                          Description="Archiver for Windows" BackgroundColor="transparent" 
+                          Square150x150Logo="Assets\Square150x150Logo.png" 
+                          Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" 
+                         Square310x310Logo="Assets\LargeTile.png" 
+                         Square71x71Logo="Assets\SmallTile.png"></uap:DefaultTile>
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <desktop4:Extension Category="windows.fileExplorerContextMenus">
+          <desktop4:FileExplorerContextMenus>
+            <desktop5:ItemType Type="Directory\Background">
+              <desktop5:Verb Id="CompressCurrentFolder" Clsid="4CDEA877-ABBA-4618-89A0-892D09F83543" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type="Directory">
+              <desktop5:Verb Id="CompressD" Clsid="4E68C2EC-B7B3-41A8-A11A-DFD30316FFD1" />
+            </desktop5:ItemType>
+            <desktop5:ItemType Type="*">
+              <desktop5:Verb Id="Compress" Clsid="73EF65E4-A72D-4E56-B078-E5C4359FF981" />
+            </desktop5:ItemType>
+          </desktop4:FileExplorerContextMenus>
+        </desktop4:Extension>
+        <com:Extension Category="windows.comServer">
+          <com:ComServer>
+            <com:SurrogateServer  DisplayName="Context menu verb handler">
+              <com:Class Id="4CDEA877-ABBA-4618-89A0-892D09F83543" Path="Archiver.ContextMenu.dll" ThreadingModel="STA"/>
+            </com:SurrogateServer>
+            <com:SurrogateServer  DisplayName="Context menu verb handler">
+              <com:Class Id="4E68C2EC-B7B3-41A8-A11A-DFD30316FFD1" Path="Archiver.ContextMenu.dll" ThreadingModel="STA"/>
+            </com:SurrogateServer>
+            <com:SurrogateServer  DisplayName="Context menu verb handler">
+              <com:Class Id="73EF65E4-A72D-4E56-B078-E5C4359FF981" Path="Archiver.ContextMenu.dll" ThreadingModel="STA"/>
+            </com:SurrogateServer>
+          </com:ComServer>
+        </com:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+</Package>

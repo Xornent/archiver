@@ -68,7 +68,20 @@ namespace Archiver
             }
             */
 
-            if (!Properties.Settings.Default.IsRegistered) {
+            bool shouldRegisterB = true;
+            string shouldRegister = System.Windows.Forms.Application.StartupPath + @"\should-register";
+            if (File.Exists(shouldRegister)) {
+                using (FileStream fs = new FileStream(shouldRegister, FileMode.Open)) {
+                    using (StreamReader sr = new StreamReader(fs)) {
+                        string end = sr.ReadToEnd()
+                            .Replace("\r", "")
+                            .Replace("\n", "");
+                        if (end == "false") shouldRegisterB = false;
+                    }
+                }
+            }
+
+            if (shouldRegisterB) {
                 // TODO - update the value of externalLocation to match the output location of
                 // your VS Build binaries and the value of 
                 // - sparsePkgPath to match the path to your signed Sparse Package (.msix). 
@@ -81,15 +94,16 @@ namespace Archiver
                     // Registration succeded, restart the app to run with identity
                     MessageBox.Show("The package is successfully installed. Please reboot your computer");
                     // System.Diagnostics.Process.Start(externalLocation + "archiver.exe", arguments: cmdArgs?.ToString());
-                    Properties.Settings.Default.IsRegistered = true;
-                    Properties.Settings.Default.Save();
+                    var writer = File.CreateText(shouldRegister);
+                    writer.WriteLine("false");
+                    writer.Flush();
+                    writer.Close();
 
                     SingleInstanceManager wrapper = new SingleInstanceManager();
                     wrapper.Run(cmdArgs);
 
                 } else //Registration failed, run without identity
-                  {
-                    Debug.WriteLine("Package Registration failed, running WITHOUT Identity");
+                {
                     SingleInstanceManager wrapper = new SingleInstanceManager();
                     wrapper.Run(cmdArgs);
                 }

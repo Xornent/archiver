@@ -230,6 +230,8 @@ namespace Archiver
                     Directory.Delete(startup + @"temp\" + taskGUID, true);
                 if (Directory.Exists(startup + @"working\" + taskGUID))
                     Directory.Delete(startup + @"working\" + taskGUID, true);
+
+                this.Close();
             };
 
             this.btnCancel.Click += (s, e) => {
@@ -256,10 +258,10 @@ namespace Archiver
                         string end = sr.ReadToEnd().Replace("\r","");
                         foreach(string line in end.Split('\n')) {
                             if (string.IsNullOrEmpty(line)) continue;
-                            if (File.Exists(line))
-                                files.Add(new FileInfo(line));
-                            else if (Directory.Exists(line))
+                            if (Directory.Exists(line))
                                 directories.Add(new DirectoryInfo(line));
+                            else if (File.Exists(line))
+                                files.Add(new FileInfo(line));
                         }
                     }
                 }
@@ -268,7 +270,12 @@ namespace Archiver
             FileEntryCollection coll = new FileEntryCollection(files, directories);
             DirectoryInfo parental = new DirectoryInfo(SpecialDirectories.MyDocuments);
             if (files.Any()) { parental = files[0].Directory; }
-            else if (directories.Any()) { parental = directories[0].Parent; }
+            else if (directories.Any()) {
+                if (directories[0].Parent == null)
+                    parental = directories[0];
+                else
+                    parental = directories[0].Parent;
+            }
             this.comboBoxSource.Items.Clear();
             this.comboBoxSource.Items.Add(coll.ToString());
             this.comboBoxSource.SelectedIndex = 0;
