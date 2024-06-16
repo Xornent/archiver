@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "dgSpecHash": "ollPS+cFd0g=",
+  "success": true,
+  "projectFilePath": "D:\\projects\\csharp\\archiver\\Archiver\\Archiver.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Xorne\\.nuget\\packages\\microsoft.extensions.filesystemglobbing\\8.0.0\\microsoft.extensions.filesystemglobbing.8.0.0.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\microsoft.win32.systemevents\\8.0.0\\microsoft.win32.systemevents.8.0.0.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\system.drawing.common\\8.0.6\\system.drawing.common.8.0.6.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.core\\4.0.1\\vanara.core.4.0.1.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.pinvoke.comctl32\\4.0.1\\vanara.pinvoke.comctl32.4.0.1.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.pinvoke.cryptography\\4.0.1\\vanara.pinvoke.cryptography.4.0.1.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.pinvoke.gdi32\\4.0.1\\vanara.pinvoke.gdi32.4.0.1.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.pinvoke.kernel32\\4.0.1\\vanara.pinvoke.kernel32.4.0.1.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.pinvoke.ole\\4.0.1\\vanara.pinvoke.ole.4.0.1.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.pinvoke.rpc\\4.0.1\\vanara.pinvoke.rpc.4.0.1.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.pinvoke.security\\4.0.1\\vanara.pinvoke.security.4.0.1.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.pinvoke.shared\\4.0.1\\vanara.pinvoke.shared.4.0.1.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.pinvoke.shell32\\4.0.1\\vanara.pinvoke.shell32.4.0.1.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.pinvoke.shlwapi\\4.0.1\\vanara.pinvoke.shlwapi.4.0.1.nupkg.sha512",
+    "C:\\Users\\Xorne\\.nuget\\packages\\vanara.pinvoke.user32\\4.0.1\\vanara.pinvoke.user32.4.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
