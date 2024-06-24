@@ -4,8 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Archiver"
+        xmlns:ui="clr-namespace:Archiver.UI"
+        xmlns:bc="clr-namespace:BreadcrumbLib"
         mc:Ignorable="d" FontFamily="{StaticResource bodyFont}" Background="#ffffff"
-        Title="Archiver" Height="650" Width="900" UseLayoutRounding="True"
+        Title="Archiver" Height="750" Width="1000" UseLayoutRounding="True"
         WindowStartupLocation="CenterScreen" Icon="resources/defrag.ico">
 
     <Grid x:Name="windowGrid">
@@ -14,13 +16,14 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5"/>
-            <RowDefinition Height="150"/>
+            <RowDefinition MinHeight="178" Height="178"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="2" Grid.RowSpan="3" x:Name="splashScreen" Background="White" 
               Visibility="Visible" Panel.ZIndex="100">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Label Content="0.8.0[b401] alpha" HorizontalAlignment="Center" VerticalAlignment="Center" 
+            <StackPanel x:Name="defaultSplash" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
+                <Label Content="0.8.0[b452] alpha" HorizontalAlignment="Center" VerticalAlignment="Center" 
                        FontStyle="Normal" FontWeight="Normal" FontSize="16" 
                        FontFamily="{StaticResource fixedWidthFont}" Foreground="#60666666"/>
             </StackPanel>
@@ -69,14 +72,6 @@
                         <TextBlock x:Name="closeText" IsHitTestVisible="False" FontFamily="Segoe Fluent Icons" Text="&#xe10a;" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14"/>
                     </Grid>
                 </StackPanel>
-                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                    <Button Margin="5" Width="30" Height="30" Style="{StaticResource secondaryButton}">
-                        <TextBlock IsHitTestVisible="False" FontFamily="Segoe Fluent Icons" Text="&#xe76B;" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18"/>
-                    </Button>
-                    <Button Margin="0 5 0 5" Width="30" Height="30" Style="{StaticResource secondaryButton}">
-                        <TextBlock IsHitTestVisible="False" FontFamily="Segoe Fluent Icons" Text="&#xe76C;" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18"/>
-                    </Button>
-                </StackPanel>
                 <Grid>
                     <StackPanel IsHitTestVisible="False" Margin="2 5 2 2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
                         <Image Width="16" Height="16"
@@ -89,11 +84,12 @@
             </DockPanel>
         </Grid>
 
-        <Grid x:Name="gridList" Visibility="Collapsed" Grid.Row="2" Background="#fafafa">
+        <Grid x:Name="gridList" Visibility="Visible" Grid.Row="2" Background="#fafafa">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            
             <ListView Grid.Row="1" x:Name="list">
                 <ListView.View>
                     <GridView>
@@ -107,57 +103,76 @@
                         <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="250">
                         </GridViewColumn>
                         <GridViewColumn Header="Date Modified" DisplayMemberBinding="{Binding DateModified}" Width="150"/>
-                        <GridViewColumn Header="Size" DisplayMemberBinding="{Binding Size}" Width="80"/>
-                        <GridViewColumn Header="Compressed" DisplayMemberBinding="{Binding CompressedSize}" Width="100"/>
+                        <GridViewColumn x:Name="colSize" Header="Size" Width="110">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding SizeHumanFriendly}" Width="90" HorizontalAlignment="Stretch" TextAlignment="Right" 
+                                               FontFamily="{StaticResource fixedWidthFont}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                         <GridViewColumn Header="Attributes" DisplayMemberBinding="{Binding Attributes}" Width="100"/>
                         <GridViewColumn Header="Encrypted" DisplayMemberBinding="{Binding IsEncrypted}" Width="70"/>
-                        <GridViewColumn Header="Comment" DisplayMemberBinding="{Binding Comment}" Width="70"/>
+                        <GridViewColumn Header="Comment" DisplayMemberBinding="{Binding CommentAbstract}" Width="170"/>
                     </GridView>
                 </ListView.View>
             </ListView>
 
             <Grid Grid.Row="0">
-                <ScrollViewer Margin="85,10,10,2" HorizontalScrollBarVisibility="Visible">
-                    <StackPanel x:Name="stackDirs" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30">
-                        <Button x:Name="dirCombo" Padding="4 0">
-                            <Button.ContentTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="{Binding Icon}" Width="16" Height="16"/>
-                                        <Grid Width="5"/>
-                                        <TextBlock Text="{Binding Name}"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </Button.ContentTemplate>
+                <DockPanel Margin="10">
+                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                        <Button Style="{StaticResource secondaryButton}" Width="30">
+                            <Image Width="20" Height="20" Source="resources/folder-add.png" IsHitTestVisible="False"/>
+                        </Button>
+                        <Button Style="{StaticResource secondaryButton}" Width="30">
+                            <Image Width="20" Height="20" Source="resources/filter-add.png" IsHitTestVisible="False"/>
+                        </Button>
+                        <Button Style="{StaticResource secondaryButton}" Width="30">
+                            <Image Width="20" Height="20" Source="resources/flash.png" IsHitTestVisible="False"/>
+                        </Button>
+                        <Button Style="{StaticResource secondaryButton}" Width="30">
+                            <Image Width="24" Height="24" Source="resources/chevron-left.png" IsHitTestVisible="False"/>
+                        </Button>
+                        <Button Style="{StaticResource secondaryButton}" Width="30">
+                            <Image Width="24" Height="24" Source="resources/chevron-right.png" IsHitTestVisible="False"/>
                         </Button>
                     </StackPanel>
-                </ScrollViewer>
 
-                <TextBlock Foreground="gray" Text="Directory" HorizontalAlignment="Left" Margin="10,12,0,0" 
-                VerticalAlignment="Top" Width="70" Height="23" TextAlignment="Right"
-                TextWrapping="Wrap" LineHeight="17" Padding="5" FontWeight="Regular"/>
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                        <Button Style="{StaticResource secondaryButton}" Width="30">
+                            <Image Width="20" Height="20" Source="resources/folder-addto.png" IsHitTestVisible="False"/>
+                        </Button>
+                    </StackPanel>
+                    
+                    <bc:Breadcrumb x:Name="breadcrumb" Margin="10 0">
+                        <!--Root-->
+                        <bc:BreadcrumbItem x:Name="bcRoot" Header="Root"/>
+                        <!--end root-->
+                    </bc:Breadcrumb>
+                </DockPanel>
             </Grid>
 
         </Grid>
         
-        <Grid x:Name="gridDetails" Grid.Row="4" Visibility="Collapsed">
+        <Grid x:Name="gridDetails" Grid.Row="4" Visibility="Visible">
             <Border BorderThickness="0 0 0 0" BorderBrush="#e3e3e3" Background="#fafafa"></Border>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="178"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="300"/>
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column="0">
-                    <Image x:Name="imgIcon" Stretch="Fill" SnapsToDevicePixels="True" UseLayoutRounding="True" Width="100" Height="100" Margin="25 25 25 25"/>
+                    <Image x:Name="imgIcon" Stretch="Fill" SnapsToDevicePixels="True" UseLayoutRounding="True" 
+                           Width="128" Height="128" Margin="25 25 25 25"/>
                 </Grid>
 
                 <Grid Grid.Column="1">
                     <ScrollViewer Margin="5">
                         <StackPanel Margin="0 0 15 15" Orientation="Vertical">
-                            <TextBlock Padding="0 5 0 5" Name="lblDesc" Margin="120 0 0 0" Text="[Name]" 
-                                   FontWeight="Bold" LineHeight="17" TextWrapping="Wrap"/>
+                            <Label x:Name="lblDesc" Content="Properties" Margin="120 0 0 0" FontWeight="Bold"/>
+
                             <StackPanel x:Name="sArchiveType" Orientation="Horizontal">
                                 <TextBlock Foreground="gray" Text="Archive type" HorizontalAlignment="Left"
                                            VerticalAlignment="Center" Width="110" Height="18" TextAlignment="Right"
@@ -175,12 +190,6 @@
                                            VerticalAlignment="Center" Width="110" Height="18" TextAlignment="Right"
                                            TextWrapping="Wrap" LineHeight="17" Padding="2" Margin="0 0 10 0" FontWeight="Regular"/>
                                 <TextBlock x:Name="tActualSize" Text="" LineHeight="17" Padding="2" Margin="0 0 0 0" Height="18"/>
-                            </StackPanel>
-                            <StackPanel x:Name="sCompressedSize" Orientation="Horizontal">
-                                <TextBlock Foreground="gray" Text="Compressed size" HorizontalAlignment="Left"
-                                           VerticalAlignment="Center" Width="110" Height="18" TextAlignment="Right"
-                                           TextWrapping="Wrap" LineHeight="17" Padding="2" Margin="0 0 10 0" FontWeight="Regular"/>
-                                <TextBlock x:Name="tCompressedSize" Text="" LineHeight="17" Padding="2" Margin="0 0 0 0" Height="18"/>
                             </StackPanel>
                             <StackPanel x:Name="sDateModified" Orientation="Horizontal">
                                 <TextBlock Foreground="gray" Text="Date modified" HorizontalAlignment="Left"
@@ -224,30 +233,19 @@
                                            TextWrapping="Wrap" LineHeight="17" Padding="2" Margin="0 0 10 0" FontWeight="Regular"/>
                                 <TextBlock x:Name="tCompressionMethod" Text="" LineHeight="17" Padding="2" Margin="0 0 0 0" Height="18"/>
                             </StackPanel>
-                            <StackPanel x:Name="sChar" Orientation="Horizontal">
-                                <TextBlock Foreground="gray" Text="Characteristics" HorizontalAlignment="Left"
+                            <StackPanel x:Name="sId" Orientation="Horizontal">
+                                <TextBlock Foreground="gray" Text="Index" HorizontalAlignment="Left"
                                            VerticalAlignment="Center" Width="110" Height="18" TextAlignment="Right"
                                            TextWrapping="Wrap" LineHeight="17" Padding="2" Margin="0 0 10 0" FontWeight="Regular"/>
-                                <TextBlock x:Name="tChar" Text="" LineHeight="17" Padding="2" Margin="0 0 0 0" Height="18"/>
-                            </StackPanel>
-                            <StackPanel x:Name="sHostOS" Orientation="Horizontal">
-                                <TextBlock Foreground="gray" Text="Host OS" HorizontalAlignment="Left"
-                                           VerticalAlignment="Center" Width="110" Height="18" TextAlignment="Right"
-                                           TextWrapping="Wrap" LineHeight="17" Padding="2" Margin="0 0 10 0" FontWeight="Regular"/>
-                                <TextBlock x:Name="tHostOS" Text="" LineHeight="17" Padding="2" Margin="0 0 0 0" Height="18"/>
-                            </StackPanel>
-                            <StackPanel x:Name="sVer" Orientation="Horizontal">
-                                <TextBlock Foreground="gray" Text="Version" HorizontalAlignment="Left"
-                                           VerticalAlignment="Center" Width="110" Height="18" TextAlignment="Right"
-                                           TextWrapping="Wrap" LineHeight="17" Padding="2" Margin="0 0 10 0" FontWeight="Regular"/>
-                                <TextBlock x:Name="tVer" Text="" LineHeight="17" Padding="2" Margin="0 0 0 0" Height="18"/>
+                                <TextBlock x:Name="tId" Text="" LineHeight="17" Padding="2" Margin="0 0 0 0" Height="18"/>
                             </StackPanel>
                             <StackPanel x:Name="sVol" Orientation="Horizontal">
-                                <TextBlock Foreground="gray" Text="Volume index" HorizontalAlignment="Left"
+                                <TextBlock Foreground="gray" Text="Volume" HorizontalAlignment="Left"
                                            VerticalAlignment="Center" Width="110" Height="18" TextAlignment="Right"
                                            TextWrapping="Wrap" LineHeight="17" Padding="2" Margin="0 0 10 0" FontWeight="Regular"/>
                                 <TextBlock x:Name="tVol" Text="" LineHeight="17" Padding="2" Margin="0 0 0 0" Height="18"/>
                             </StackPanel>
+
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
@@ -257,81 +255,64 @@
                         <Label Content="Comments" FontWeight="Bold"/>
                     </StackPanel>
 
-                    <TextBox x:Name="tComment" Margin="10 0 10 10" TextWrapping="Wrap"
-                             VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"/>
+                    <TextBox x:Name="tComment" Margin="10 0 10 10" TextWrapping="Wrap" AcceptsReturn="True" 
+                             FontFamily="{StaticResource fixedWidthFont}" Height="auto"
+                             IsReadOnly="False" VerticalScrollBarVisibility="Visible" TextAlignment="Left"/>
                 </DockPanel>
             </Grid>
         </Grid>
 
         <Grid Grid.Row="1">
             <Border BorderThickness="0 0 0 1" BorderBrush="#e3e3e3"/>
-            <Menu Height="32" Margin="0 -2 0 0" VerticalAlignment="Top">
+            <Menu x:Name="menu" Height="32" Margin="0 -2 0 0" VerticalAlignment="Top">
                 <MenuItem x:Name="hFile" Header="_File">
-                    <MenuItem x:Name="menuOpen" Click="menuOpen_Click" Header="Open from archive ..." InputGestureText="Ctrl + O"/>
-                    <MenuItem x:Name="mnuRecent" Header="Recent">
-                        <MenuItem x:Name="mnuNoHistory" Header="No file history" IsEnabled="False"/>
-                        <Separator/>
-                        <MenuItem x:Name="mnuClearHistory" Header="Clear history"/>
-                    </MenuItem>
-                    <MenuItem x:Name="menuCreate" Header="Create new archive from ..." Click="menuCreate_Click" InputGestureText="Ctrl + N"/>
-                    <Separator/>
-                    <MenuItem x:Name="mnuDecompCurrent" IsEnabled="False" Header="Decompress to current path" InputGestureText="Ctrl + D"/>
-                    <MenuItem x:Name="mnuDecompress" IsEnabled="False" Header="Decompress ..."/>
-                    <MenuItem x:Name="mnuDecompSelected" IsEnabled="False" Header="Decompress selected files ..." InputGestureText="Ctrl + Shift + D"/>
-                    <Separator/>
-                    <MenuItem x:Name="mnuOpenInExplorer" IsEnabled="False" Header="Open archive location in Windows Explorer ..."/>
-                    <MenuItem x:Name="mnuCloseArch" IsEnabled="False" Header="Close archive"/>
-                    <Separator/>
-                    <MenuItem x:Name="mnuQuit" Header="Exit Application" InputGestureText="Alt + F4"/>
+                    <MenuItem Command="{Binding OpenArchive}"/>
+                    <MenuItem Command="{Binding Create}"/>
                 </MenuItem>
                 <MenuItem x:Name="hEdit" Header="_Edit">
-                    <MenuItem x:Name="mnuAppend" Header="Append files into archive ..." InputGestureText="Ctrl + P"/>
-                    <MenuItem x:Name="mnuDeleteSelection" Header="Delete selection" InputGestureText="Del"/>
-                    <MenuItem Visibility="Collapsed" x:Name="mnuDelete" Header="Delete files ..." InputGestureText="Ctrl + Del"/>
-                    <Separator/>
-                    <MenuItem x:Name="mnuRename" Header="Rename ..." InputGestureText="F2"/>
-                    <MenuItem x:Name="mnuCopy" Header="Copy" InputGestureText="Ctrl + C"/>
-                    <MenuItem x:Name="mnuPaste" Header="Paste" InputGestureText="Ctrl + V"/>
-                    <MenuItem x:Name="mnuCut" Header="Cut" InputGestureText="Ctrl + X"/>
-                    <Separator/>
-                    <MenuItem x:Name="mnuFind" Header="Find ..." InputGestureText="Ctrl + F"/>
-                    <Separator/>
-                    <MenuItem x:Name="mnuSelectAll" Header="Select all" InputGestureText="Ctrl + A"/>
-                    <MenuItem x:Name="mnuDeselect" Header="Unselect all" InputGestureText="Ctrl + Shift + A"/>
-                    <MenuItem x:Name="mnuReverse" Header="Reverse selection" InputGestureText="Ctrl + R"/>
-                    <MenuItem Visibility="Collapsed" x:Name="mnuSelectWildcard" Header="Select from wildcard ..."/>
-                    <MenuItem x:Name="mnuSelectExt" Header="Select by extension"/>
                 </MenuItem>
                 <MenuItem x:Name="hView" Header="_View">
-                    <MenuItem Header="Sort by">
-                        <MenuItem x:Name="menuSortbyName" IsCheckable="True" IsChecked="True" Header="Name"/>
-                        <MenuItem x:Name="menuSortbyModified" IsCheckable="True" IsChecked="False" Header="Date modified"/>
-                        <MenuItem x:Name="menuSortbyCreation" IsCheckable="True" IsChecked="False" Header="Date creation"/>
-                    </MenuItem>
-                    <Separator/>
-                    <MenuItem x:Name="menuSortAscending" IsCheckable="True" IsChecked="True" Header="Ascending"/>
-                    <MenuItem x:Name="menuSortDescending" IsCheckable="True" IsChecked="False" Header="Descending"/>
-                    <Separator/>
-                    <MenuItem IsEnabled="False" x:Name="menuPrev" Header="Previous"/>
-                    <MenuItem IsEnabled="False" x:Name="menuNext" Header="Next"/>
-                    <Separator/>
-                    <MenuItem IsEnabled="False" x:Name="menuRootdir" Header="Archive root directory" InputGestureText="Ctrl + ."/>
-                    <MenuItem IsEnabled="False" x:Name="menuUplevel" Header="Up one level" InputGestureText="Backspace"/>
                 </MenuItem>
                 <MenuItem x:Name="hTools" Header="_Tools" Visibility="Collapsed">
-                    <MenuItem Header="Test archive ..." InputGestureText="Ctrl + T"/>
-                    <MenuItem Header="Decrypt archive ..."/>
-                    <MenuItem Header="Comment ..."/>
-                    <MenuItem Header="Properties ..." InputGestureText="F7"/>
                 </MenuItem>
                 <MenuItem x:Name="hHelp" Header="_Help">
-                    <MenuItem x:Name="mnuAbout7z" Header="About 7-zip ..."/>
-                    <MenuItem x:Name="mnuAbout" Header="About Archiver ..."/>
+                    <MenuItem Command="{Binding About7Z}"/>
+                    <MenuItem Command="{Binding About}"/>
                 </MenuItem>
             </Menu>
         </Grid>
 
-        <GridSplitter HorizontalAlignment="Stretch" Background="White" Grid.Row="3"/>
+        <Grid Grid.Row="5" Name="statusBar" Background="#f0f0f0" Height="52" Visibility="Collapsed">
+            <Border BorderThickness="0 1 0 0" BorderBrush="#d0d0d0"
+                    Effect="{StaticResource dropShadow}"/>
+            <DockPanel>
+                <ui:LoadingRing x:Name="loadingRing" Width="32" Height="32" Margin="10 10 0 10" DockPanel.Dock="Left" Scale="0.5"/>
+                
+                <StackPanel Orientation="Vertical" x:Name="stackDoubleLineRemark" DockPanel.Dock="Left" Margin="10 0">
+                    <TextBlock x:Name="stackDblHeading" Text="Remark heading" FontWeight="Bold" Margin="0 10 0 0"/>
+                    <TextBlock x:Name="stackDblSubheading" Text="Remark sub-heading" FontWeight="Regular"
+                               FontSize="11" Margin="0 1 0 0" Foreground="Gray"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Button x:Name="btnCancel" Content="Cancel" IsEnabled="False" Padding="5 0" Margin="0 12 0 12"/>
+                    <Button x:Name="btnProceed" Content="Proceed" IsEnabled="False" Padding="5 0" Margin="5 12 12 12"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" x:Name="stackProgress" MinWidth="200" MaxWidth="400" 
+                            HorizontalAlignment="Stretch" Margin="12 0">
+                    <DockPanel Margin="0 10 0 0">
+                        <TextBlock x:Name="stackProgressDescription" DockPanel.Dock="Left"
+                                   Text="Progress description" Foreground="Gray"/>
+                        <TextBlock x:Name="stackProgressIndic" DockPanel.Dock="Right" TextAlignment="Right"
+                                   Text="0 %" FontFamily="{StaticResource fixedWidthFont}" Foreground="Gray"/>
+                    </DockPanel>
+                    <ProgressBar x:Name="stackProgressBar" Margin="0 5 0 0" Height="8" Value="40"/>
+                </StackPanel>
+            </DockPanel>
+        </Grid>
+
+        <GridSplitter HorizontalAlignment="Stretch" Background="#fafafa" Grid.Row="3"/>
     </Grid>
 
     <Window.Resources>
@@ -346,66 +327,25 @@
             </StackPanel>
         </DataTemplate>
 
-        <RoutedUICommand x:Key="rcOpen"/>
-        <RoutedUICommand x:Key="rcCreate"/>
-        <RoutedUICommand x:Key="rcDecompressSelected"/>
-        <RoutedUICommand x:Key="rcDecompress"/>
+        <HierarchicalDataTemplate DataType="{x:Type local:Arch}" ItemsSource="{Binding Children}">
+            <TextBlock Text="{Binding Path=Name}"/>
+        </HierarchicalDataTemplate>
 
-        <RoutedUICommand x:Key="rcRoot"/>
-        <RoutedUICommand x:Key="rcUpOneLevel"/>
+        <HierarchicalDataTemplate DataType="{x:Type local:FolderItem}" ItemsSource="{Binding Children}">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Margin="0 1 5 -1" Source="{Binding Icon}"/>
+                <TextBlock Text="{Binding Path=Name}"/>
+            </StackPanel>
+        </HierarchicalDataTemplate>
 
-        <RoutedUICommand x:Key="rcAppend"/>
-        <RoutedUICommand x:Key="rcDelete"/>
-        <RoutedUICommand x:Key="rcRename"/>
-        <RoutedUICommand x:Key="rcCopy"/>
-        <RoutedUICommand x:Key="rcPaste"/>
-        <RoutedUICommand x:Key="rcCut"/>
-        <RoutedUICommand x:Key="rcFind"/>
+        <DataTemplate DataType="{x:Type local:FileItem}">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Margin="0 1 5 -1" Source="{Binding Icon}"/>
+                <TextBlock Text="{Binding Path=Name}"/>
+            </StackPanel>
+        </DataTemplate>
 
-        <RoutedUICommand x:Key="rcSelect"/>
-        <RoutedUICommand x:Key="rcUnselect"/>
-        <RoutedUICommand x:Key="rcReverse"/>
-
-        <CommandBinding x:Key="cbOpen" Command="{StaticResource rcOpen}"/>
-        <CommandBinding Command="{StaticResource rcCreate}" x:Key="cbCreate"/>
-        <CommandBinding Command="{StaticResource rcDecompressSelected}" x:Key="cbDecompressSelected"/>
-        <CommandBinding Command="{StaticResource rcDecompress}" x:Key="cbDecompress"/>
-        <CommandBinding Command="{StaticResource rcRoot}" x:Key="cbRoot"/>
-        <CommandBinding Command="{StaticResource rcUpOneLevel}" x:Key="cbUpOneLevel"/>
-        <CommandBinding Command="{StaticResource rcAppend}" x:Key="cbAppend"/>
-        <CommandBinding Command="{StaticResource rcDelete}" x:Key="cbDelete"/>
-        <CommandBinding Command="{StaticResource rcRename}" x:Key="cbRename"/>
-        <CommandBinding Command="{StaticResource rcCopy}" x:Key="cbCopy"/>
-        <CommandBinding Command="{StaticResource rcPaste}" x:Key="cbPaste"/>
-        <CommandBinding Command="{StaticResource rcCut}" x:Key="cbCut"/>
-        <CommandBinding Command="{StaticResource rcFind}" x:Key="cbFind"/>
-        <CommandBinding Command="{StaticResource rcSelect}" x:Key="cbSelect"/>
-        <CommandBinding Command="{StaticResource rcUnselect}" x:Key="cbUnselect"/>
-        <CommandBinding Command="{StaticResource rcReverse}" x:Key="cbReverse"/>
     </Window.Resources>
-
-    <Window.InputBindings>
-        <KeyBinding Gesture="Ctrl + O" Command="{StaticResource rcOpen}"/>
-        <KeyBinding Gesture="Ctrl + N" Command="{StaticResource rcCreate}"/>
-        <KeyBinding Gesture="Ctrl + D" Command="{StaticResource rcDecompressSelected}"/>
-        <KeyBinding Gesture="Ctrl + Shift + D" Command="{StaticResource rcDecompress}"/>
-
-        <KeyBinding Gesture="Ctrl + Decimal" Command="{StaticResource rcRoot}"/>
-        <KeyBinding Gesture="Backspace" Command="{StaticResource rcUpOneLevel}"/>
-
-        <KeyBinding Gesture="Ctrl + P" Command="{StaticResource rcAppend}"/>
-        <KeyBinding Gesture="Del" Command="{StaticResource rcDelete}"/>
-
-        <KeyBinding Gesture="F2" Command="{StaticResource rcRename}"/>
-        <KeyBinding Gesture="Ctrl + C" Command="{StaticResource rcCopy}"/>
-        <KeyBinding Gesture="Ctrl + V" Command="{StaticResource rcPaste}"/>
-        <KeyBinding Gesture="Ctrl + X" Command="{StaticResource rcCut}"/>
-        <KeyBinding Gesture="Ctrl + F" Command="{StaticResource rcFind}"/>
-
-        <KeyBinding Gesture="Ctrl + A" Command="{StaticResource rcSelect}"/>
-        <KeyBinding Gesture="Ctrl + Shift + A" Command="{StaticResource rcUnselect}"/>
-        <KeyBinding Gesture="Ctrl + R" Command="{StaticResource rcReverse}"/>
-    </Window.InputBindings>
 
     <WindowChrome.WindowChrome>
         <WindowChrome CornerRadius="0"

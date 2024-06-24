@@ -22,7 +22,7 @@ namespace Archiver
     /// </summary>
     public partial class Extract : Window
     {
-        public Extract(Archiver.MainWindow.Archive archive)
+        public Extract(Archiver.Arch archive)
         {
             InitializeComponent();
 

@@ -21,10 +21,10 @@ namespace Archiver
             InitializeComponent();
 
             string[] lines = conflict.Replace("\r", "").Split('\n');
-            this.oPath.Text = lines[2].Substring(4).Parse7zUnicode();
+            this.oPath.Text = lines[2].Substring(4);
             this.oSize.Text = lines[3].Substring(4);
             this.oModif.Text = lines[4].Substring(4);
-            this.nPath.Text = lines[7].Substring(4).Parse7zUnicode();
+            this.nPath.Text = lines[7].Substring(4);
             this.nSize.Text = lines[8].Substring(4);
             this.nModif.Text = lines[9].Substring(4);
 

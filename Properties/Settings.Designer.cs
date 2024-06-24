@@ -33,5 +33,17 @@ namespace Archiver.Properties {
                 this["History"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool OpenFileDialogAddToRecent {
+            get {
+                return ((bool)(this["OpenFileDialogAddToRecent"]));
+            }
+            set {
+                this["OpenFileDialogAddToRecent"] = value;
+            }
+        }
     }
 }

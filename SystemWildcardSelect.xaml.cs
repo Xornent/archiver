@@ -158,7 +158,7 @@ namespace Archiver
 
                             if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext))
                                 File.Create(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext);
-                            var icon = MainWindow.GetIconFromFile(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
+                            var icon = IconExtension.GetIconFromFile(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
                             var node = new UI.IconTreeNode();
                             node.Caption = cascade;
 
@@ -325,7 +325,7 @@ namespace Archiver
 
                                 if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext))
                                     File.Create(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext);
-                                var icon = MainWindow.GetIconFromFile(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
+                                var icon = IconExtension.GetIconFromFile(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
                                 var node = new UI.IconTreeNode();
                                 node.Caption = cascade;
 

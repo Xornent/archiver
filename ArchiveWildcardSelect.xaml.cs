@@ -25,9 +25,9 @@ namespace Archiver
     /// </summary>
     public partial class ArchiveWildcardSelect : Window
     {
-        MainWindow.Archive archive = null;
+        Arch archive = null;
         bool isSPF = false;
-        public ArchiveWildcardSelect(MainWindow.Archive _arch)
+        public ArchiveWildcardSelect(Arch _arch)
         {
             InitializeComponent();
             this.archive = _arch;
@@ -66,15 +66,15 @@ namespace Archiver
                 if (this.availableFiles.Count == 0)
                     walkDirectory(this.archive);
 
-                void walkDirectory(Archiver.MainWindow.FileSystemNode info, string basepath = "")
+                void walkDirectory(Archiver.FileSystemNode info, string basepath = "")
                 {
-                    if(info is MainWindow.Archive arch) {
+                    if(info is Arch arch) {
                         foreach (var item in arch.Children) 
                             walkDirectory(item);
-                    } else if (info is MainWindow.FolderItem folder) {
+                    } else if (info is FolderItem folder) {
                         foreach(var item in folder.Children)
                             walkDirectory(item, basepath + folder.Name + "/");
-                    } else if (info is MainWindow.FileItem file) {
+                    } else if (info is FileItem file) {
                         if (basepath.Contains(":")) this.isSPF = true;
                         this.availableFiles.Add(basepath.Replace(":","") + file.Name);
                     }
@@ -111,7 +111,7 @@ namespace Archiver
                             
                             if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext))
                                 File.Create(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext);
-                            var icon = MainWindow.GetIconFromFile(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
+                            var icon = IconExtension.GetIconFromFile(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
                             var node = new UI.IconTreeNode();
                             node.Caption = cascade;
 
@@ -267,7 +267,7 @@ namespace Archiver
 
                                 if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext))
                                     File.Create(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext);
-                                var icon = MainWindow.GetIconFromFile(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
+                                var icon = IconExtension.GetIconFromFile(AppDomain.CurrentDomain.BaseDirectory + @"\temp\." + ext, Vanara.PInvoke.Shell32.SHIL.SHIL_SMALL);
                                 var node = new UI.IconTreeNode();
                                 node.Caption = cascade;
 

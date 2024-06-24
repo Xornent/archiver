@@ -21,7 +21,7 @@ namespace Archiver
     /// </summary>
     public partial class Find : Window
     {
-        public Find(Archiver.MainWindow.Archive archive, bool isSPF)
+        public Find(Archiver.Arch archive, bool isSPF)
         {
             InitializeComponent();
             if (isSPF) {
@@ -30,20 +30,20 @@ namespace Archiver
             }
 
             // visit all available items.
-            void visitDirectory(MainWindow.FileSystemNode node)
+            void visitDirectory(FileSystemNode node)
             {
-                if(node is MainWindow.Archive a) {
+                if(node is Arch a) {
                     foreach (var item in a.Children) {
-                        if (item is MainWindow.FileItem f)
+                        if (item is FileItem f)
                             this.items.Add(f);
-                        else if (item is MainWindow.FolderItem fd)
+                        else if (item is FolderItem fd)
                             visitDirectory(fd);
                     }
-                } else if(node is MainWindow.FolderItem fd2) {
+                } else if(node is FolderItem fd2) {
                     foreach (var item in fd2.Children) {
-                        if (item is MainWindow.FileItem f)
+                        if (item is FileItem f)
                             this.items.Add(f);
-                        else if (item is MainWindow.FolderItem fd)
+                        else if (item is FolderItem fd)
                             visitDirectory(fd);
                     }
                 }
@@ -86,7 +86,7 @@ namespace Archiver
             this.btnOK.Click += (s, e) => { this.Close(); };
         }
 
-        List<MainWindow.Item> items = new List<MainWindow.Item>();
+        List<Item> items = new List<Item>();
 
         private void titleBarDrag(object sender, MouseButtonEventArgs e)
         {

@@ -33,9 +33,9 @@ namespace Archiver.UI
         }
 
         public static DependencyProperty ScaleProperty = DependencyProperty.Register("Scale",
-            typeof(float), typeof(LoadingRing), new PropertyMetadata(1.0f));
+            typeof(float), typeof(LoadingRing), new PropertyMetadata(0.5f));
 
-        private float _scale = 1.0f;
+        private float _scale = 0.5f;
         public float Scale
         {
             get { return _scale; }

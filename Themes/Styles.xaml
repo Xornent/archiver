@@ -14,6 +14,10 @@
         /Fonts/#Roboto, HarmonyOS Sans SC
     </FontFamily>
 
+    <FontFamily x:Key="symbolFont">
+        /Fonts/#SF Pro Compressed Ultralight, HarmonyOS Sans SC
+    </FontFamily>
+
     <!-- Colors -->
 
     <Color x:Key="enabledButtonFaceC">
@@ -157,17 +161,19 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border x:Name="BorderFocus" BorderThickness="0" Margin="{StaticResource focusThickness}" CornerRadius="{StaticResource radiusMedium}"
-                            BorderBrush="{StaticResource focus}">
+                    <Border x:Name="BorderFocus" BorderThickness="{StaticResource focusThickness}" Margin="0"
+                            CornerRadius="{StaticResource radiusMedium}"
+                            BorderBrush="Transparent">
                         <Border Name="Border"
                                 BorderThickness="0.8" CornerRadius="{StaticResource radiusMedium}"
                                 BorderBrush="{StaticResource stressedBorder}"
                                 Background="{StaticResource enabledButtonFace}"
-                                TextElement.Foreground="{StaticResource enabledText}"
+                                TextElement.Foreground="{TemplateBinding Foreground}"
                                 Effect="{StaticResource dropShadow}">
                             <Grid Margin="2">
                                 <ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                  UseLayoutRounding="True" SnapsToDevicePixels="True">
+                                                  UseLayoutRounding="True" SnapsToDevicePixels="True"
+                                                  TextElement.Foreground="{TemplateBinding Foreground}">
                                 </ContentPresenter>
                             </Grid>
                         </Border>
@@ -177,12 +183,9 @@
                         <EventTrigger RoutedEvent="GotFocus">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ThicknessAnimation From="0" To="{StaticResource focusThickness}" Duration="0:0:0.1"
-                                                     Storyboard.TargetName="BorderFocus"
-                                                     Storyboard.TargetProperty="(Border.BorderThickness)"/>
-                                    <ThicknessAnimation From="{StaticResource focusThickness}" To="0" Duration="0:0:0.1"
-                                                     Storyboard.TargetName="BorderFocus"
-                                                     Storyboard.TargetProperty="(Border.Margin)"/>
+                                    <ColorAnimation From="Transparent" To="{StaticResource focusC}" Duration="0:0:0.1"
+                                                    Storyboard.TargetName="BorderFocus"
+                                                    Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"/>
                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderFocus"
                                                      Storyboard.TargetProperty="(Border.CornerRadius)">
                                         <ObjectAnimationUsingKeyFrames.KeyFrames>
@@ -197,12 +200,9 @@
                         <EventTrigger RoutedEvent="LostFocus">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ThicknessAnimation From="{StaticResource focusThickness}" To="0" Duration="0:0:0.1"
-                                                     Storyboard.TargetName="BorderFocus"
-                                                     Storyboard.TargetProperty="(Border.BorderThickness)"/>
-                                    <ThicknessAnimation From="0" To="{StaticResource focusThickness}" Duration="0:0:0.1"
-                                                     Storyboard.TargetName="BorderFocus"
-                                                     Storyboard.TargetProperty="(Border.Margin)"/>
+                                    <ColorAnimation From="{StaticResource focusC}" To="Transparent" Duration="0:0:0.1"
+                                                    Storyboard.TargetName="BorderFocus"
+                                                    Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"/>
                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderFocus"
                                                      Storyboard.TargetProperty="(Border.CornerRadius)">
                                         <ObjectAnimationUsingKeyFrames.KeyFrames>
@@ -225,7 +225,7 @@
                             </Trigger.ExitActions>
                             <Setter TargetName="Border" Property="Background" Value="{StaticResource stressed}"></Setter>
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource stressed}"></Setter>
-                            <Setter TargetName="Border" Property="TextElement.Foreground" Value="{StaticResource stressedText}"/>
+                            <Setter Property="Foreground" Value="{StaticResource stressedText}"/>
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">
@@ -240,7 +240,7 @@
                                 </BeginStoryboard>
                             </Trigger.ExitActions>
                             <Setter TargetName="Border" Property="Background" Value="LightGray"></Setter>
-                            <Setter TargetName="Border" Property="TextElement.Foreground" Value="{StaticResource disabledText}"/>
+                            <Setter Property="Foreground" Value="{StaticResource disabledText}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -795,6 +795,7 @@
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="Check" />
+                    <!--<ColumnDefinition Width="Auto" SharedSizeGroup="Image" />-->
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut" />
                 </Grid.ColumnDefinitions>
@@ -806,6 +807,15 @@
                           Data="M 3 9 L 6.6 13 L 13 3" Stroke="{StaticResource stressed}">
                     </Path>
                 </Border>
+                
+                <!--
+                <Border x:Name="Image" Width="16" Height="16" Visibility="Visible" Margin="3,0,3,0"
+                        BorderThickness="0" BorderBrush="Transparent" Background="Transparent">
+                    <Image x:Name="IconImage" Width="16" Height="16" Margin="0 1 0 -1" Source="{Binding Icon}"
+                           Visibility="Visible" SnapsToDevicePixels="False">
+                    </Image>
+                </Border>
+                -->
 
                 <ContentPresenter x:Name="HeaderHost" Grid.Column="1" ContentSource="Header"
                                   TextElement.FontWeight="Regular" UseLayoutRounding="True"
@@ -1031,11 +1041,44 @@
         </Setter>
     </Style>
 
-    <ControlTemplate x:Key="ComboBoxTextBox"
-                 TargetType="{x:Type TextBox}">
-        <Border x:Name="PART_ContentHost"
-          Focusable="False"
-          Background="{TemplateBinding Background}" />
+    <Style x:Key="CustomItemTemplateContextMenu" TargetType="{x:Type ContextMenu}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="FontWeight" Value="Regular"/>
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ContextMenu}">
+                    <Popup x:Name="Popup" SnapsToDevicePixels="True" UseLayoutRounding="True"
+                               Placement="Bottom" HorizontalOffset="-4" VerticalOffset="0" IsOpen="{TemplateBinding IsOpen}"
+                               AllowsTransparency="True" Focusable="True" PopupAnimation="None">
+
+                        <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True" BorderThickness="1"
+                                    Background="White" BorderBrush="{StaticResource menuArrow}" CornerRadius="8"
+                                    Margin="20" Effect="{StaticResource dropShadowPopup}">
+                            <Grid Margin="5">
+                                <ScrollViewer CanContentScroll="True" Style="{StaticResource MenuScrollViewer}">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Border>
+
+                    </Popup>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger SourceName="Popup" Property="AllowsTransparency" Value="True">
+                            <Setter TargetName="SubmenuBorder" Property="CornerRadius" Value="8 8 8 8" />
+                            <Setter TargetName="SubmenuBorder" Property="Padding" Value="0,0,0,0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
+        <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}" />
     </ControlTemplate>
 
     <Style x:Key="{x:Type ComboBox}"
@@ -1204,7 +1247,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBoxBase}">
-                    <Border x:Name="Highlight" CornerRadius="{StaticResource radiusMedium}"
+                    <Border x:Name="Highlight" CornerRadius="{StaticResource radiusLarge}"
                             BorderThickness="{StaticResource focusThickness}" BorderBrush="Transparent">
                         <Border Name="Border" CornerRadius="{StaticResource radiusSmall}" Padding="2"
                                 BorderThickness="1" Background="White" BorderBrush="{StaticResource menuArrow}"
@@ -1216,8 +1259,7 @@
                                         <Storyboard>
                                             <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
                                                 Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-                                                <EasingColorKeyFrame KeyTime="0"
-                                         Value="LightGray" />
+                                                <EasingColorKeyFrame KeyTime="0" Value="LightGray" />
                                             </ColorAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -1225,8 +1267,7 @@
                                         <Storyboard>
                                             <ColorAnimationUsingKeyFrames Storyboard.TargetName="Border"
                                                 Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-                                                <EasingColorKeyFrame KeyTime="0"
-                                         Value="Gray" />
+                                                <EasingColorKeyFrame KeyTime="0" Value="Gray" />
                                             </ColorAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -1634,7 +1675,7 @@
                         </VisualStateManager.VisualStateGroups>
                         <Border x:Name="Border" Grid.Row="0" BorderBrush="Transparent"
                                 BorderThickness="{StaticResource focusThickness}"
-                                CornerRadius="{StaticResource radiusMedium}" Padding="3">
+                                CornerRadius="{StaticResource radiusMedium}" Padding="0 3">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20" />
@@ -1649,14 +1690,15 @@
                                 </ToggleButton>
                                 <ContentPresenter Grid.Column="1"
                                                   Margin="4"
+                                                  TextElement.FontWeight="Bold"
                                                   ContentSource="Header"
                                                   RecognizesAccessKey="True" />
                             </Grid>
                         </Border>
-                        <Border x:Name="Content" Grid.Row="1" BorderThickness="1" BorderBrush="#eeeeee"
+                        <Border x:Name="Content" Grid.Row="1" BorderThickness="0" BorderBrush="#eeeeee"
                                 Background="White"
                                 CornerRadius="{StaticResource radiusMedium}">
-                            <ContentPresenter Margin="4 4 4 14" />
+                            <ContentPresenter Margin="0 4 0 14" />
                         </Border>
                     </Grid>
 
@@ -1940,50 +1982,6 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ExpandCollapseToggleStyle"
-       TargetType="ToggleButton">
-        <Setter Property="Focusable" Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ToggleButton">
-                    <Grid Width="15" Height="13" Background="Transparent">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Checked">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
-                                                                       Storyboard.TargetName="Collapsed">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Hidden}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
-                                                                       Storyboard.TargetName="Expanded">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Unchecked" />
-                                <VisualState x:Name="Indeterminate" />
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <Path x:Name="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Center"
-                              Margin="1,1,1,1" Data="M 4 0 L 8 4 L 4 8 Z">
-                            <Path.Fill>
-                                <SolidColorBrush Color="{DynamicResource enabledTextC}" />
-                            </Path.Fill>
-                        </Path>
-                        <Path x:Name="Expanded" HorizontalAlignment="Left"
-                              VerticalAlignment="Center" Margin="1,1,1,1"
-                              Data="M 0 4 L 8 4 L 4 8 Z" Visibility="Hidden">
-                            <Path.Fill>
-                                <SolidColorBrush Color="{DynamicResource enabledTextC}" />
-                            </Path.Fill>
-                        </Path>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style x:Key="TreeViewItemFocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -1997,8 +1995,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Type TreeViewItem}"
-       TargetType="{x:Type TreeViewItem}">
+    <Style x:Key="{x:Type TreeViewItem}" TargetType="{x:Type TreeViewItem}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="HorizontalContentAlignment"
                 Value="{Binding Path=HorizontalContentAlignment, 
@@ -2087,5 +2084,68 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <LinearGradientBrush x:Key="ProgressBarIndicatorAnimatedFill" StartPoint="0,0" EndPoint="1,0">
+        <LinearGradientBrush.GradientStops>
+            <GradientStopCollection>
+                <GradientStop Color="#002997ff"
+                    Offset="0" />
+                <GradientStop Color="#2997ff"
+                    Offset="0.4" />
+                <GradientStop Color="#2997ff"
+                    Offset="0.6" />
+                <GradientStop Color="#002997ff"
+                    Offset="1" />
+            </GradientStopCollection>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
+    <Style x:Key="ProgressBarBaseStyle" TargetType="{x:Type ProgressBar}">
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Background" Value="#f5f5f5"/>
+        <Setter Property="BorderThickness" Value="1,1,1,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ProgressBar}">
+                    <Grid>
+                        <Border x:Name="TemplateRoot" CornerRadius="4" BorderBrush="#d0d0d0" BorderThickness="1" 
+                                Background="{TemplateBinding Background}">
+                            <Border.Effect>
+                                <DropShadowEffect Opacity="0.15" Direction="-90" BlurRadius="3" ShadowDepth="1"/>
+                            </Border.Effect>
+                        </Border>
+                        <Grid Margin="1">
+                            <Rectangle x:Name="PART_Track"/>
+                            <Grid HorizontalAlignment="Left">
+                                <Decorator x:Name="PART_Indicator" HorizontalAlignment="Left" Margin="0,0,0,-1">
+                                    <Border CornerRadius="4" x:Name="Animation" ClipToBounds="true" Background="{TemplateBinding Foreground}">
+                                        <Rectangle x:Name="PART_GlowRect" RadiusX="4" RadiusY="4" 
+                                                   Fill="{StaticResource ProgressBarIndicatorAnimatedFill}" 
+                                                   HorizontalAlignment="Left" Margin="-100,0,0,0" Width="100"/>
+                                    </Border>
+                                </Decorator>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden">
+                                    <Label FontSize="9" Foreground="#fff" Content="{TemplateBinding Value}"></Label>
+                                    <Label FontSize="9" Foreground="#fff" Content="%"></Label>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Orientation" Value="Vertical">
+                            <Setter Property="LayoutTransform" TargetName="TemplateRoot">
+                                <Setter.Value>
+                                    <RotateTransform Angle="-90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style BasedOn="{StaticResource ProgressBarBaseStyle}" TargetType="{x:Type ProgressBar}">
+        <Setter Property="Foreground" Value="#0a84ff"/>
     </Style>
 </ResourceDictionary>
