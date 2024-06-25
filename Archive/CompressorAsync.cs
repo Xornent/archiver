@@ -1,6 +1,7 @@
 ﻿
 namespace Archiver.Archive
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
@@ -25,6 +26,8 @@ namespace Archiver.Archive
         private delegate void CompressStreamDelegate(Stream inStream, Stream outStream, string password);
 
         private delegate void ModifyArchiveDelegate(string archiveName, IDictionary<int, string> newFileNames, string password);
+
+        private delegate void CompressDictionaryDelegate(IDictionary<string, string> dictionary, string archive, string password = "");
 
         #endregion
 
@@ -451,5 +454,24 @@ namespace Archiver.Archive
         }
 
         #endregion
+
+        public async Task CompressFileDictionaryAsync(IDictionary<string, string> dictionary, string archive, string password = "")
+        {
+            try
+            {
+                SaveContext();
+                await Task.Run(() => new CompressDictionaryDelegate(CompressFileDictionary).Invoke(dictionary, archive, password));
+            } finally
+            {
+                ReleaseContext();
+            }
+        }
+
+        public void BeginCompressFileDictionary(IDictionary<string, string> dictionary, string archive, string password = "")
+        {
+            SaveContext();
+            Task.Run(() => new CompressDictionaryDelegate(CompressFileDictionary).Invoke(dictionary, archive, password))
+                .ContinueWith(_ => ReleaseContext());
+        }
     }
 }

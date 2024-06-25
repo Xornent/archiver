@@ -18,7 +18,6 @@
         <Grid Grid.Row="0">
             <Rectangle Fill="White" MouseDown="titleBarDrag"/>
             <DockPanel>
-                <Border BorderBrush="#e3e3e3" BorderThickness="0 0 0 0"/>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                     <Grid Width="30" Height="30" Margin="5 5 0 5">
                         <Border x:Name="bdMinimize" CornerRadius="4" BorderBrush="Transparent" Background="#ffffff"
@@ -92,33 +91,71 @@
         </Grid>
 
         <Grid Grid.Row="1" Background="#fafafa">
+            <Border BorderThickness="0 1 0 1" BorderBrush="#e3e3e3"/>
             <Grid Margin="20">
+
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Foreground="Black" Text="Would you like to replace the following file existed on the destination" HorizontalAlignment="Left"
-                               VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                    <TextBlock Foreground="#555555" Text="Would you like to replace the following file existed on the destination" HorizontalAlignment="Left"
+                               VerticalAlignment="Top" TextAlignment="Left" Width="470"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" FontWeight="Bold"/>
-                    <TextBlock Foreground="gray" Text="Path: /" HorizontalAlignment="Left"
-                               x:Name="oPath" VerticalAlignment="Top" TextAlignment="Left" Width="400"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
-                    <TextBlock Foreground="gray" Text="Size: " HorizontalAlignment="Left"
-                               x:Name="oSize" VerticalAlignment="Top" TextAlignment="Left" Width="400"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
-                    <TextBlock Foreground="gray" Text="Modified Date: " HorizontalAlignment="Left"
-                               x:Name="oModif" VerticalAlignment="Top" TextAlignment="Left" Width="400"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
-                    
-                    <TextBlock Foreground="Black" Text="With the one with the same name in the archive" HorizontalAlignment="Left"
-                               VerticalAlignment="Top" TextAlignment="Left" Width="400"
+
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Foreground="gray" Text="Path" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" TextAlignment="Right" Width="70"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
+                            <Grid Height="10"/>
+                            <TextBlock Foreground="gray" Text="Size" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" TextAlignment="Right" Width="70"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
+                            <TextBlock Foreground="gray" Text="Modified" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" TextAlignment="Right" Width="70"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Foreground="black" Text="/" HorizontalAlignment="Left"
+                                       x:Name="oPath" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="15 0 0 0" FontWeight="Regular"/>
+                            <Grid Height="10"/>
+                            <TextBlock Foreground="black" Text="" HorizontalAlignment="Left" FontFamily="{StaticResource fixedWidthFont}"
+                                       x:Name="oSize" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="15 0 0 0" FontWeight="Regular"/>
+                            <TextBlock Foreground="black" Text="" HorizontalAlignment="Left" FontFamily="{StaticResource fixedWidthFont}"
+                                       x:Name="oModif" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="15 0 0 0" FontWeight="Regular"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Grid Height="20"/>
+
+                    <TextBlock Foreground="#555555" Text="With the one with the same name in the archive" HorizontalAlignment="Left"
+                               VerticalAlignment="Top" TextAlignment="Left" Width="470"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" FontWeight="Bold"/>
-                    <TextBlock Foreground="gray" Text="Path: /" HorizontalAlignment="Left"
-                               x:Name="nPath" VerticalAlignment="Top" TextAlignment="Left" Width="400"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
-                    <TextBlock Foreground="gray" Text="Size: " HorizontalAlignment="Left"
-                               x:Name="nSize" VerticalAlignment="Top" TextAlignment="Left" Width="400"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
-                    <TextBlock Foreground="gray" Text="Modified Date: " HorizontalAlignment="Left"
-                               x:Name="nModif" VerticalAlignment="Top" TextAlignment="Left" Width="400"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Foreground="gray" Text="Path" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" TextAlignment="Right" Width="70"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
+                            <Grid Height="10"/>
+                            <TextBlock Foreground="gray" Text="Size" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" TextAlignment="Right" Width="70"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
+                            <TextBlock Foreground="gray" Text="Modified" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" TextAlignment="Right" Width="70"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5 0 0 0" FontWeight="Regular"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Foreground="black" Text="/" HorizontalAlignment="Left"
+                                       x:Name="nPath" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="15 0 0 0" FontWeight="Regular"/>
+                            <Grid Height="10"/>
+                            <TextBlock Foreground="black" Text="" HorizontalAlignment="Left" FontFamily="{StaticResource fixedWidthFont}"
+                                       x:Name="nSize" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="15 0 0 0" FontWeight="Regular"/>
+                            <TextBlock Foreground="black" Text="" HorizontalAlignment="Left" FontFamily="{StaticResource fixedWidthFont}"
+                                       x:Name="nModif" VerticalAlignment="Top" TextAlignment="Left" Width="400"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="15 0 0 0" FontWeight="Regular"/>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </Grid>
@@ -127,8 +164,8 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
                 <Button x:Name="btnY" Content="Yes" Margin="20 15 0 15" Padding="10 0 10 0"/>
-                <Button x:Name="btnN" Content="No" Margin="5 15 0 15" Padding="10 0 10 0"/>
                 <Button x:Name="btnA" Content="Always" Margin="5 15 0 15" Padding="10 0 10 0"/>
+                <Button x:Name="btnN" Content="Skip" Margin="5 15 0 15" Padding="10 0 10 0"/>
                 <Button x:Name="btnS" Content="Skip all" Margin="5 15 0 15" Padding="10 0 10 0"/>
                 <Button x:Name="btnU" Content="Auto rename all" Margin="5 15 0 15" Padding="10 0 10 0"/>
                 <Button x:Name="btnQ" Content="Abort" Margin="5 15 20 15" Padding="10 0 10 0"/>

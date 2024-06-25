@@ -6,13 +6,13 @@
       xmlns:local="clr-namespace:Archiver"
       xmlns:io="clr-namespace:System.IO;assembly=mscorlib"
       xmlns:tree="clr-namespace:Aga.Controls.Tree"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800">
+      mc:Ignorable="d"
+      d:DesignHeight="1000" d:DesignWidth="800">
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0*"/>
-            <ColumnDefinition Width="4*" MinWidth="510" MaxWidth="800"/>
+            <ColumnDefinition Width="4*" MinWidth="510" MaxWidth="510"/>
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
@@ -131,6 +131,7 @@
                                 <ComboBoxItem>7z</ComboBoxItem>
                                 <ComboBoxItem>Cab</ComboBoxItem>
                                 <ComboBoxItem>Tar</ComboBoxItem>
+                                <ComboBoxItem>Wim</ComboBoxItem>
                             </ComboBox>
                         </StackPanel>
 
@@ -145,37 +146,37 @@
                     <StackPanel Orientation="Vertical">
                         <RadioButton x:Name="radioNoPassword"  Content="No password" IsChecked="True" MinWidth="385"/>
                         <RadioButton x:Name="radioWithPassword"  Content="Specify password to extract this archive" MinWidth="385"/>
-                        <StackPanel x:Name="panelPassword"  Orientation="Horizontal" Visibility="Visible">
+                        <StackPanel x:Name="panelPassword"  Orientation="Horizontal" Visibility="Collapsed">
                             <TextBox x:Name="txtPassword"  Width="200" Margin="25 0 0 0"></TextBox>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
                 <Grid Height="15"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel x:Name="stSNI" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="Collapsed">
                     <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="80" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                     <CheckBox x:Name="chkRestoreNTSecurity"  Content="Restore NT security information" MinWidth="385"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel x:Name="stSNS" Orientation="Horizontal" HorizontalAlignment="Center" Visibility="Collapsed">
                     <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="80" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                     <CheckBox x:Name="chkIncludeNTFS"  IsChecked="False" Content="Include alternative NTFS data streams" MinWidth="385"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Visibility="Collapsed">
                     <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="80" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                    <CheckBox x:Name="chkCompressShared"  IsChecked="False" Content="Compress shared files (files that are open for read)" MinWidth="385"/>
+                    <CheckBox x:Name="chkCompressShared"  IsChecked="False" Content="Compress shared files (files that are open for writing)" MinWidth="385"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Visibility="Collapsed">
                     <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="80" Height="23" TextAlignment="Right"
                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                     <CheckBox x:Name="chkSetTimestamp" IsChecked="False" Margin="0" Content="Set archive timestamp from the most recently modified file" MinWidth="385"/>
                 </StackPanel>
-                <Grid Height="15"/>
+                <Grid Height="15" Visibility="Collapsed"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Foreground="gray" Text="" HorizontalAlignment="Left"
                                VerticalAlignment="Center" Width="80" Height="23" TextAlignment="Right"
@@ -184,7 +185,7 @@
                 </StackPanel>
                 <Grid Height="15"/>
                 
-                <Expander Header="7z format options" HorizontalAlignment="Center" Width="475">
+                <Expander x:Name="exp7z" Header="7z format options" HorizontalAlignment="Center" Width="475" Visibility="Collapsed" IsExpanded="True">
 
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
@@ -232,8 +233,8 @@
                                 <StackPanel Margin="25 0 0 0" Orientation="Horizontal">
                                     <TextBox Text="100"/>
                                     <TextBlock Foreground="gray" Text="files in 1 solid block" HorizontalAlignment="Left"
-                               VerticalAlignment="Center" Height="23"  TextAlignment="Left"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                               VerticalAlignment="Center" Height="23"  TextAlignment="Left"
+                                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                                 </StackPanel>
                                 <RadioButton Content="Set a limit for the total size of a solid block"/>
                                 <StackPanel Orientation="Horizontal" Margin="25 0 0 0">
@@ -312,12 +313,12 @@
                     </StackPanel>
                 </Expander>
 
-                <Expander Header="Zip format options" HorizontalAlignment="Center" Width="475">
+                <Expander x:Name="expZip" Header="Zip format options" HorizontalAlignment="Center" Width="475" Visibility="Visible" IsExpanded="True">
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Foreground="gray" Text="Level of compression" HorizontalAlignment="Left"
-               VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
-               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                             <StackPanel Orientation="Vertical">
                                 <RadioButton Content="Select a level of compression" IsChecked="True"/>
                                 <ComboBox Margin="25 0 0 0" Width="200" SelectedIndex="3" HorizontalAlignment="Left">
@@ -335,24 +336,40 @@
                         <Grid Height="10"/>
 
                         <StackPanel Orientation="Horizontal">
-                            <Grid Width="90"/>
+                            <TextBlock Foreground="gray" Text="Mode" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <ComboBox Width="200" SelectedIndex="1" HorizontalAlignment="Left">
+                                <ComboBoxItem>Copy</ComboBoxItem>
+                                <ComboBoxItem>Deflate</ComboBoxItem>
+                                <ComboBoxItem>Deflate64</ComboBoxItem>
+                                <ComboBoxItem>BZip2</ComboBoxItem>
+                                <ComboBoxItem>LZMA</ComboBoxItem>
+                                <ComboBoxItem>PPMd</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Options" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                             <StackPanel Orientation="Vertical">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Foreground="gray" Text="Number of fast bytes (Deflate)" HorizontalAlignment="Left"
-                           VerticalAlignment="Center" Height="23" TextAlignment="Left"
-                           TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                               VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                                     <TextBox Text="32" Width="100" HorizontalAlignment="Left"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Foreground="gray" Text="Number of passes (Deflate)" HorizontalAlignment="Left"
-                           VerticalAlignment="Center" Height="23" TextAlignment="Left"
-                           TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                               VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                                     <TextBox Text="1" HorizontalAlignment="Left"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Foreground="gray" Text="Size of used memory (PPMd)" HorizontalAlignment="Left"
-                           VerticalAlignment="Center" Height="23" TextAlignment="Left"
-                           TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                               VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBox Text="16" HorizontalAlignment="Left"/>
                                         <ComboBox SelectedIndex="2">
@@ -364,14 +381,14 @@
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Foreground="gray" Text="Model order (PPMd)" HorizontalAlignment="Left"
-                           VerticalAlignment="Center" Height="23" TextAlignment="Left"
-                           TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                                   VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                                   TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                                         <TextBox Text="8" HorizontalAlignment="Left"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Foreground="gray" Text="Dictionary size (BZip2)" HorizontalAlignment="Left"
-                           VerticalAlignment="Center" Height="23" TextAlignment="Left"
-                           TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                                   VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                                   TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBox Text="900000" HorizontalAlignment="Left"/>
                                             <ComboBox SelectedIndex="0">
@@ -406,7 +423,7 @@
                     </StackPanel>
                 </Expander>
 
-                <Expander Header="Bzip2 format options" HorizontalAlignment="Center" Width="475">
+                <Expander x:Name="expBzip" Header="Bzip2 format options" HorizontalAlignment="Center" Width="475" Visibility="Collapsed" IsExpanded="True">
 
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
@@ -472,7 +489,7 @@
 
                 </Expander>
 
-                <Expander Header="Gzip format options" HorizontalAlignment="Center" Width="475">
+                <Expander x:Name="expGzip" Header="Gzip format options" HorizontalAlignment="Center" Width="475" Visibility="Collapsed" IsExpanded="True">
 
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">

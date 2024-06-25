@@ -1,6 +1,7 @@
 ﻿
 namespace Archiver.Events
 {
+    using Archiver.Archive;
     using System;
 
     /// <summary>
@@ -12,9 +13,10 @@ namespace Archiver.Events
         /// Initializes a new instance of the FileOverwriteEventArgs class
         /// </summary>
         /// <param name="fileName">The file name.</param>
-        public FileOverwriteEventArgs(string fileName)
+        public FileOverwriteEventArgs(string fileName, ArchiveFileInfo info)
         {
             FileName = fileName;
+            Archive = info;
         }
 
         /// <summary>
@@ -25,6 +27,8 @@ namespace Archiver.Events
         /// <summary>
         /// Gets or sets the file name to extract to. Null means skip.
         /// </summary>
-        public string FileName { get; set; }
+        public string? FileName { get; set; }
+
+        public ArchiveFileInfo Archive { get; private set; }
     }
 }

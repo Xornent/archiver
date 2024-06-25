@@ -23,7 +23,7 @@
         <Grid Grid.Row="2" Grid.RowSpan="3" x:Name="splashScreen" Background="White" 
               Visibility="Visible" Panel.ZIndex="100">
             <StackPanel x:Name="defaultSplash" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
-                <Label Content="0.8.0[b452] alpha" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                <Label Content="0.8.0[b541.a] alpha" HorizontalAlignment="Center" VerticalAlignment="Center" 
                        FontStyle="Normal" FontWeight="Normal" FontSize="16" 
                        FontFamily="{StaticResource fixedWidthFont}" Foreground="#60666666"/>
             </StackPanel>
@@ -268,6 +268,7 @@
                 <MenuItem x:Name="hFile" Header="_File">
                     <MenuItem Command="{Binding OpenArchive}"/>
                     <MenuItem Command="{Binding Create}"/>
+                    <MenuItem Command="{Binding Decompress}"/>
                 </MenuItem>
                 <MenuItem x:Name="hEdit" Header="_Edit">
                 </MenuItem>

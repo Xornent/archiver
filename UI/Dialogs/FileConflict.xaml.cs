@@ -16,17 +16,17 @@ namespace Archiver
 {
     public partial class FileConflict : Window
     {
-        public FileConflict(string conflict)
+        public FileConflict(string existingPath, string existingSize, string existingModified,
+            string archivePath, string archiveSize, string archiveModified)
         {
             InitializeComponent();
 
-            string[] lines = conflict.Replace("\r", "").Split('\n');
-            this.oPath.Text = lines[2].Substring(4);
-            this.oSize.Text = lines[3].Substring(4);
-            this.oModif.Text = lines[4].Substring(4);
-            this.nPath.Text = lines[7].Substring(4);
-            this.nSize.Text = lines[8].Substring(4);
-            this.nModif.Text = lines[9].Substring(4);
+            this.oPath.Text = existingPath;
+            this.oSize.Text = existingSize;
+            this.oModif.Text = existingModified;
+            this.nPath.Text = archivePath;
+            this.nSize.Text = archiveSize;
+            this.nModif.Text = archiveModified;
 
             this.btnA.Click += (s, e) => { this.Response = "A"; this.DialogResult = true; this.Close(); };
             this.btnY.Click += (s, e) => { this.Response = "Y"; this.DialogResult = true; this.Close(); };
@@ -45,9 +45,7 @@ namespace Archiver
         private void windowClose(object sender, MouseButtonEventArgs e)
         {
             this.DialogResult = false;
-            // do not call 'close' here, because the window if closed without specifying
-            // an option will show repeatedly until one option is selected.
-            this.Hide();
+            this.Close();
         }
 
         private void windowStateChange(object sender, MouseButtonEventArgs e)

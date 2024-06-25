@@ -45,6 +45,7 @@ namespace Archiver
         private void windowClose(object sender, MouseButtonEventArgs e)
         {
             this.DialogResult = false;
+
             // do not call 'close' here, because the window if closed without specifying
             // an option will show repeatedly until one option is selected.
             this.Hide();

@@ -10,6 +10,9 @@
     <Compile Update="CompressPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="ExtractPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UI\Dialogs\About.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -19,6 +22,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="CompressPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="ExtractPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UI\Dialogs\About.xaml">

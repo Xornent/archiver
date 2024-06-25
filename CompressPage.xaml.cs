@@ -67,6 +67,7 @@ namespace Archiver
             this.btnWildcardMode.Click += (s, e) =>
             {
                 // if switching to this mode, all selections prior will be cleared.
+                loader.proceedDisabled();
                 this.source = new FileEntryCollection();
                 this.tree.Model = new FileTreeModel(source);
 
@@ -107,6 +108,10 @@ namespace Archiver
 
                     this.tree.Model = new FileTreeModel(entries);
                 }
+
+                if (entries.Count > 0)
+                    loader.proceedEnabled();
+                else loader.proceedDisabled();
             };
 
             #region Wildcard
@@ -123,6 +128,7 @@ namespace Archiver
                     this.comboWd.Items.Add(this.workingDirectory);
                     this.comboBoxDest.SelectedIndex = this.comboBoxDest.Items.Count - 1;
                     this.comboWd.SelectedIndex = this.comboWd.Items.Count - 1;
+                    dest = this.workingDirectory;
 
                     updatedSearch = false;
                     this.updatedExecution = false;
@@ -132,6 +138,7 @@ namespace Archiver
             this.comboWd.SelectionChanged += (s, e) => {
                 this.workingDirectory = this.comboWd.SelectedItem as DirectoryInfo;
                 this.sourceParentalDirectory = this.workingDirectory;
+                this.dest = this.workingDirectory;
                 this.updatedSearch = false;
                 this.updatedExecution = false;
             };
@@ -147,7 +154,8 @@ namespace Archiver
                 if (this.currentWildcard.Trim() == this.lastExecuteWildcast)
                 {
                     this.updatedExecution = true;
-                    loader.changeProceedText("Select");
+                    // loader.changeProceedText("Select");
+                    loader.proceedEnabled();
                 }
                 else
                 {
@@ -256,6 +264,223 @@ namespace Archiver
             wildcardInputs[0].btnExcludeSwitch.Click += wildCardUpdate;
 
             #endregion
+
+            #region Options
+
+            this.radioWithPassword.Click += (s, e) =>
+            {
+                if (this.radioWithPassword.IsChecked ?? false)
+                    this.panelPassword.Visibility = Visibility.Visible;
+                else this.panelPassword.Visibility = Visibility.Collapsed;
+            };
+
+            this.radioNoPassword.Click += (s, e) =>
+            {
+                if (this.radioWithPassword.IsChecked ?? false)
+                    this.panelPassword.Visibility = Visibility.Visible;
+                else this.panelPassword.Visibility = Visibility.Collapsed;
+            };
+
+            // ID	                                    Тип параметра	Группа параметра
+            // PARAMETER_ID_COMPRESSION_LEVEL           VT_UI4          PARAMETER_GROUP_COMPRESSION
+            // PARAMETER_ID_COMPRESSION_METHOD          VT_BSTR
+            // PARAMETER_ID_COMPRESSION_SUBMETHOD       VT_BSTR
+            // PARAMETER_ID_COMPRESSION_DICTIONARYSIZE  VT_UI8
+            // PARAMETER_ID_COMPRESSION_WORDSIZE        VT_UI4
+            // PARAMETER_ID_COMPRESSION_THREADS         VT_UI4
+            // PARAMETER_ID_COMPRESSION_SOLID           VT_BOOL
+            // PARAMETER_ID_COMPRESSION_SOLIDBLOCKSIZE  VT_UI8
+            // PARAMETER_ID_COMPRESSION_SORT            VT_BOOL
+            // PARAMETER_ID_STORE_SYMLINKS              VT_BOOL         PARAMETER_GROUP_STORE
+            // PARAMETER_ID_STORE_HARDLINKS             VT_BOOL
+            // PARAMETER_ID_STORE_ALTSTREAMS            VT_BOOL
+            // PARAMETER_ID_STORE_FILESECURITY          VT_BOOL
+            // PARAMETER_ID_STORE_DATECREATED           VT_BOOL
+            // PARAMETER_ID_STORE_DATEMODIFIED          VT_BOOL
+            // PARAMETER_ID_STORE_DATEACCESSED          VT_BOOL
+            // PARAMETER_ID_STORE_ATTRIBUTES            VT_BOOL
+            // PARAMETER_ID_ENCRYPTION                  VT_BOOL         PARAMETER_GROUP_ENCRYPTION
+            // PARAMETER_ID_ENCRYPTION_PASSWORD         VT_BSTR
+            // PARAMETER_ID_ENCRYPTION_METHOD           VT_BSTR
+            // PARAMETER_ID_ENCRYPTION_HEADER           VT_BOOL
+            // PARAMETER_ID_ENCRYPTION_HEADERPASSWORD   VT_BSTR
+            // PARAMETER_ID_SFX_CREATE                  VT_BOOL         PARAMETER_GROUP_SFX
+            // PARAMETER_ID_SFX_MODULE                  VT_BSTR
+            // PARAMETER_ID_CONTAINER_VOLUMES           VT_BOOL         PARAMETER_GROUP_CONTAINER
+            // PARAMETER_ID_CONTAINER_VOLUMESIZE        VT_UI8
+            // PARAMETER_ID_CONTAINER_COMMENTS          VT_BSTR
+
+            this.comboArchiveType.SelectionChanged += (s, e) => {
+                this.expZip.Visibility = Visibility.Collapsed;
+                this.expBzip.Visibility = Visibility.Collapsed;
+                this.expGzip.Visibility = Visibility.Collapsed;
+                this.exp7z.Visibility = Visibility.Collapsed;
+
+                // this.stSNS.Visibility = Visibility.Collapsed;
+                // this.stSNI.Visibility = Visibility.Collapsed;
+
+                switch ((comboArchiveType.SelectedItem as ComboBoxItem)?.Content?.ToString()?.ToLower() ?? "")
+                {
+                    case "zip":
+                        this.expZip.Visibility = Visibility.Visible;
+                        break;
+                    case "bzip2":
+                        this.expBzip.Visibility = Visibility.Visible;
+                        break;
+                    case "gzip":
+                        this.expGzip.Visibility = Visibility.Visible;
+                        break;
+                    case "xz":
+                        break;
+                    case "7z":
+                        this.exp7z.Visibility = Visibility.Visible;
+                        break;
+                    case "cab":
+                        break;
+                    case "tar":
+                        break;
+                    case "wim":
+
+                        // this.stSNI.Visibility = Visibility.Visible;
+                        // this.stSNS.Visibility = Visibility.Visible;
+                        
+                        break;
+                }
+            };
+
+            #endregion
+
+            #region Compress
+
+            loader.ProceedRequest += (s, e) =>
+            {
+                Archive.SevenZipCompressor compressor = new Archive.SevenZipCompressor();
+                string archiveType = (comboArchiveType.SelectedItem as ComboBoxItem)?.Content?.ToString()?.ToLower() ?? "";
+                compressor.CompressionMode = Archive.CompressionMode.Create;
+                compressor.CompressionMethod = Library.CompressionMethod.Deflate;
+
+                if (archiveType == "")
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        loader.descriptionOn("Compress error", "Invalid archive type");
+                    });
+                    return;
+                }
+
+                // if (this.chkSetTimestamp.IsChecked ?? false)
+                //     compressor.CustomParameters.Add("stl", "1");
+                // if (this.chkCompressShared.IsChecked ?? false)
+                //     compressor.CustomParameters.Add("ssw", "1");
+
+                switch (archiveType)
+                {
+                    case "zip":
+                        break;
+                    case "bzip2":
+                        break;
+                    case "gzip":
+                        break;
+                    case "xz":
+                        break;
+                    case "7z":
+                        break;
+                    case "cab":
+                        break;
+                    case "tar":
+                        break;
+                    case "wim":
+                        // if (this.chkRestoreNTSecurity.IsChecked ?? false)
+                        //     compressor.CustomParameters.Add("sni", "1");
+                        // if (this.chkIncludeNTFS.IsChecked ?? false)
+                        //     compressor.CustomParameters.Add("sns", "1");
+                        break;
+                }
+
+                string? password = this.radioWithPassword.IsChecked ?? false ?
+                    this.txtPassword.Text : null;
+
+                bool useSPF = this.chkSPF.IsChecked ?? false;
+
+                Dictionary<string, string> fileDictionary = new Dictionary<string, string>();
+                if (this.source == null || this.source.Count == 0)
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        loader.descriptionOn("Compress error", "Must compress at least 1 file");
+                    });
+                    return;
+                }
+
+                string archiveName = this.txtArchiveName.Text.Trim();
+                if (string.IsNullOrEmpty(archiveName))
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        loader.descriptionOn("Compress error", "Must specify the archive name");
+                    });
+                    return;
+                }
+
+                foreach (var item in this.source)
+                {
+                    if (!useSPF) fileDictionary.Add(item.ArchivePath, item.FileSystemPath);
+                    else fileDictionary.Add(item.FileSystemPath, item.FileSystemPath);
+                }
+
+                compressor.FilesFound += (s, e) => {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        loader.descriptionOn("Scanning for files ...", $"{e.Value} / {fileDictionary.Count} files has been found.");
+                    });
+                };
+
+                compressor.FileCompressionStarted += (s, e) =>
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        loader.descriptionOn("Compressing ...", "Compressing files into archive");
+                        loader.progressOn($"Compressing {e.FileName}", e.PercentDone);
+                    });
+                };
+
+                compressor.Compressing += (s, e) =>
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        // loader.progressOn($"Compressing ...", e.PercentDone);
+                    });
+                };
+
+                compressor.CompressionFinished += (s, e) =>
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        loader.descriptionOff();
+                        loader.progressOff();
+                        loader.loaderOff();
+                        this.JobFinished?.Invoke(this, new EventArgs());
+                    });
+                };
+
+                loader.loaderOn();
+                string destination = this.dest?.FullName ?? "";
+                if (destination == "") destination = archiveName + "." + archiveType;
+                else if (destination.EndsWith("\\")) destination += archiveName + "." + archiveType;
+                else destination += "\\" + archiveName + "." + archiveType;
+
+                compressor.CustomParameters.Add("tm", "on");
+                compressor.CustomParameters.Add("tc", "on");
+                compressor.CustomParameters.Add("ta", "on");
+                compressor.CustomParameters.Add("tp", "3");
+                compressor.CustomParameters.Add("mt", "44");
+
+                if (password == null)
+                    compressor.BeginCompressFileDictionary(fileDictionary, destination);
+                else compressor.BeginCompressFileDictionary(fileDictionary, destination, password);
+            };
+
+            #endregion
         }
 
         private void wildCardUpdate(object s, EventArgs e)
@@ -335,7 +560,7 @@ namespace Archiver
             }
         }
 
-        public event EventHandler JobFinished;
+        public event EventHandler? JobFinished;
 
         internal class WildcardInput
         {
@@ -361,8 +586,8 @@ namespace Archiver
                 {
                     this.isIncluded = value;
                     this.btnExcludeSwitchImage.Source = value ?
-                        isc.ConvertFrom("resources/check.png") as ImageSource :
-                        isc.ConvertFrom("resources/close.png") as ImageSource;
+                        isc.ConvertFrom("pack://siteoforigin:,,,/resources/check.png") as ImageSource :
+                        isc.ConvertFrom("pack://siteoforigin:,,,/resources/close.png") as ImageSource;
                     this.btnExcludeSwitchText.Text = value ? "Include" : "Exclude";
                 }
             }
@@ -383,12 +608,12 @@ namespace Archiver
                 get { return this.inputText.Text.Trim(); }
             }
 
-            internal WildcardInput(bool include = true, bool isLast = true, bool isDefault = false)
+            internal WildcardInput(bool include = true, bool isLast = true, bool isDefault = false, int textboxSize = 215)
             {
                 isc = new ImageSourceConverter();
                 this.inputText = new TextBox();
                 this.inputText.FontFamily = Application.Current.Resources["fixedWidthFont"] as FontFamily;
-                this.inputText.Width = 215;
+                this.inputText.Width = textboxSize;
 
                 this.btnExcludeSwitch = new Button();
                 StackPanel besContent = new StackPanel();
@@ -398,8 +623,8 @@ namespace Archiver
                 this.btnExcludeSwitchImage.Width = 16;
                 this.btnExcludeSwitchImage.Height = 16;
                 this.btnExcludeSwitchImage.Source = include ?
-                    isc.ConvertFrom("resources/check.png") as ImageSource :
-                    isc.ConvertFrom("resources/close.png") as ImageSource;
+                    isc.ConvertFrom("pack://siteoforigin:,,,/resources/check.png") as ImageSource :
+                    isc.ConvertFrom("pack://siteoforigin:,,,/resources/close.png") as ImageSource;
                 this.btnExcludeSwitchText = new TextBlock();
                 this.btnExcludeSwitchText.Margin = new Thickness(2, 0, 2, 0);
                 this.btnExcludeSwitchText.Text = include ?
@@ -414,7 +639,7 @@ namespace Archiver
                 btnAddImage.Width = 16;
                 btnAddImage.Height = 16;
                 btnAddImage.IsHitTestVisible = false;
-                btnAddImage.Source = isc.ConvertFrom("resources/add-circle.png") as ImageSource;
+                btnAddImage.Source = isc.ConvertFrom("pack://siteoforigin:,,,/resources/add-circle.png") as ImageSource;
                 this.btnAdd = new Button();
                 btnAdd.Width = 35;
                 btnAdd.Margin = new Thickness(3);
@@ -426,7 +651,7 @@ namespace Archiver
                 btnRemoveImage.Width = 16;
                 btnRemoveImage.Height = 16;
                 btnRemoveImage.IsHitTestVisible = false;
-                btnRemoveImage.Source = isc.ConvertFrom("resources/remove-circle.png") as ImageSource;
+                btnRemoveImage.Source = isc.ConvertFrom("pack://siteoforigin:,,,/resources/remove-circle.png") as ImageSource;
                 this.btnRemove = new Button();
                 btnRemove.Width = 35;
                 btnRemove.Margin = new Thickness(3);

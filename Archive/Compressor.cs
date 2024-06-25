@@ -247,201 +247,205 @@ namespace Archiver.Archive
             switch (_archiveFormat)
             {
                 case OutArchiveFormat.Tar:
-                {
-                    break;
-                }
+                    {
+                        break;
+                    }
                 default:
-                {
-                    var setter =
-                        CompressionMode == CompressionMode.Create && _updateData.FileNamesToModify == null ? 
-                            (ISetProperties) LibraryInterface.OutArchive(_archiveFormat, this) : 
-                            (ISetProperties) LibraryInterface.InArchive(Formats.InForOutFormats[_archiveFormat], this);
-                    
-                    if (setter == null)
                     {
-                        if (!ThrowException(null, new CompressionFailedException("The specified archive format is unsupported.")))
+                        var setter =
+                            CompressionMode == CompressionMode.Create && _updateData.FileNamesToModify == null ?
+                                (ISetProperties)LibraryInterface.OutArchive(_archiveFormat, this) :
+                                (ISetProperties)LibraryInterface.InArchive(Formats.InForOutFormats[_archiveFormat], this);
+
+                        if (setter == null)
                         {
-                            return;
+                            if (!ThrowException(null, new CompressionFailedException("The specified archive format is unsupported.")))
+                            {
+                                return;
+                            }
                         }
-                    }
 
-                    if (_volumeSize > 0 && ArchiveFormat != OutArchiveFormat.SevenZip)
-                    {
-                        throw new CompressionFailedException("Unfortunately, the creation of multi-volume non-7Zip archives is not implemented.");
-                    }
-
-#region Check for "forbidden" parameters
-
-                    if (CustomParameters.ContainsKey("x"))
-                    {
-                        if (!ThrowException(null, new CompressionFailedException("Use the \"CompressionLevel\" property instead of the \"x\" parameter.")))
+                        if (_volumeSize > 0 && ArchiveFormat != OutArchiveFormat.SevenZip)
                         {
-                            return;
+                            throw new CompressionFailedException("Unfortunately, the creation of multi-volume non-7Zip archives is not implemented.");
                         }
-                    }
 
-                    if (CustomParameters.ContainsKey("em"))
-                    {
-                        if (!ThrowException(null, new CompressionFailedException("Use the \"ZipEncryptionMethod\" property instead of the \"em\" parameter.")))
+                        #region Check for "forbidden" parameters
+
+                        if (CustomParameters.ContainsKey("x"))
                         {
-                            return;
+                            if (!ThrowException(null, new CompressionFailedException("Use the \"CompressionLevel\" property instead of the \"x\" parameter.")))
+                            {
+                                return;
+                            }
                         }
-                    }
 
-                    if (CustomParameters.ContainsKey("m"))
-                    {
-                        if (!ThrowException(null, new CompressionFailedException("Use the \"CompressionMethod\" property instead of the \"m\" parameter.")))
+                        if (CustomParameters.ContainsKey("em"))
                         {
-                            return;
+                            if (!ThrowException(null, new CompressionFailedException("Use the \"ZipEncryptionMethod\" property instead of the \"em\" parameter.")))
+                            {
+                                return;
+                            }
                         }
-                    }
 
-#endregion
-
-                    var names = new List<IntPtr>(2 + CustomParameters.Count);
-                    var values = new List<PropVariant>(2 + CustomParameters.Count);
-
-#region Initialize compression properties
-
-                    names.Add(Marshal.StringToBSTR("x"));
-                    values.Add(new PropVariant());
-
-                    if (_compressionMethod != CompressionMethod.Default)
-                    {
-                        names.Add(_archiveFormat == OutArchiveFormat.Zip ? 
-                            Marshal.StringToBSTR("m") : 
-                            Marshal.StringToBSTR("0"));
-
-                        var pv = new PropVariant
+                        if (CustomParameters.ContainsKey("m"))
                         {
-                            VarType = VarEnum.VT_BSTR,
-                            Value = Marshal.StringToBSTR(Formats.MethodNames[_compressionMethod])
-                        };
-
-                        values.Add(pv);
-                    }
-
-                    foreach (var pair in CustomParameters)
-                    {
-                        #region Validate parameters against compression method.
-
-                        if (_compressionMethod != CompressionMethod.Ppmd && 
-                                (pair.Key.Equals("mem") || 
-                                pair.Key.Equals("o")))
-                        {
-                            ThrowException(null, new CompressionFailedException(
-                                $"Parameter \"{pair.Key}\" is only valid with the PPMd compression method."));
+                            if (!ThrowException(null, new CompressionFailedException("Use the \"CompressionMethod\" property instead of the \"m\" parameter.")))
+                            {
+                                return;
+                            }
                         }
 
                         #endregion
 
-                        names.Add(Marshal.StringToBSTR(pair.Key));
-                        var pv = new PropVariant();
+                        var names = new List<IntPtr>(2 + CustomParameters.Count);
+                        var values = new List<PropVariant>(2 + CustomParameters.Count);
 
-                        if (pair.Value.All(char.IsDigit))
+                        #region Initialize compression properties
+
+                        names.Add(Marshal.StringToBSTR("x"));
+                        values.Add(new PropVariant());
+
+                        if (_compressionMethod != CompressionMethod.Default)
                         {
-                            pv.VarType = VarEnum.VT_UI4;
-                            pv.UInt32Value = Convert.ToUInt32(pair.Value, CultureInfo.InvariantCulture);
-                        }
-                        else
-                        {
-                            pv.VarType = VarEnum.VT_BSTR;
-                            pv.Value = Marshal.StringToBSTR(pair.Value);
+                            names.Add(_archiveFormat == OutArchiveFormat.Zip ?
+                                Marshal.StringToBSTR("m") :
+                                Marshal.StringToBSTR("0"));
+
+                            var pv = new PropVariant
+                            {
+                                VarType = VarEnum.VT_BSTR,
+                                Value = Marshal.StringToBSTR(Formats.MethodNames[_compressionMethod])
+                            };
+
+                            values.Add(pv);
                         }
 
-                        values.Add(pv);
+                        foreach (var pair in CustomParameters)
+                        {
+                            #region Validate parameters against compression method.
+
+                            if (_compressionMethod != CompressionMethod.Ppmd &&
+                                    (pair.Key.Equals("mem") ||
+                                    pair.Key.Equals("o")))
+                            {
+                                ThrowException(null, new CompressionFailedException(
+                                    $"Parameter \"{pair.Key}\" is only valid with the PPMd compression method."));
+                            }
+
+                            #endregion
+
+                            names.Add(Marshal.StringToBSTR(pair.Key));
+                            var pv = new PropVariant();
+
+                            if (string.IsNullOrEmpty(pair.Value))
+                            {
+                                pv.VarType = VarEnum.VT_EMPTY;
+                                pv.Value = nint.Zero;
+                            } 
+                            else if (pair.Value.All(char.IsDigit))
+                            {
+                                pv.VarType = VarEnum.VT_UI4;
+                                pv.UInt32Value = Convert.ToUInt32(pair.Value, CultureInfo.InvariantCulture);
+                            } 
+                            else
+                            {
+                                pv.VarType = VarEnum.VT_BSTR;
+                                pv.Value = Marshal.StringToBSTR(pair.Value);
+                            }
+
+                            values.Add(pv);
+                        }
+
+                        #endregion
+
+                        #region Set compression level
+
+                        var clpv = values[0];
+                        clpv.VarType = VarEnum.VT_UI4;
+
+                        switch (CompressionLevel)
+                        {
+                            case CompressionLevel.None:
+                                {
+                                    clpv.UInt32Value = 0;
+                                    break;
+                                }
+                            case CompressionLevel.Fast:
+                                {
+                                    clpv.UInt32Value = 1;
+                                    break;
+                                }
+                            case CompressionLevel.Low:
+                                {
+                                    clpv.UInt32Value = 3;
+                                    break;
+                                }
+                            case CompressionLevel.Normal:
+                                {
+                                    clpv.UInt32Value = 5;
+                                    break;
+                                }
+                            case CompressionLevel.High:
+                                {
+                                    clpv.UInt32Value = 7;
+                                    break;
+                                }
+                            case CompressionLevel.Ultra:
+                                {
+                                    clpv.UInt32Value = 9;
+                                    break;
+                                }
+                        }
+
+                        values[0] = clpv;
+
+                        #endregion
+
+                        #region Encrypt headers
+
+                        if (EncryptHeaders && _archiveFormat == OutArchiveFormat.SevenZip && !SwitchIsInCustomParameters("he"))
+                        {
+                            names.Add(Marshal.StringToBSTR("he"));
+                            var tmp = new PropVariant { VarType = VarEnum.VT_BSTR, Value = Marshal.StringToBSTR("on") };
+                            values.Add(tmp);
+                        }
+
+                        #endregion
+
+                        #region Zip Encryption
+
+                        if (_archiveFormat == OutArchiveFormat.Zip &&
+                            ZipEncryptionMethod != ZipEncryptionMethod.ZipCrypto &&
+                            !SwitchIsInCustomParameters("em"))
+                        {
+                            names.Add(Marshal.StringToBSTR("em"));
+
+                            var tmp = new PropVariant
+                            {
+                                VarType = VarEnum.VT_BSTR,
+                                Value = Marshal.StringToBSTR(Enum.GetName(typeof(ZipEncryptionMethod), ZipEncryptionMethod))
+                            };
+
+                            values.Add(tmp);
+                        }
+
+                        #endregion
+
+                        var namesHandle = GCHandle.Alloc(names.ToArray(), GCHandleType.Pinned);
+                        var valuesHandle = GCHandle.Alloc(values.ToArray(), GCHandleType.Pinned);
+
+                        try
+                        {
+                            setter?.SetProperties(namesHandle.AddrOfPinnedObject(), valuesHandle.AddrOfPinnedObject(), names.Count);
+                        } finally
+                        {
+                            namesHandle.Free();
+                            valuesHandle.Free();
+                        }
+
+                        break;
                     }
-
-#endregion
-
-#region Set compression level
-
-                    var clpv = values[0];
-                    clpv.VarType = VarEnum.VT_UI4;
-
-                    switch (CompressionLevel)
-                    {
-                        case CompressionLevel.None:
-                        {
-                            clpv.UInt32Value = 0;
-                            break;
-                        }
-                        case CompressionLevel.Fast:
-                        {
-                            clpv.UInt32Value = 1;
-                            break;
-                        }
-                        case CompressionLevel.Low:
-                        {
-                            clpv.UInt32Value = 3;
-                            break;
-                        }
-                        case CompressionLevel.Normal:
-                        {
-                            clpv.UInt32Value = 5;
-                            break;
-                        }
-                        case CompressionLevel.High:
-                        {
-                            clpv.UInt32Value = 7;
-                            break;
-                        }
-                        case CompressionLevel.Ultra:
-                        {
-                            clpv.UInt32Value = 9;
-                            break;
-                        }
-                    }
-
-                    values[0] = clpv;
-
-#endregion
-
-#region Encrypt headers
-
-                    if (EncryptHeaders && _archiveFormat == OutArchiveFormat.SevenZip && !SwitchIsInCustomParameters("he"))
-                    {
-                        names.Add(Marshal.StringToBSTR("he"));
-                        var tmp = new PropVariant {VarType = VarEnum.VT_BSTR, Value = Marshal.StringToBSTR("on")};
-                        values.Add(tmp);
-                    }
-
-#endregion
-
-#region Zip Encryption
-
-                    if (_archiveFormat == OutArchiveFormat.Zip &&
-                        ZipEncryptionMethod != ZipEncryptionMethod.ZipCrypto &&
-                        !SwitchIsInCustomParameters("em"))
-                    {
-                        names.Add(Marshal.StringToBSTR("em"));
-
-                        var tmp = new PropVariant
-                        {
-                            VarType = VarEnum.VT_BSTR,
-                            Value = Marshal.StringToBSTR(Enum.GetName(typeof(ZipEncryptionMethod), ZipEncryptionMethod))
-                        };
-
-                        values.Add(tmp);
-                    }
-
-#endregion
-
-                    var namesHandle = GCHandle.Alloc(names.ToArray(), GCHandleType.Pinned);
-                    var valuesHandle = GCHandle.Alloc(values.ToArray(), GCHandleType.Pinned);
-
-                    try
-                    {
-                        setter?.SetProperties(namesHandle.AddrOfPinnedObject(), valuesHandle.AddrOfPinnedObject(), names.Count);
-                    }
-                    finally
-                    {
-                        namesHandle.Free();
-                        valuesHandle.Free();
-                    }
-
-                    break;
-                }
             }
         }
 

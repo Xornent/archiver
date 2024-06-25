@@ -7,6 +7,7 @@ using System.Windows.Media;
 using Microsoft.Win32;
 using System.Collections;
 using System.Drawing;
+using Vanara.Collections;
 
 namespace Archiver
 {
@@ -174,8 +175,15 @@ namespace Archiver
     public class FileTreeModel : ITreeModel
     {
         private FileTreeFolder root = new FileTreeFolder("/");
-        public FileTreeModel(FileEntryCollection collection)
+        private bool showRootName = false;
+        public FileTreeModel(FileEntryCollection collection, string commonRootName = "")
         {
+            if (!string.IsNullOrEmpty(commonRootName))
+            {
+                this.root = new FileTreeFolder(commonRootName);
+                this.showRootName = true;
+            }
+
             foreach(var entry in collection)
             {
                 FileTree item = new FileTreeNode(entry);
@@ -268,8 +276,12 @@ namespace Archiver
         {
             var parentFolder = parent as FileTreeFolder;
             if (parent == null)
-                foreach (var item in this.root.Children)
-                    yield return item;
+                if (this.showRootName)
+                    yield return root;
+                else
+                    foreach (var item in this.root.Children)
+                        yield return item;
+
             else if (parentFolder != null)
                 foreach (var item in parentFolder.Children)
                     yield return item;
@@ -353,5 +365,272 @@ namespace Archiver
                 return IconExtension.GetIconFromExtension(this.Name);
             }
         }
+    }
+
+    public class PreviewFileTreeModel : ITreeModel
+    {
+        private PreviewFileTreeFolder root;
+        private bool showRootName = false;
+
+        public PreviewFileTreeModel(FileEntryCollection collection, Arch arch, string commonRootName = "")
+        {
+            if (!string.IsNullOrEmpty(commonRootName))
+            {
+                this.root = new PreviewFileTreeFolder(commonRootName, true);
+                this.showRootName = true;
+            } else this.root = new PreviewFileTreeFolder("/", true);
+
+            foreach (var entry in collection)
+            {
+                FileItem? query = arch.FindPathRecursive(entry.ArchivePath.Replace("/","\\"));
+                PreviewFileTree item = new PreviewFileTreeNode(entry, query ?? throw new Exception("Unexpected"));
+
+                string[] fullpath = item.PreviewLocalName.Split('/');
+                item.Name = fullpath.Last();
+                PreviewFileTreeFolder? parent = null;
+                string fullCascadeName = "";
+
+                if (fullpath.Count() > 1)
+                {
+                    string cascadeName = fullpath[0];
+                    fullCascadeName = fullCascadeName + cascadeName;
+                    parent = (PreviewFileTreeFolder?)root.Children.Find((x) => {
+                        return (x.Name == cascadeName && x.IsFolder);
+                    });
+
+                    if (parent == null)
+                    {
+                        parent = new PreviewFileTreeFolder(cascadeName);
+                        root.Children.Add(parent);
+                    }
+
+                    for (int cascade = 1; cascade < fullpath.Length - 1; cascade++)
+                    {
+                        cascadeName = fullpath[cascade];
+                        fullCascadeName = fullCascadeName + "/" + cascadeName;
+                        PreviewFileTreeFolder? fi = (PreviewFileTreeFolder?)parent.Children.Find((x) => {
+                            return x.Name == cascadeName && x.IsFolder;
+                        });
+
+                        if (fi == null)
+                        {
+                            fi = new PreviewFileTreeFolder(cascadeName);
+                            parent.Children.Add(fi);
+                        }
+
+                        parent = fi;
+                    }
+
+                    if (item.IsFolder)
+                    {
+                        PreviewFileTreeFolder? found = (PreviewFileTreeFolder?)parent.Children.Find((x) => {
+                            return (x.Name == item.Name && x.IsFolder);
+                        });
+
+                        if (found != null)
+                        {
+                            var folder = item as PreviewFileTreeFolder;
+                            if (folder != null) folder.Children = found.Children;
+                            parent.Children.Remove(found);
+                        }
+                    }
+
+                    parent.Children.Add(item);
+                    continue;
+                }
+
+                if (item.IsFolder)
+                {
+                    PreviewFileTreeFolder? found = (PreviewFileTreeFolder?)root.Children.Find((x) => {
+                        return (x.Name == item.Name && x.IsFolder);
+                    });
+
+                    if (found != null)
+                    {
+                        var folder = item as PreviewFileTreeFolder;
+                        if (folder != null) folder.Children = found.Children;
+                        root.Children.Remove(found);
+                    }
+                } else
+                {
+                    PreviewFileTree? found = (PreviewFileTree?)root.Children.Find((x) => {
+                        return (x.Name == item.Name && !x.IsFolder);
+                    });
+
+                    if (found == null)
+                        root.Children.Add(item);
+                }
+            }
+        }
+
+        public bool HasChildren(object parent)
+        {
+            return parent is PreviewFileTreeFolder;
+        }
+
+        IEnumerable ITreeModel.GetChildren(object parent)
+        {
+            var parentFolder = parent as PreviewFileTreeFolder;
+            if (parent == null)
+                if (this.showRootName)
+                    yield return root;
+                else
+                    foreach (var item in this.root.Children)
+                        yield return item;
+
+            else if (parentFolder != null)
+                foreach (var item in parentFolder.Children)
+                    yield return item;
+        }
+    }
+
+    public class PreviewFileTree
+    {
+        public bool IsFolder { get; set; }
+        public bool IsRoot { get; set; } = false;
+
+        public string Name { get; set; } = "";
+        public string ArchiveName { get; set; } = "";
+        public string PreviewLocalName { get; set; } = "";
+
+        public virtual int? Index { get; set; } = null;
+        public virtual ulong Size { get; set; }
+        public string SizeHumanFriendly
+        {
+            get
+            {
+                return Item.expressSize(Size);
+            }
+        }
+
+        public virtual DateTime? DateModified { get; set; }
+        public virtual DateTime? DateCreation { get; set; }
+        public virtual DateTime? DateAccessed { get; set; }
+        public virtual uint? Attributes { get; set; } = null;
+        public virtual bool? IsEncrypted { get; set; }
+        public virtual uint? CRC { get; set; }
+        public virtual string Method { get; set; } = "";
+        public virtual string? Comment { get; set; }
+        public string? CommentAbstract
+        {
+            get
+            {
+                if (Comment == null) return null;
+                return Comment.Split('\n').FirstOrDefault("");
+            }
+        }
+
+        public virtual ImageSource? Icon { get; set; }
+    }
+
+    public class PreviewFileTreeFolder : PreviewFileTree
+    {
+        ImageSourceConverter isc = new ImageSourceConverter();
+        public PreviewFileTreeFolder(string folderName, bool isroot = false)
+        {
+            this.Name = folderName;
+            this.IsFolder = true;
+            this.IsRoot = isroot;
+        }
+
+        public List<PreviewFileTree> Children { get; set; } = new List<PreviewFileTree>();
+
+        public override int? Index { get { return null; } }
+
+        public override DateTime? DateAccessed
+        {
+            get
+            {
+                return this.Children.Max(r => r.DateAccessed);
+            }
+        }
+
+        public override DateTime? DateCreation
+        {
+            get
+            {
+                return this.Children.Max(r => r.DateCreation);
+            }
+        }
+
+        public override DateTime? DateModified
+        {
+            get
+            {
+                return this.Children.Max(r => r.DateModified);
+            }
+        }
+
+        public override bool? IsEncrypted
+        {
+            get
+            {
+                return this.Children.Any((x) =>
+                {
+                    return x.IsEncrypted ?? false;
+                });
+            }
+        }
+
+        public override ulong Size
+        {
+            get
+            {
+                ulong sum = 0;
+                foreach (var item in this.Children)
+                {
+                    sum += item.Size;
+                }
+                return sum;
+            }
+        }
+
+        public override uint? Attributes { get { return null; } }
+        public override uint? CRC { get { return null; } }
+        public override string Method { get { return ""; } }
+        public override string? Comment { get { return null; } }
+
+        public override ImageSource? Icon
+        {
+            get
+            {
+                return isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico") as ImageSource;
+            }
+        }
+    }
+
+    public class PreviewFileTreeNode : PreviewFileTree
+    {
+        public PreviewFileTreeNode(FileEntry entry, FileItem item)
+        {
+            this.ArchiveName = entry.ArchivePath;
+            this.PreviewLocalName = entry.FileSystemPath;
+            this.Name = entry.ArchivePath.Split('/').LastOrDefault("");
+
+            this.IsFolder = false;
+            this.Item = item;
+        }
+
+        public override ImageSource? Icon
+        {
+            get
+            {
+                return IconExtension.GetIconFromExtension(this.Name);
+            }
+        }
+
+        public override int? Index { get { return this.Item.Index; } }
+        public override ulong Size { get { return this.Item.Size; } }
+
+        public override DateTime? DateModified { get { return this.Item.DateModified; } }
+        public override DateTime? DateCreation { get { return this.Item.DateCreation; } }
+        public override DateTime? DateAccessed { get { return this.Item.DateAccessed; } }
+        public override uint? Attributes { get { return this.Item.Attributes; } }
+        public override bool? IsEncrypted { get { return this.Item.IsEncrypted; } }
+        public override uint? CRC { get { return this.Item.CRC; } }
+        public override string Method { get { return this.Item.Method; } }
+        public override string? Comment { get { return this.Item.Comment; } }
+
+        public FileItem Item;
     }
 }

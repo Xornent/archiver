@@ -182,7 +182,9 @@ namespace Archiver.Archive
         {
             if (HasExceptions)
             {
+#if DEBUG
                 throw new SevenZipException(SevenZipException.USER_EXCEPTION_MESSAGE);
+#endif
             }
         }
 

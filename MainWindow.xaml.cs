@@ -14,6 +14,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static Vanara.PInvoke.Shell32;
+using static Vanara.PInvoke.User32;
 
 namespace Archiver
 {
@@ -48,8 +49,6 @@ namespace Archiver
                 Directory.CreateDirectory(_env + @"\temp\");
 
             ImageSourceConverter isc = new ImageSourceConverter();
-
-            string[] pargs = Environment.GetCommandLineArgs();
 
             this.StateChanged += (s, e) =>
             {
@@ -107,127 +106,7 @@ namespace Archiver
 
                     if (dialog.ShowDialog() ?? false)
                     {
-                        Archiver.Archive.SevenZipExtractor extractor = new Archiver.Archive.SevenZipExtractor(dialog.FileName);
-                        var properties = extractor.ArchiveProperties;
-
-                        if (extractor.HasExceptions)
-                            return;
-
-                        Arch arch = new Arch();
-                        arch.Format = extractor.Format.ToString();
-                        arch.FullName = dialog.FileName;
-                        arch.Name = new FileInfo(dialog.FileName).Name;
-                        arch.PackedSize = Convert.ToUInt64(extractor.PackedSize);
-                        arch.Icon = isc.ConvertFrom("pack://siteoforigin:,,,/resources/archive.ico") as ImageSource;
-
-                        foreach(var fileData in extractor.ArchiveFileData)
-                        {
-                            Item? item = null;
-                            if (!fileData.IsDirectory)
-                                item = new FileItem(fileData);
-                            else item = new FolderItem(fileData);
-
-                            if (item == null) continue;
-
-                            string[] fullpath = item.FullName.Split('\\');
-                            item.Name = fullpath.Last();
-                            FolderItem? parent = null;
-                            string fullCascadeName = "";
-
-                            if (fullpath.Count() > 1)
-                            {
-                                string cascadeName = fullpath[0];
-                                fullCascadeName = fullCascadeName + cascadeName;
-                                parent = (FolderItem?) arch.Children.Find((x) => { 
-                                    return (x.Name == cascadeName && x.IsFolder); 
-                                });
-
-                                if (parent == null)
-                                {
-                                    parent = new FolderItem()
-                                    {
-                                        Name = cascadeName,
-                                        FullName = fullCascadeName,
-                                        IsFolder = true,
-                                        Icon = isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico") as ImageSource
-                                    };
-                                    arch.Children.Add(parent);
-                                    parent.Parent = arch;
-                                }
-
-                                for (int cascade = 1; cascade < fullpath.Length - 1; cascade++)
-                                {
-                                    cascadeName = fullpath[cascade];
-                                    fullCascadeName = fullCascadeName + "\\" + cascadeName;
-                                    FolderItem? fi = (FolderItem?) parent.Children.Find((x) => {
-                                        return x.Name == cascadeName && x.IsFolder; 
-                                    });
-
-                                    if (fi == null)
-                                    {
-                                        fi = new FolderItem()
-                                        {
-                                            Name = cascadeName,
-                                            FullName = fullCascadeName,
-                                            IsFolder = true,
-                                            Icon = isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico") as ImageSource
-                                        };
-                                        parent.Children.Add(fi);
-                                        fi.Parent = parent;
-                                    }
-
-                                    parent = fi;
-                                }
-
-                                if (item.IsFolder)
-                                {
-                                    FolderItem? found = (FolderItem?) parent.Children.Find((x) => {
-                                        return (x.Name == item.Name && x.IsFolder);
-                                    });
-
-                                    if (found != null)
-                                    {
-                                        var folder = item as FolderItem;
-                                        if (folder != null) folder.Children = found.Children;
-                                        parent.Children.Remove(found);
-                                    }
-                                }
-
-                                parent.Children.Add(item);
-                                item.Parent = parent;
-                                continue;
-                            }
-
-                            if (item.IsFolder)
-                            {
-                                FolderItem? found = (FolderItem?) arch.Children.Find((x) => {
-                                    return (x.Name == item.Name && x.IsFolder);
-                                });
-
-                                if (found != null)
-                                {
-                                    var folder = item as FolderItem;
-                                    if (folder != null) folder.Children = found.Children;
-                                    arch.Children.Remove(found);
-                                }
-                            }
-
-                            arch.Children.Add(item);
-                            item.Parent = arch;
-                        }
-
-                        this.currentArchive = arch;
-                        this.lblTitle.Text = "Archiver · " + System.IO.Path.GetFileName(arch.Name);
-                        this.Title = arch.Name;
-
-                        this.previous.Clear();
-                        this.next.Clear();
-                        this.history.Add(arch.FullName);
-
-                        this.bcRoot.ItemsSource = arch;
-                        this.navigate(arch);
-                        this.updateProperties(arch);
-                        this.splashScreen.Visibility = Visibility.Hidden;
+                        openFile(isc, dialog.FileName);
                     }
                 },
                 (o, args) =>
@@ -261,7 +140,39 @@ namespace Archiver
                         isModelDialogOpened = false;
                     };
                 },
-                (s, e) => { return true; }
+                (s, e) => { return !isModelDialogOpened; }
+            );
+
+            this.Decompress = registerCommand("Extract archive ...", "decompress",
+                new KeyGesture(Key.X, ModifierKeys.Control | ModifierKeys.Shift, "Ctrl + Shift + X"),
+                (s, e) =>
+                {
+                    isModelDialogOpened = true;
+                    var tempVisibility = this.splashScreen.Visibility;
+
+                    this.resetStatusBar();
+                    ExtractPage page = new ExtractPage(this, this.currentArchive ?? throw new Exception("Unexpected"));
+                    this.statusBar.Visibility = Visibility.Visible;
+                    this.splashScreen.Visibility = Visibility.Visible;
+                    this.defaultSplash.Visibility = Visibility.Hidden;
+                    this.splashScreen.Children.Add(page);
+
+                    page.JobFinished += (s, e) =>
+                    {
+                        this.splashScreen.Children.Remove(page);
+                        this.defaultSplash.Visibility = Visibility.Visible;
+                        this.splashScreen.Visibility = tempVisibility;
+                        this.resetStatusBar();
+                        this.statusBar.Visibility = Visibility.Collapsed;
+
+                        isModelDialogOpened = false;
+                    };
+                },
+                (s, e) => 
+                { 
+                    return !isModelDialogOpened && 
+                           this.IsArchiveOpened; 
+                }
             );
 
             #endregion
@@ -277,6 +188,149 @@ namespace Archiver
                 (s, e) => { return true; });
 
             #endregion
+
+            this.Loaded += (s, e) =>
+            {
+                string[] pargs = Environment.GetCommandLineArgs();
+                if (pargs.Count() == 2)
+                {
+                    string fname = pargs[1];
+                    if (File.Exists(fname))
+                    {
+                        this.openFile(isc, fname);
+                    }
+                }
+            };
+        }
+
+        private void openFile(ImageSourceConverter isc, string fname)
+        {
+            Archiver.Archive.SevenZipExtractor extractor = new Archiver.Archive.SevenZipExtractor(fname);
+            var properties = extractor.ArchiveProperties;
+
+            if (extractor.HasExceptions)
+                return;
+
+            Arch arch = new Arch();
+            arch.Format = extractor.Format.ToString();
+            arch.FullName = fname;
+            arch.Name = new FileInfo(fname).Name;
+            arch.PackedSize = Convert.ToUInt64(extractor.PackedSize);
+            arch.Icon = isc.ConvertFrom("pack://siteoforigin:,,,/resources/archive.ico") as ImageSource;
+
+            foreach (var fileData in extractor.ArchiveFileData)
+            {
+                Item? item = null;
+                if (!fileData.IsDirectory)
+                    item = new FileItem(fileData);
+                else item = new FolderItem(fileData);
+
+                if (item == null) continue;
+
+                string[] fullpath = item.FullName.Split('\\');
+                item.Name = fullpath.Last();
+                FolderItem? parent = null;
+                string fullCascadeName = "";
+
+                if (fullpath.Count() > 1)
+                {
+                    string cascadeName = fullpath[0];
+                    fullCascadeName = fullCascadeName + cascadeName;
+                    parent = (FolderItem?)arch.Children.Find((x) =>
+                    {
+                        return (x.Name == cascadeName && x.IsFolder);
+                    });
+
+                    if (parent == null)
+                    {
+                        parent = new FolderItem()
+                        {
+                            Name = cascadeName,
+                            FullName = fullCascadeName,
+                            IsFolder = true,
+                            Icon = isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico") as ImageSource
+                        };
+                        arch.Children.Add(parent);
+                        parent.Parent = arch;
+                    }
+
+                    for (int cascade = 1; cascade < fullpath.Length - 1; cascade++)
+                    {
+                        cascadeName = fullpath[cascade];
+                        fullCascadeName = fullCascadeName + "\\" + cascadeName;
+                        FolderItem? fi = (FolderItem?)parent.Children.Find((x) =>
+                        {
+                            return x.Name == cascadeName && x.IsFolder;
+                        });
+
+                        if (fi == null)
+                        {
+                            fi = new FolderItem()
+                            {
+                                Name = cascadeName,
+                                FullName = fullCascadeName,
+                                IsFolder = true,
+                                Icon = isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico") as ImageSource
+                            };
+                            parent.Children.Add(fi);
+                            fi.Parent = parent;
+                        }
+
+                        parent = fi;
+                    }
+
+                    if (item.IsFolder)
+                    {
+                        FolderItem? found = (FolderItem?)parent.Children.Find((x) =>
+                        {
+                            return (x.Name == item.Name && x.IsFolder);
+                        });
+
+                        if (found != null)
+                        {
+                            var folder = item as FolderItem;
+                            if (folder != null) folder.Children = found.Children;
+                            parent.Children.Remove(found);
+                        }
+                    }
+
+                    parent.Children.Add(item);
+                    item.Parent = parent;
+                    continue;
+                }
+
+                if (item.IsFolder)
+                {
+                    FolderItem? found = (FolderItem?)arch.Children.Find((x) =>
+                    {
+                        return (x.Name == item.Name && x.IsFolder);
+                    });
+
+                    if (found != null)
+                    {
+                        var folder = item as FolderItem;
+                        if (folder != null) folder.Children = found.Children;
+                        arch.Children.Remove(found);
+                    }
+                }
+
+                arch.Children.Add(item);
+                item.Parent = arch;
+            }
+
+            this.currentArchive = arch;
+            this.lblTitle.Text = "Archiver · " + System.IO.Path.GetFileName(arch.Name);
+            this.Title = arch.Name;
+            extractor.Dispose(); // free the file handle.
+
+            this.previous.Clear();
+            this.next.Clear();
+            this.history.Add(arch.FullName);
+
+            this.bcRoot.ItemsSource = arch;
+            this.navigate(arch);
+            this.updateProperties(arch);
+            this.splashScreen.Visibility = Visibility.Hidden;
         }
 
         private void navigate(FileSystemNode directory, bool suppress = false)
@@ -536,6 +590,8 @@ namespace Archiver
 
         public Arch? currentArchive { get; set; } = null;
 
+        public bool IsArchiveOpened { get { return this.currentArchive != null; } }
+
         public FileSystemNode? current { get; set; } = null;
         List<FileSystemNode> previous = new List<FileSystemNode>();
         List<FileSystemNode> next = new List<FileSystemNode>();
@@ -575,6 +631,42 @@ namespace Archiver
         public IEnumerator<Item> GetEnumerator()
         {
             return this.Children.GetEnumerator();
+        }
+
+        public bool IsSPF
+        {
+            get
+            {
+                if (this.Children.Any())
+                    if (this.Children.First() is FolderItem folder)
+                        if ((folder.Name ?? "-").EndsWith(":"))
+                            return true;
+                return false;
+            }
+        }
+
+        private FileItem? findPathRecursive(List<Item> items, string path)
+        {
+            foreach (var item in items)
+            {
+                if(item is FolderItem folder)
+                {
+                    var result = findPathRecursive(folder.Children, path);
+                    if (result != null) return result;
+                }
+                else if(item is FileItem file)
+                {
+                    if (file.FullName == path)
+                        return file;
+                }
+            }
+
+            return null;
+        }
+
+        public FileItem? FindPathRecursive(string path)
+        {
+            return findPathRecursive(this.Children, path);
         }
     }
 
@@ -638,7 +730,8 @@ namespace Archiver
             // this.DateModified = info.LastWriteTime;
             this.FullName = info.FileName;
             this.Name = info.FileName.Split('\\').Last();
-            this.Icon = IconExtension.GetIconFromExtension(this.Name);
+            ImageSourceConverter isc = new ImageSourceConverter();
+            this.Icon = isc.ConvertFrom("pack://siteoforigin:,,,/resources/folder.ico") as ImageSource;
             this.Index = info.Index;
             // this.IsEncrypted = info.Encrypted;
             this.IsFolder = info.IsDirectory;
@@ -920,6 +1013,13 @@ namespace Archiver
             this.progressOff();
             this.cancelDisabled();
             this.proceedDisabled();
+
+            foreach (var del in this.CancelRequest?.GetInvocationList() ?? new Delegate[] { })
+                this.CancelRequest -= (EventHandler)del;
+
+            foreach (var del in this.ProceedRequest?.GetInvocationList() ?? new Delegate[] { })
+                this.ProceedRequest -= (EventHandler)del;
+
             this.changeProceedText("Proceed");
         }
     }

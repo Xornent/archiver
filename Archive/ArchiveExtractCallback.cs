@@ -286,7 +286,7 @@ namespace Archiver.Archive
                             
                             if (File.Exists(fileName))
                             {
-                                var fnea = new FileOverwriteEventArgs(fileName);
+                                var fnea = new FileOverwriteEventArgs(fileName, _extractor.ArchiveFileData[(int)index]);
 
                                 FileExists?.Invoke(this, fnea);
                                 
