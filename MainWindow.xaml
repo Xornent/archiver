@@ -16,14 +16,14 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5"/>
-            <RowDefinition MinHeight="178" Height="178"/>
+            <RowDefinition MinHeight="178" Height="216"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="2" Grid.RowSpan="3" x:Name="splashScreen" Background="White" 
               Visibility="Visible" Panel.ZIndex="100">
             <StackPanel x:Name="defaultSplash" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
-                <Label Content="0.8.0[b541.a] alpha" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                <Label Content="0.8.0[b563.a] alpha" HorizontalAlignment="Center" VerticalAlignment="Center" 
                        FontStyle="Normal" FontWeight="Normal" FontSize="16" 
                        FontFamily="{StaticResource fixedWidthFont}" Foreground="#60666666"/>
             </StackPanel>
@@ -130,16 +130,16 @@
                         <Button Style="{StaticResource secondaryButton}" Width="30">
                             <Image Width="20" Height="20" Source="resources/flash.png" IsHitTestVisible="False"/>
                         </Button>
-                        <Button Style="{StaticResource secondaryButton}" Width="30">
+                        <Button x:Name="btnPrev" Style="{StaticResource secondaryButton}" Width="30">
                             <Image Width="24" Height="24" Source="resources/chevron-left.png" IsHitTestVisible="False"/>
                         </Button>
-                        <Button Style="{StaticResource secondaryButton}" Width="30">
+                        <Button x:Name="btnNext" Style="{StaticResource secondaryButton}" Width="30">
                             <Image Width="24" Height="24" Source="resources/chevron-right.png" IsHitTestVisible="False"/>
                         </Button>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                        <Button Style="{StaticResource secondaryButton}" Width="30">
+                        <Button x:Name="btnRefresh" Style="{StaticResource secondaryButton}" Width="30">
                             <Image Width="20" Height="20" Source="resources/folder-addto.png" IsHitTestVisible="False"/>
                         </Button>
                     </StackPanel>
@@ -267,12 +267,36 @@
             <Menu x:Name="menu" Height="32" Margin="0 -2 0 0" VerticalAlignment="Top">
                 <MenuItem x:Name="hFile" Header="_File">
                     <MenuItem Command="{Binding OpenArchive}"/>
+                    <MenuItem x:Name="mnuRecent" Header="Recent files">
+                        <MenuItem x:Name="mnuNoHistory" Header="No file history" IsEnabled="False"/>
+                        <Separator/>
+                        <MenuItem x:Name="mnuClearHistory" Header="Clear history"/>
+                    </MenuItem>
+                    <Separator/>
                     <MenuItem Command="{Binding Create}"/>
                     <MenuItem Command="{Binding Decompress}"/>
+                    <MenuItem Command="{Binding DecompressToCurrent}"/>
+                    <Separator/>
+                    <MenuItem Command="{Binding Reveal}"/>
+                    <MenuItem Command="{Binding Quit}"/>
                 </MenuItem>
                 <MenuItem x:Name="hEdit" Header="_Edit">
                 </MenuItem>
                 <MenuItem x:Name="hView" Header="_View">
+                    <MenuItem Header="Sort by">
+                        <MenuItem x:Name="menuSortbyName" IsCheckable="True" IsChecked="True" Header="Name"/>
+                        <MenuItem x:Name="menuSortbyModified" IsCheckable="True" IsChecked="False" Header="Date modified"/>
+                        <MenuItem x:Name="menuSortbyCreation" IsCheckable="True" IsChecked="False" Header="Date creation"/>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem x:Name="menuSortAscending" IsCheckable="True" IsChecked="True" Header="Ascending"/>
+                    <MenuItem x:Name="menuSortDescending" IsCheckable="True" IsChecked="False" Header="Descending"/>
+                    <Separator/>
+                    <MenuItem Command="{Binding Previous}"/>
+                    <MenuItem Command="{Binding Next}"/>
+                    <Separator/>
+                    <MenuItem Command="{Binding Root}"/>
+                    <MenuItem Command="{Binding LevelUp}"/>
                 </MenuItem>
                 <MenuItem x:Name="hTools" Header="_Tools" Visibility="Collapsed">
                 </MenuItem>

@@ -145,8 +145,8 @@
     <DropShadowEffect x:Key="dropShadowCondensed" Color="Black" BlurRadius="1"
                       ShadowDepth="0.5" Direction="-90" Opacity="0.4"/>
 
-    <DropShadowEffect x:Key="dropShadowPopup" Color="Black"
-                      ShadowDepth="2" BlurRadius="20" Opacity="0.2"/>
+    <DropShadowEffect x:Key="dropShadowPopup" Color="Black" Direction="-90"
+                      ShadowDepth="8" BlurRadius="15" Opacity="0.13"/>
 
     <!-- Buttons -->
 
@@ -740,7 +740,7 @@
 
                     <Border x:Name="SubmenuBorder" SnapsToDevicePixels="True" BorderThickness="1"
                             Background="White" BorderBrush="{StaticResource menuArrow}" CornerRadius="8"
-                            Margin="20" Effect="{StaticResource dropShadowPopup}">
+                            Margin="20 2 20 20" Effect="{StaticResource dropShadowPopup}">
                         <Grid Margin="0 5 0 5">
                             <ScrollViewer CanContentScroll="True" Style="{StaticResource MenuScrollViewer}">
                                 <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
@@ -791,7 +791,7 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="{x:Static MenuItem.SubmenuItemTemplateKey}" TargetType="{x:Type MenuItem}">
-        <Border x:Name="Border" BorderThickness="0" Margin="4 0 4 0" Padding="5 2 5 2" CornerRadius="4">
+        <Border x:Name="Border" BorderThickness="0" Margin="4 0 4 0" Padding="5 2 5 2" CornerRadius="4" IsHitTestVisible="True">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="Check" />
@@ -855,7 +855,7 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
-        <Border x:Name="Border" BorderThickness="0" Margin="4 0 4 0" Padding="5 2 5 2" CornerRadius="4">
+        <Border x:Name="Border" BorderThickness="0" Margin="4 0 4 0" Padding="5 2 5 2" CornerRadius="4" IsHitTestVisible="True">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="Check" />
@@ -925,9 +925,9 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <Style x:Key="{x:Type MenuItem}"
-       TargetType="{x:Type MenuItem}">
+    <Style x:Key="{x:Type MenuItem}" TargetType="{x:Type MenuItem}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="IsHitTestVisible" Value="True"/>
         <Style.Triggers>
             <Trigger Property="Role" Value="TopLevelHeader">
                 <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}" />

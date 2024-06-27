@@ -14,7 +14,6 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static Vanara.PInvoke.Shell32;
-using static Vanara.PInvoke.User32;
 
 namespace Archiver
 {
@@ -121,6 +120,8 @@ namespace Archiver
                 {
                     isModelDialogOpened = true;
                     var tempVisibility = this.splashScreen.Visibility;
+                    var tempTitle = this.lblTitle.Text;
+                    var tempWindowTitle = this.Title;
 
                     this.resetStatusBar();
                     CompressPage page = new CompressPage(this);
@@ -129,6 +130,9 @@ namespace Archiver
                     this.defaultSplash.Visibility = Visibility.Hidden;
                     this.splashScreen.Children.Add(page);
 
+                    this.lblTitle.Text = "Create archive";
+                    this.Title = "Create archive";
+
                     page.JobFinished += (s, e) =>
                     {
                         this.splashScreen.Children.Remove(page);
@@ -137,6 +141,8 @@ namespace Archiver
                         this.resetStatusBar();
                         this.statusBar.Visibility = Visibility.Collapsed;
 
+                        this.lblTitle.Text = tempTitle;
+                        this.Title = tempWindowTitle;
                         isModelDialogOpened = false;
                     };
                 },
@@ -144,11 +150,13 @@ namespace Archiver
             );
 
             this.Decompress = registerCommand("Extract archive ...", "decompress",
-                new KeyGesture(Key.X, ModifierKeys.Control | ModifierKeys.Shift, "Ctrl + Shift + X"),
+                new KeyGesture(Key.E, ModifierKeys.Control | ModifierKeys.Shift, "Ctrl + Shift + E"),
                 (s, e) =>
                 {
                     isModelDialogOpened = true;
-                    var tempVisibility = this.splashScreen.Visibility;
+                    var tempVisibility = this.splashScreen.Visibility; 
+                    var tempTitle = this.lblTitle.Text;
+                    var tempWindowTitle = this.Title;
 
                     this.resetStatusBar();
                     ExtractPage page = new ExtractPage(this, this.currentArchive ?? throw new Exception("Unexpected"));
@@ -157,6 +165,9 @@ namespace Archiver
                     this.defaultSplash.Visibility = Visibility.Hidden;
                     this.splashScreen.Children.Add(page);
 
+                    this.lblTitle.Text = "Extract archive";
+                    this.Title = "Extract archive";
+
                     page.JobFinished += (s, e) =>
                     {
                         this.splashScreen.Children.Remove(page);
@@ -164,7 +175,9 @@ namespace Archiver
                         this.splashScreen.Visibility = tempVisibility;
                         this.resetStatusBar();
                         this.statusBar.Visibility = Visibility.Collapsed;
-
+                        
+                        this.lblTitle.Text = tempTitle;
+                        this.Title = tempWindowTitle;
                         isModelDialogOpened = false;
                     };
                 },
@@ -174,6 +187,182 @@ namespace Archiver
                            this.IsArchiveOpened; 
                 }
             );
+
+            this.DecompressToCurrent = registerCommand("Decompress to current directory", "decompress.current",
+                new KeyGesture(Key.E, ModifierKeys.Control, "Ctrl + E"),
+                (s, e) =>
+                {
+                    isModelDialogOpened = true;
+                    var tempVisibility = this.splashScreen.Visibility;
+                    var tempTitle = this.lblTitle.Text;
+                    var tempWindowTitle = this.Title;
+
+                    this.resetStatusBar();
+                    ExtractPage page = new ExtractPage(this, this.currentArchive ?? throw new Exception("Unexpected"), autoextract: true);
+                    this.statusBar.Visibility = Visibility.Visible;
+                    this.splashScreen.Visibility = Visibility.Visible;
+                    this.defaultSplash.Visibility = Visibility.Hidden;
+                    this.splashScreen.Children.Add(page);
+
+                    this.lblTitle.Text = "Extract archive";
+                    this.Title = "Extract archive";
+
+                    page.JobFinished += (s, e) =>
+                    {
+                        this.splashScreen.Children.Remove(page);
+                        this.defaultSplash.Visibility = Visibility.Visible;
+                        this.splashScreen.Visibility = tempVisibility;
+                        this.resetStatusBar();
+                        this.statusBar.Visibility = Visibility.Collapsed;
+
+                        this.lblTitle.Text = tempTitle;
+                        this.Title = tempWindowTitle;
+                        isModelDialogOpened = false;
+                    };
+                },
+                (s, e) =>
+                {
+                    return !isModelDialogOpened &&
+                           this.IsArchiveOpened;
+                }
+            );
+
+            this.Reveal = registerCommand("Reveal in Windows Explorer ...", "reveal", null,
+                (s, e) =>
+                {
+                    if (currentArchive == null) return;
+                    DirectoryInfo? dinfo = new System.IO.FileInfo(this.currentArchive.FullName).Directory;
+                    if (dinfo != null)
+                        System.Diagnostics.Process.Start(new ProcessStartInfo(dinfo.FullName) { UseShellExecute = true });
+                },
+                (s, e) =>
+                {
+                    return this.IsArchiveOpened;
+                }
+            );
+
+            this.Quit = registerCommand("Quit application", "quit", 
+                new KeyGesture(Key.F4, ModifierKeys.Alt, "Alt + F4"),
+                (s, e) =>
+                {
+                    Application.Current.Shutdown();
+                },
+                (s, e) =>
+                {
+                    return true;
+                }
+            );
+
+            this.mnuClearHistory.Click += (s, e) => {
+                Properties.Settings.Default.History.Clear();
+                Properties.Settings.Default.Save();
+                this.mnuNoHistory.Visibility = Visibility.Visible;
+                this.mnuRecent.Items.Clear();
+                this.mnuRecent.Items.Add(this.mnuNoHistory);
+                this.mnuRecent.Items.Add(new Separator());
+                this.mnuRecent.Items.Add(this.mnuClearHistory);
+            };
+
+            if (Properties.Settings.Default.History == null)
+            {
+                Settings.Default.History = new System.Collections.Specialized.StringCollection();
+                Settings.Default.Save();
+            }
+
+            foreach (var item in Properties.Settings.Default.History)
+            {
+                MenuItem mi = new MenuItem();
+                if (item == null) continue;
+                FileInfo info = new FileInfo(item);
+                if (!info.Exists) continue;
+                mi.Header = info.Name;
+                mi.InputGestureText = info.Directory?.FullName ?? "";
+                mi.Click += (s, e) => {
+                    this.openFile(isc, item);
+                };
+                this.mnuRecent.Items.Insert(1, mi);
+                this.mnuNoHistory.Visibility = Visibility.Collapsed;
+            }
+
+            #endregion
+
+            #region View Menu
+
+            this.menuSortDescending.Click += (s, e) => {
+                resetSortDirectionUI();
+                this.menuSortDescending.IsChecked = true;
+                this.direction = ListSortDirection.Descending;
+                this.sort();
+            };
+
+            this.menuSortAscending.Click += (s, e) => {
+                resetSortDirectionUI();
+                this.menuSortAscending.IsChecked = true;
+                this.direction = ListSortDirection.Ascending;
+                this.sort();
+            };
+
+            this.menuSortbyName.Click += (s, e) => {
+                resetSortbyUI();
+                this.menuSortbyName.IsChecked = true;
+                this.sortProperty = "Name";
+                this.sort();
+            };
+
+            this.menuSortbyCreation.Click += (s, e) => {
+                resetSortbyUI();
+                this.menuSortbyCreation.IsChecked = true;
+                this.sortProperty = "DateCreation";
+                this.sort();
+            };
+
+            this.menuSortbyModified.Click += (s, e) => {
+                resetSortbyUI();
+                this.menuSortbyModified.IsChecked = true;
+                this.sortProperty = "DateModified";
+                this.sort();
+            };
+
+            Action<object, ExecutedRoutedEventArgs> delPrev = (s, e) => {
+                var last = this.previous.Last();
+                this.next.Insert(0, last);
+                this.previous.RemoveAt(this.previous.Count - 1);
+
+                this.navigate(this.previous.Last(), true);
+            };
+
+            Action<object, ExecutedRoutedEventArgs> delNext = (s, e) => {
+                var first = this.next[0];
+                this.previous.Add(first);
+                this.next.RemoveAt(0);
+
+                this.navigate(first, true);
+            };
+
+            Action<object, ExecutedRoutedEventArgs> delUpOneLevel = (s, e) => {
+                if (currentArchive == null) return;
+                if (this.current?.Parent != null)
+                {
+                    this.navigate(this.current.Parent, true);
+                } else this.navigate(currentArchive, true);
+            };
+
+            Action<object, ExecutedRoutedEventArgs> delRoot = (s, e) => {
+                if (currentArchive == null) return;
+                this.navigate(currentArchive, true);
+            };
+
+            this.Previous = this.registerCommand("Previous", "previous", null,
+                delPrev, (s, e) => { return this.IsArchiveOpened && this.previous.Count > 1; });
+            this.Next = this.registerCommand("Next", "next", null,
+                delNext, (s, e) => { return this.IsArchiveOpened && this.next.Any(); });
+            this.LevelUp = this.registerCommand("Up one level", "up.level", new KeyGesture(Key.Back, ModifierKeys.None, "Backspace"),
+                delUpOneLevel, (s, e) => { return this.IsArchiveOpened && this.current?.Parent != null; });
+            this.Root = this.registerCommand("Archive root directory", "root.dir", new KeyGesture(Key.Decimal, ModifierKeys.Control, "Ctrl + ."),
+                delRoot, (s, e) => { return this.IsArchiveOpened; });
+
+            this.btnNext.Command = this.Next;
+            this.btnPrev.Command = this.Previous;
 
             #endregion
 
@@ -205,11 +394,21 @@ namespace Archiver
 
         private void openFile(ImageSourceConverter isc, string fname)
         {
-            Archiver.Archive.SevenZipExtractor extractor = new Archiver.Archive.SevenZipExtractor(fname);
-            var properties = extractor.ArchiveProperties;
+            Archiver.Archive.SevenZipExtractor? extractor = null;
 
-            if (extractor.HasExceptions)
+            try
+            {
+                extractor = new Archiver.Archive.SevenZipExtractor(fname);
+                var properties = extractor.ArchiveProperties;
+            } 
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
                 return;
+            }
+
+            if (extractor == null) return;
+            if (extractor.HasExceptions) return;
 
             Arch arch = new Arch();
             arch.Format = extractor.Format.ToString();
@@ -325,7 +524,17 @@ namespace Archiver
 
             this.previous.Clear();
             this.next.Clear();
-            this.history.Add(arch.FullName);
+
+            string contains = "";
+            foreach (var his in Properties.Settings.Default.History)
+                if ((his ?? "").ToLower().Trim() == arch.FullName.ToLower().Trim())
+                    contains = his ?? "";
+
+            if (!string.IsNullOrEmpty(contains))
+                Properties.Settings.Default.History.Remove(contains);
+
+            Properties.Settings.Default.History.Add(arch.FullName);
+            Properties.Settings.Default.Save();
 
             this.bcRoot.ItemsSource = arch;
             this.navigate(arch);
@@ -381,8 +590,7 @@ namespace Archiver
                 navigate(file.FullName, this.currentArchive);
             }
 
-            if (!suppress)
-                this.breadcrumb.Navigate(directory);
+            this.breadcrumb.Navigate(directory);
         }
 
         private void navigate(string relativePath, Arch archive)
@@ -504,32 +712,22 @@ namespace Archiver
         public RoutedUICommand Create { get; private set; }
         public RoutedUICommand Decompress { get; private set; }
         public RoutedUICommand DecompressToCurrent { get; private set; }
-        public RoutedUICommand DecompressSelected { get; private set; }
         public RoutedUICommand Reveal { get; private set; }
-        public RoutedUICommand CloseArchive { get; private set; }
         public RoutedUICommand Quit { get; private set; }
-        public RoutedUICommand Append { get; private set; }
-        public RoutedUICommand DeleteSelection { get; private set; }
-        public RoutedUICommand DeleteFile { get; private set; }
-        public RoutedUICommand Rename { get; private set; }
-        public RoutedUICommand Copy { get; private set; }
-        public RoutedUICommand Paste { get; private set; }
-        public RoutedUICommand Cut { get; private set; }
-        public RoutedUICommand Find { get; private set; }
-        public RoutedUICommand SelectAll { get; private set; }
-        public RoutedUICommand Deselect { get; private set; }
-        public RoutedUICommand Reverse { get; private set; }
-        public RoutedUICommand SelectExtension { get; private set; }
-        public RoutedUICommand SortByName { get; private set; }
-        public RoutedUICommand SortByExtension { get; private set; }
-        public RoutedUICommand SortByModified { get; private set; }
-        public RoutedUICommand SortByCreation { get; private set; }
-        public RoutedUICommand SortAscending { get; private set; }
-        public RoutedUICommand SortDescending { get; private set; }
         public RoutedUICommand Previous { get; private set; }
         public RoutedUICommand Next { get; private set; }
         public RoutedUICommand Root { get; private set; }
         public RoutedUICommand LevelUp { get; private set; }
+        public RoutedUICommand Append { get; private set; }
+        public RoutedUICommand Delete { get; private set; }
+        public RoutedUICommand Rename { get; private set; }
+        public RoutedUICommand Copy { get; private set; }
+        public RoutedUICommand Paste { get; private set; }
+        public RoutedUICommand Cut { get; private set; }
+        public RoutedUICommand SelectAll { get; private set; }
+        public RoutedUICommand Deselect { get; private set; }
+        public RoutedUICommand Reverse { get; private set; }
+        public RoutedUICommand SelectExtension { get; private set; }
         public RoutedUICommand About7Z { get; private set; }
         public RoutedUICommand About { get; private set; }
 
@@ -580,6 +778,19 @@ namespace Archiver
         ListSortDirection direction = ListSortDirection.Ascending;
         string sortProperty = "Name";
 
+        private void resetSortbyUI()
+        {
+            this.menuSortbyCreation.IsChecked = false;
+            this.menuSortbyModified.IsChecked = false;
+            this.menuSortbyName.IsChecked = false;
+        }
+
+        private void resetSortDirectionUI()
+        {
+            this.menuSortAscending.IsChecked = false;
+            this.menuSortDescending.IsChecked = false;
+        }
+
         private void sort()
         {
             if (this.currentArchive == null) return;
@@ -595,8 +806,6 @@ namespace Archiver
         public FileSystemNode? current { get; set; } = null;
         List<FileSystemNode> previous = new List<FileSystemNode>();
         List<FileSystemNode> next = new List<FileSystemNode>();
-
-        public List<string> history = new List<string>();
     }
 
     // archiver file structures - these structures are core models for archiver
@@ -921,6 +1130,7 @@ namespace Archiver
         public void proceedDisabled();
         public void changeProceedText(string content);
         public event EventHandler ProceedRequest;
+        public void proceed();
     }
 
     public interface ITaskPage
@@ -1021,6 +1231,12 @@ namespace Archiver
                 this.ProceedRequest -= (EventHandler)del;
 
             this.changeProceedText("Proceed");
+        }
+
+        public void proceed()
+        {
+            if (this.btnProceed.IsEnabled)
+                this.ProceedRequest?.Invoke(this.btnProceed, new EventArgs());
         }
     }
 }

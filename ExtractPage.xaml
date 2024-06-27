@@ -81,7 +81,7 @@
                         <RadioButton x:Name="radioNoPass" Content="No password" IsChecked="True"/>
                         <RadioButton x:Name="radioPass" Content="Specify password to extract this archive"/>
                         <StackPanel x:Name="panelPass" Orientation="Horizontal" Visibility="Collapsed">
-                            <PasswordBox x:Name="txtPass" Width="200" Margin="25 0 0 0"></PasswordBox>
+                            <PasswordBox x:Name="txtPass" Width="200" Margin="25 0 0 0" FontFamily="{StaticResource fixedWidthFont}"></PasswordBox>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

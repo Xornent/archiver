@@ -172,7 +172,12 @@ namespace Archiver.Archive
         {
             if (_reportErrors && (handler == null || !handler.Canceled))
             {
-                throw e[0];
+                foreach (var item in e)
+                    this.AddException(item);
+
+                // throw e[0];
+                if(handler != null) handler.Canceled = true;
+                return true;
             }
 
             return false;
@@ -182,7 +187,7 @@ namespace Archiver.Archive
         {
             if (HasExceptions)
             {
-#if DEBUG
+#if false
                 throw new SevenZipException(SevenZipException.USER_EXCEPTION_MESSAGE);
 #endif
             }

@@ -48,15 +48,18 @@ namespace Archiver
 
         public DirectoryInfo? extracted;
         private string remembered = "";
+        private bool autoExtract = false;
 
-        public ExtractPage(ILoadingStatusProvider provider, Arch arch)
+        public ExtractPage(ILoadingStatusProvider provider, Arch arch, bool autoextract = false)
         {
             InitializeComponent();
             this.loader = provider;
             this.archive = arch;
             this.extracted = new FileInfo(arch.FullName).Directory;
+            this.autoExtract = autoextract;
 
             this.chkSPF.IsEnabled = arch.IsSPF;
+            this.chkSPF.IsChecked = arch.IsSPF;
             this.panelExclusion.Visibility = Visibility.Collapsed;
             this.panelPass.Visibility = Visibility.Collapsed;
 
@@ -105,6 +108,8 @@ namespace Archiver
                     {
                         loader.proceedEnabled();
                         loader.cancelEnabled();
+
+                        if (this.autoExtract) { loader.proceed(); this.autoExtract = false; }
                     }
                 }
                 else
@@ -290,9 +295,17 @@ namespace Archiver
                         foreach (var item in extractor.Exceptions)
                         {
                             if (item is UserCancelledException)
-                            { } else throw item;
+                                MessageBox.Show("User cancelled the operation");
+                            else if (item is SevenZipException sze)
+                                MessageBox.Show(sze.Message);
+                            else throw item;
                         }
 
+                        loader.loaderOff();
+                        loader.descriptionOff();
+                        loader.progressOff();
+                        loader.cancelEnabled();
+                        wildCardUpdate(this, new EventArgs());
                         return;
                     }
 
@@ -392,7 +405,19 @@ namespace Archiver
                     }
                 };
 
-                extractor.BeginExtractFiles(this.extracted.FullName, indices.ToArray());
+                try
+                {
+                    extractor.BeginExtractFiles(this.extracted.FullName, indices.ToArray());
+                }
+                catch(Archiver.Exceptions.ExtractionFailedException extractFailed)
+                {
+                    MessageBox.Show("Your file may have password.");
+                    extractor.AddException(extractFailed);
+                }
+                finally
+                {
+                    
+                }
             };
         }
 
