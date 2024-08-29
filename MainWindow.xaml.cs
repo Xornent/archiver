@@ -101,7 +101,7 @@ namespace Archiver
                 {
                     OpenFileDialog dialog = new OpenFileDialog();
                     dialog.Multiselect = false;
-                    dialog.AddToRecent = Settings.Default.OpenFileDialogAddToRecent;
+                    // dialog.AddToRecent = Settings.Default.OpenFileDialogAddToRecent;
 
                     if (dialog.ShowDialog() ?? false)
                     {

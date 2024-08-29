@@ -7,7 +7,7 @@
       xmlns:io="clr-namespace:System.IO;assembly=mscorlib"
       xmlns:tree="clr-namespace:Aga.Controls.Tree"
       mc:Ignorable="d"
-      d:DesignHeight="1000" d:DesignWidth="800">
+      d:DesignHeight="1200" d:DesignWidth="800">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -125,11 +125,9 @@
                             <ComboBox x:Name="comboArchiveType"  IsEnabled="True" SelectedIndex="0" HorizontalAlignment="Left" 
                                       VerticalAlignment="Top" Width="150" Margin="0">
                                 <ComboBoxItem>Zip</ComboBoxItem>
-                                <ComboBoxItem>Bzip2</ComboBoxItem>
-                                <ComboBoxItem>Gzip</ComboBoxItem>
-                                <ComboBoxItem>Xz</ComboBoxItem>
+                                <ComboBoxItem>Bz2</ComboBoxItem>
+                                <ComboBoxItem>Gz</ComboBoxItem>
                                 <ComboBoxItem>7z</ComboBoxItem>
-                                <ComboBoxItem>Cab</ComboBoxItem>
                                 <ComboBoxItem>Tar</ComboBoxItem>
                                 <ComboBoxItem>Wim</ComboBoxItem>
                             </ComboBox>
@@ -206,166 +204,79 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <Grid Height="15"/>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="gray" Text="File analysis" HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
-                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                            <ComboBox Width="200" SelectedIndex="3" HorizontalAlignment="Left">
-                                <ComboBoxItem>0 (No analysis)</ComboBoxItem>
-                                <ComboBoxItem>1 (WAV analysis)</ComboBoxItem>
-                                <ComboBoxItem>3 (WAV analysis)</ComboBoxItem>
-                                <ComboBoxItem>5 (WAV and EXE analysis)</ComboBoxItem>
-                                <ComboBoxItem>7 (WAV and EXE analysis)</ComboBoxItem>
-                                <ComboBoxItem>9 (Analysis of all files)</ComboBoxItem>
-                            </ComboBox>
-                        </StackPanel>
-
-                        <Grid Height="15"/>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="gray" Text="Solid mode" HorizontalAlignment="Left"
-                               VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <Grid Width="115"/>
                             <StackPanel Orientation="Vertical">
-                                <RadioButton Content="Disable solid mode" IsChecked="True"/>
-                                <RadioButton Content="Use a separate solid block for each new file extension"/>
-                                <CheckBox Content="Set the limit for number of files in one solid block"/>
-                                <StackPanel Margin="25 0 0 0" Orientation="Horizontal">
-                                    <TextBox Text="100"/>
-                                    <TextBlock Foreground="gray" Text="files in 1 solid block" HorizontalAlignment="Left"
-                                               VerticalAlignment="Center" Height="23"  TextAlignment="Left"
-                                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                                </StackPanel>
-                                <RadioButton Content="Set a limit for the total size of a solid block"/>
-                                <StackPanel Orientation="Horizontal" Margin="25 0 0 0">
-                                    <TextBox Text="2" HorizontalAlignment="Left"/>
-                                    <ComboBox SelectedIndex="3">
-                                        <ComboBoxItem>Bytes</ComboBoxItem>
-                                        <ComboBoxItem>Kilobytes</ComboBoxItem>
-                                        <ComboBoxItem>Megabytes</ComboBoxItem>
-                                        <ComboBoxItem>Gigabytes</ComboBoxItem>
-                                    </ComboBox>
-                                </StackPanel>
-                            </StackPanel>
-                        </StackPanel>
-
-                        <Grid Height="15"/>
-
-
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="gray" Text="Archive header" HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
-                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                            <StackPanel Orientation="Vertical">
-                                <CheckBox Content="Archive header compression" IsChecked="True"/>
-                                <CheckBox Content="Archive header encryption" IsChecked="False"/>
-                            </StackPanel>
-                        </StackPanel>
-
-                        <Grid Height="15"/>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="gray" Text="Multithreading" HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
-                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                            <StackPanel Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="False" Content="Uses multithread compression"/>
-                                    <ComboBox Margin="10 0 0 0" SelectedIndex="0">
-                                        <ComboBoxItem>Auto</ComboBoxItem>
-                                        <ComboBoxItem>1</ComboBoxItem>
-                                        <ComboBoxItem>2</ComboBoxItem>
-                                        <ComboBoxItem>3</ComboBoxItem>
-                                        <ComboBoxItem>4</ComboBoxItem>
-                                        <ComboBoxItem>6</ComboBoxItem>
-                                        <ComboBoxItem>8</ComboBoxItem>
-                                        <ComboBoxItem>10</ComboBoxItem>
-                                        <ComboBoxItem>12</ComboBoxItem>
-                                        <ComboBoxItem>14</ComboBoxItem>
-                                        <ComboBoxItem>16</ComboBoxItem>
-                                    </ComboBox>
-                                </StackPanel>
-                                <CheckBox IsChecked="True" Content="Use multithread for filters"/>
-                            </StackPanel>
-                        </StackPanel>
-
-                        <Grid Height="15"/>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="gray" Text="Storage" HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
-                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                            <StackPanel Orientation="Vertical">
-                                <CheckBox Content="Store last modified timestamps" IsChecked="True"/>
-                                <CheckBox Content="Store creation timestamps" IsChecked="False"/>
-                                <CheckBox Content="Store last accessed timestamps" IsChecked="False"/>
-                                <CheckBox Content="Store file attributes" IsChecked="True"/>
-                            </StackPanel>
-                        </StackPanel>
-                        <Grid Height="15"/>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="gray" Text="Methods" HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
-                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                            <StackPanel Orientation="Vertical">
-                                <CheckBox Content="Specify customized compression method chains" IsChecked="False"/>
-                            </StackPanel>
-                        </StackPanel>
-
-                    </StackPanel>
-                </Expander>
-
-                <Expander x:Name="expZip" Header="Zip format options" HorizontalAlignment="Center" Width="475" Visibility="Visible" IsExpanded="True">
-                    <StackPanel Orientation="Vertical">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="gray" Text="Level of compression" HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
-                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                            <StackPanel Orientation="Vertical">
-                                <RadioButton Content="Select a level of compression" IsChecked="True"/>
-                                <ComboBox Margin="25 0 0 0" Width="200" SelectedIndex="3" HorizontalAlignment="Left">
-                                    <ComboBoxItem>0 - Copy mode</ComboBoxItem>
-                                    <ComboBoxItem>1 - Fastest</ComboBoxItem>
-                                    <ComboBoxItem>3 - Fast</ComboBoxItem>
-                                    <ComboBoxItem>5 - Normal</ComboBoxItem>
-                                    <ComboBoxItem>7 - Maximum</ComboBoxItem>
-                                    <ComboBoxItem>9 - Ultra</ComboBoxItem>
+                                <ComboBox Width="200" SelectedIndex="4" HorizontalAlignment="Left">
+                                    <ComboBoxItem>Copy</ComboBoxItem>
+                                    <ComboBoxItem>Deflate</ComboBoxItem>
+                                    <ComboBoxItem>BZip2</ComboBoxItem>
+                                    <ComboBoxItem>LZMA</ComboBoxItem>
+                                    <ComboBoxItem>LZMA2</ComboBoxItem>
+                                    <ComboBoxItem>PPMd</ComboBoxItem>
                                 </ComboBox>
-                                <RadioButton Content="Use customized compression settings"/>
-                            </StackPanel>
-                        </StackPanel>
-
-                        <Grid Height="10"/>
-
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="gray" Text="Mode" HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
-                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                            <ComboBox Width="200" SelectedIndex="1" HorizontalAlignment="Left">
-                                <ComboBoxItem>Copy</ComboBoxItem>
-                                <ComboBoxItem>Deflate</ComboBoxItem>
-                                <ComboBoxItem>Deflate64</ComboBoxItem>
-                                <ComboBoxItem>BZip2</ComboBoxItem>
-                                <ComboBoxItem>LZMA</ComboBoxItem>
-                                <ComboBoxItem>PPMd</ComboBoxItem>
-                            </ComboBox>
-                        </StackPanel>
-                        
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="gray" Text="Options" HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
-                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                            <StackPanel Orientation="Vertical">
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Foreground="gray" Text="Number of fast bytes (Deflate)" HorizontalAlignment="Left"
+                                    <TextBlock Foreground="gray" Text="LZMA compression mode (LZMA)" HorizontalAlignment="Left"
                                                VerticalAlignment="Center" Height="23" TextAlignment="Left"
                                                TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                                    <TextBox Text="32" Width="100" HorizontalAlignment="Left"/>
+                                    <ComboBox HorizontalAlignment="Left" SelectedIndex="1" Width="200">
+                                        <ComboBoxItem>Fast</ComboBoxItem>
+                                        <ComboBoxItem>Normal</ComboBoxItem>
+                                    </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Foreground="gray" Text="Number of passes (Deflate)" HorizontalAlignment="Left"
-                                               VerticalAlignment="Center" Height="23" TextAlignment="Left"
-                                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                                    <TextBox Text="1" HorizontalAlignment="Left"/>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Foreground="gray" Text="Dictionary size (LZMA)" HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                                   TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox Text="900000" HorizontalAlignment="Left"/>
+                                            <ComboBox SelectedIndex="0">
+                                                <ComboBoxItem>Bytes</ComboBoxItem>
+                                                <ComboBoxItem>Kilobytes</ComboBoxItem>
+                                                <ComboBoxItem>Megabytes</ComboBoxItem>
+                                                <ComboBoxItem>Gigabytes</ComboBoxItem>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </StackPanel>
                                 </StackPanel>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Foreground="gray" Text="Match finder (LZMA)" HorizontalAlignment="Left" VerticalAlignment="Center" Height="23" TextAlignment="Left" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                    <ComboBox HorizontalAlignment="Left" SelectedIndex="2" Width="200">
+                                        <ComboBoxItem>bt2</ComboBoxItem>
+                                        <ComboBoxItem>bt3</ComboBoxItem>
+                                        <ComboBoxItem>bt4</ComboBoxItem>
+                                        <ComboBoxItem>hc4</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Foreground="gray" Text="Fast bytes (LZMA, between 5 and 273)" HorizontalAlignment="Left" VerticalAlignment="Center" Height="23" TextAlignment="Left" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                    <TextBox Width="200" HorizontalAlignment="Left">64</TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Foreground="gray" Text="Match finder cycles (LZMA)" HorizontalAlignment="Left" VerticalAlignment="Center" Height="23" TextAlignment="Left" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                    <TextBox Width="200" HorizontalAlignment="Left"></TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Foreground="gray" Text="Literal context bits" HorizontalAlignment="Left" VerticalAlignment="Center" Height="23" TextAlignment="Left" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                        <TextBox Width="120" HorizontalAlignment="Left">3</TextBox>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Foreground="gray" Text="Literal position bits" HorizontalAlignment="Left" VerticalAlignment="Center" Height="23" TextAlignment="Left" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                        <TextBox Width="120" HorizontalAlignment="Left">0</TextBox>
+                                    </StackPanel>
+                                </StackPanel>
+                                
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Foreground="gray" Text="Position bits (LZMA)" HorizontalAlignment="Left" VerticalAlignment="Center" Height="23" TextAlignment="Left" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                    <TextBox Width="120" HorizontalAlignment="Left">2</TextBox>
+                                </StackPanel>
+                                <TextBlock Foreground="gray" Text="Sets the number of pos bits (low bits of current (literal) position). It can be in the range from 0 to 4. Intended for periodical data when the period is equal 2 ^ value" 
+                                           HorizontalAlignment="Left" VerticalAlignment="Center"
+                                           TextAlignment="Left" TextWrapping="Wrap" LineHeight="17" Padding="5" 
+                                           Margin="0 0 10 0" Width="350" FontWeight="Regular"/>
+
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Foreground="gray" Text="Size of used memory (PPMd)" HorizontalAlignment="Left"
                                                VerticalAlignment="Center" Height="23" TextAlignment="Left"
@@ -385,25 +296,110 @@
                                                    TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                                         <TextBox Text="8" HorizontalAlignment="Left"/>
                                     </StackPanel>
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Foreground="gray" Text="Dictionary size (BZip2)" HorizontalAlignment="Left"
-                                                   VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                </StackPanel>
+                                
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Grid Height="15"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="File analysis" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <ComboBox Width="200" SelectedIndex="3" HorizontalAlignment="Left">
+                                <ComboBoxItem>0 (No analysis)</ComboBoxItem>
+                                <ComboBoxItem>1 (WAV analysis)</ComboBoxItem>
+                                <ComboBoxItem>3 (WAV analysis)</ComboBoxItem>
+                                <ComboBoxItem>5 (WAV and EXE analysis)</ComboBoxItem>
+                                <ComboBoxItem>7 (WAV and EXE analysis)</ComboBoxItem>
+                                <ComboBoxItem>9 (Analysis of all files)</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <Grid Height="15"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Filters" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <ComboBox SelectedIndex="2" HorizontalAlignment="Left">
+                                <ComboBoxItem>Automatic (7-Zip 24.06)</ComboBoxItem>
+                                <ComboBoxItem>Compatible with 7-Zip 24.02 (RISC-V disabled)</ComboBoxItem>
+                                <ComboBoxItem>Compatible with 7-Zip 23.00 or older</ComboBoxItem>
+                                <ComboBoxItem>No filter</ComboBoxItem>
+                                <ComboBoxItem>BCJ</ComboBoxItem>
+                                <ComboBoxItem>BCJ2</ComboBoxItem>
+                                <ComboBoxItem>ARM</ComboBoxItem>
+                                <ComboBoxItem>ARM64 (Compatible > 23.00)</ComboBoxItem>
+                                <ComboBoxItem>ARMT</ComboBoxItem>
+                                <ComboBoxItem>IA64</ComboBoxItem>
+                                <ComboBoxItem>RISCV (Compatible > 24.02)</ComboBoxItem>
+                                <ComboBoxItem>PPC</ComboBoxItem>
+                                <ComboBoxItem>SPARC</ComboBoxItem>
+                                <ComboBoxItem>Delta</ComboBoxItem>
+                            </ComboBox>
+                            <TextBox Text="4" Visibility="Collapsed"/>
+                        </StackPanel>
+                        <StackPanel Margin="90 0 0 0">
+                            <TextBlock Foreground="gray" Text="Enables or disables compression filters. By default, 7-zip uses filter for some files: executables files (dll, exe, ocx, sfx, sys) and wav files. for x86 executables it can use BCJ2 filter in Ultra (x9) mode and BCJ filter in other modes" HorizontalAlignment="Left"
+                                       VerticalAlignment="Center" TextAlignment="Left" Width="370"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 0 0" FontWeight="Regular"/>
+                        </StackPanel>
+
+                        <Grid Height="15"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Solid mode" HorizontalAlignment="Left"
+                               VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
+                                <RadioButton Content="Disable solid mode" IsChecked="False"/>
+                                <RadioButton Content="Enable solid mode" IsChecked="True"/>
+                                
+                                <StackPanel Orientation="Vertical" Margin="25 5 0 0">
+                                    <CheckBox Content="Use a separate solid block for each new file extension"/>
+                                    <CheckBox Content="Sort files by types in solid archive"/>
+                                    <CheckBox Content="Set the limit for number of files in one solid block"/>
+                                    <StackPanel Margin="25 0 0 0" Orientation="Horizontal">
+                                        <TextBox Text="100"/>
+                                        <TextBlock Foreground="gray" Text="files in 1 solid block" HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" Height="23"  TextAlignment="Left"
                                                    TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="900000" HorizontalAlignment="Left"/>
-                                            <ComboBox SelectedIndex="0">
-                                                <ComboBoxItem>Bytes</ComboBoxItem>
-                                                <ComboBoxItem>Kilobytes</ComboBoxItem>
-                                                <ComboBoxItem>Megabytes</ComboBoxItem>
-                                                <ComboBoxItem>Gigabytes</ComboBoxItem>
-                                            </ComboBox>
-                                        </StackPanel>
+                                    </StackPanel>
+                                    <RadioButton Content="Set a limit for the total size of a solid block"/>
+                                    <StackPanel Orientation="Horizontal" Margin="25 0 0 0">
+                                        <TextBox Text="2" HorizontalAlignment="Left"/>
+                                        <ComboBox SelectedIndex="3">
+                                            <ComboBoxItem>Bytes</ComboBoxItem>
+                                            <ComboBoxItem>Kilobytes</ComboBoxItem>
+                                            <ComboBoxItem>Megabytes</ComboBoxItem>
+                                            <ComboBoxItem>Gigabytes</ComboBoxItem>
+                                        </ComboBox>
                                     </StackPanel>
                                 </StackPanel>
 
-                                <Grid Height="15"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Grid Height="15"/>
+
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Archive header" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox Content="Archive header compression" IsChecked="True"/>
+                                <CheckBox Content="Archive header encryption" IsChecked="False"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Grid Height="15"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Multithread" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="False" Content="Uses multithread compression"/>
+                                    <CheckBox IsChecked="True" Content="Multithreaded"/>
                                     <ComboBox Margin="10 0 0 0" SelectedIndex="0">
                                         <ComboBoxItem>Auto</ComboBoxItem>
                                         <ComboBoxItem>1</ComboBoxItem>
@@ -418,19 +414,198 @@
                                         <ComboBoxItem>16</ComboBoxItem>
                                     </ComboBox>
                                 </StackPanel>
+                                <CheckBox IsChecked="True" Content="Use multithread for filters"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="False" Content="Memory limit within"/>
+                                    <ComboBox Margin="10 0 0 0" SelectedIndex="2">
+                                        <ComboBoxItem>10 % RAM</ComboBoxItem>
+                                        <ComboBoxItem>30 % RAM</ComboBoxItem>
+                                        <ComboBoxItem>50 % RAM</ComboBoxItem>
+                                        <ComboBoxItem>70 % RAM</ComboBoxItem>
+                                        <ComboBoxItem>90 % RAM</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
+                                <TextBlock Foreground="gray" Text="7-Zip tries to fit in specified memory limits by changing the number of working threads, if the number of threads was not specified in command. If 7-Zip cannot fit in specified memory limit, 7-Zip still executes the command" HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" TextAlignment="Left" Width="370"
+                                           TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 0 0" FontWeight="Regular"/>
                             </StackPanel>
                         </StackPanel>
+
+                        <Grid Height="15"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Storage" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox Content="Store last modified timestamps" IsChecked="True"/>
+                                <CheckBox Content="Store creation timestamps" IsChecked="False"/>
+                                <CheckBox Content="Store last accessed timestamps" IsChecked="False"/>
+                                <CheckBox Content="Store file attributes" IsChecked="True"/>
+                            </StackPanel>
+                        </StackPanel>
+
                     </StackPanel>
+                </Expander>
+
+                <Expander x:Name="expZip" Header="Zip format options" HorizontalAlignment="Center" Width="475" Visibility="Visible" IsExpanded="True">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Level of compression" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
+                                <RadioButton x:Name="zipRadioLevel" Content="Select a level of compression" IsChecked="True"/>
+                                <ComboBox x:Name="zipCmbLevel" Margin="25 0 0 0" Width="200" SelectedIndex="3" HorizontalAlignment="Left">
+                                    <ComboBoxItem>0 - Copy mode</ComboBoxItem>
+                                    <ComboBoxItem>1 - Fastest</ComboBoxItem>
+                                    <ComboBoxItem>3 - Fast</ComboBoxItem>
+                                    <ComboBoxItem>5 - Normal</ComboBoxItem>
+                                    <ComboBoxItem>7 - Maximum</ComboBoxItem>
+                                    <ComboBoxItem>9 - Ultra</ComboBoxItem>
+                                </ComboBox>
+                                <RadioButton x:Name="zipRadioCustom" Content="Use customized compression settings"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Grid Height="10"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Mode" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="170" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <ComboBox x:Name="zipCmbMode" Width="200" SelectedIndex="1" HorizontalAlignment="Left">
+                                <ComboBoxItem>Copy</ComboBoxItem>
+                                <ComboBoxItem>Deflate</ComboBoxItem>
+                                <ComboBoxItem>Deflate64</ComboBoxItem>
+                                <ComboBoxItem>BZip2</ComboBoxItem>
+                                <ComboBoxItem>LZMA</ComboBoxItem>
+                                <ComboBoxItem>PPMd</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Options" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="170" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Foreground="gray" Text="Number of fast bytes (Deflate)" HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                    <TextBox x:Name="zipTxtNFast" Text="32" Width="100" HorizontalAlignment="Left"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Foreground="gray" Text="Number of passes (Deflate)" HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                    <TextBox x:Name="zipTxtNPass" Text="1" HorizontalAlignment="Left"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Foreground="gray" Text="Size of used memory (PPMd)" HorizontalAlignment="Left"
+                                               VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox x:Name="zipTxtUsemem" Text="16" HorizontalAlignment="Left"/>
+                                        <ComboBox x:Name="zipCmbUsememUnit" SelectedIndex="2">
+                                            <ComboBoxItem>Bytes</ComboBoxItem>
+                                            <ComboBoxItem>Kilobytes</ComboBoxItem>
+                                            <ComboBoxItem>Megabytes</ComboBoxItem>
+                                            <ComboBoxItem>Gigabytes</ComboBoxItem>
+                                        </ComboBox>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Foreground="gray" Text="Model order (PPMd)" HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                                   TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                        <TextBox x:Name="zipTxtModelOrder" Text="8" HorizontalAlignment="Left"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Foreground="gray" Text="Dictionary size (BZip2)" HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center" Height="23" TextAlignment="Left"
+                                                   TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBox x:Name="zipTxtDictSize" Text="900000" HorizontalAlignment="Left"/>
+                                            <ComboBox x:Name="zipCmbDictSize" SelectedIndex="0">
+                                                <ComboBoxItem>Bytes</ComboBoxItem>
+                                                <ComboBoxItem>Kilobytes</ComboBoxItem>
+                                                <ComboBoxItem>Megabytes</ComboBoxItem>
+                                                <ComboBoxItem>Gigabytes</ComboBoxItem>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Grid Height="10"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Encryption" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <ComboBox x:Name="zipCmbEncrypt" Width="200" SelectedIndex="0" HorizontalAlignment="Left">
+                                <ComboBoxItem>ZipCrypto</ComboBoxItem>
+                                <ComboBoxItem>AES128</ComboBoxItem>
+                                <ComboBoxItem>AES192</ComboBoxItem>
+                                <ComboBoxItem>AES256</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        
+                        <Grid Height="10"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Code page" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
+                                <RadioButton x:Name="zipRadioAlwaysLocalCP" Content="Always use local code page" IsChecked="True"/>
+                                <RadioButton x:Name="zipRadioAlwaysUTF8" Content="Always use UTF-8 code page"/>
+                                <RadioButton x:Name="zipRadioSpecify" Content="Specify code page"/>
+                                <ComboBox x:Name="zipRadioCP" Margin="25 0 0 0" Width="200" SelectedIndex="0" HorizontalAlignment="Left">
+                                    <ComboBoxItem>UTF-8</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Grid Height="10"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Timestamp" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox x:Name="zipStoreTM" IsChecked="True" Content="Stores last Modified timestamps for files"/>
+                                <CheckBox x:Name="zipStoreTC" IsChecked="False" Content="Stores Creation timestamps for files"/>
+                                <CheckBox x:Name="zipStoreTA" IsChecked="False" Content="Stores last Access timestamps for files"/>
+                                <ComboBox x:Name="zipRadioTPrec" Margin="0 10 0 0" Width="200" SelectedIndex="0" HorizontalAlignment="Left">
+                                    <ComboBoxItem>Windows (200 ns)</ComboBoxItem>
+                                    <ComboBoxItem>Unix (1 s)</ComboBoxItem>
+                                    <ComboBoxItem>DOS (2 s)</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="90 10 0 0">
+                            <CheckBox IsChecked="False" Content="Multithreaded"/>
+                            <ComboBox Margin="10 0 0 0" SelectedIndex="0">
+                                <ComboBoxItem>Auto</ComboBoxItem>
+                                <ComboBoxItem>1</ComboBoxItem>
+                                <ComboBoxItem>2</ComboBoxItem>
+                                <ComboBoxItem>3</ComboBoxItem>
+                                <ComboBoxItem>4</ComboBoxItem>
+                                <ComboBoxItem>6</ComboBoxItem>
+                                <ComboBoxItem>8</ComboBoxItem>
+                                <ComboBoxItem>10</ComboBoxItem>
+                                <ComboBoxItem>12</ComboBoxItem>
+                                <ComboBoxItem>14</ComboBoxItem>
+                                <ComboBoxItem>16</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+
+                    </StackPanel>
+                    
                 </Expander>
 
                 <Expander x:Name="expBzip" Header="Bzip2 format options" HorizontalAlignment="Center" Width="475" Visibility="Collapsed" IsExpanded="True">
 
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="gray" Text="Level of compression" HorizontalAlignment="Left"
-                               VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
-                               TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                            <ComboBox Width="200" SelectedIndex="3" HorizontalAlignment="Left">
+                            <TextBlock Foreground="gray" Text="Level" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <ComboBox x:Name="bz2CmbLevel" Width="200" SelectedIndex="3" HorizontalAlignment="Left">
                                 <ComboBoxItem>0 - Copy mode</ComboBoxItem>
                                 <ComboBoxItem>1 - Fastest</ComboBoxItem>
                                 <ComboBoxItem>3 - Fast</ComboBoxItem>
@@ -446,7 +621,7 @@
                                     <TextBlock Foreground="gray" Text="Number of passes (BZip2)" HorizontalAlignment="Left"
                                            VerticalAlignment="Center" Height="23" TextAlignment="Left"
                                            TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
-                                    <TextBox Text="1" HorizontalAlignment="Left"/>
+                                    <TextBox x:Name="bz2TxtNPass" Text="1" HorizontalAlignment="Left"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Vertical">
@@ -454,8 +629,8 @@
                                            VerticalAlignment="Center" Height="23" TextAlignment="Left"
                                            TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="900000" HorizontalAlignment="Left"/>
-                                            <ComboBox SelectedIndex="0">
+                                            <TextBox x:Name="bz2TxtDict" Text="900000" HorizontalAlignment="Left"/>
+                                            <ComboBox x:Name="bz2CmbDictUnit" SelectedIndex="0">
                                                 <ComboBoxItem>Bytes</ComboBoxItem>
                                                 <ComboBoxItem>Kilobytes</ComboBoxItem>
                                                 <ComboBoxItem>Megabytes</ComboBoxItem>
@@ -467,8 +642,8 @@
 
                                 <Grid Height="15"/>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="False" Content="Uses multithread compression"/>
-                                    <ComboBox Margin="10 0 0 0" SelectedIndex="0">
+                                    <CheckBox x:Name="bz2ChkMT" IsChecked="False" Content="Multithreaded"/>
+                                    <ComboBox x:Name="bz2CmbMT" Margin="10 0 0 0" SelectedIndex="0">
                                         <ComboBoxItem>Auto</ComboBoxItem>
                                         <ComboBoxItem>1</ComboBoxItem>
                                         <ComboBoxItem>2</ComboBoxItem>
@@ -520,25 +695,123 @@
                                            TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
                                     <TextBox Text="1" HorizontalAlignment="Left"/>
                                 </StackPanel>
-                                <Grid Height="15"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="False" Content="Uses multithread compression"/>
-                                    <ComboBox Margin="10 0 0 0" SelectedIndex="0">
-                                        <ComboBoxItem>Auto</ComboBoxItem>
-                                        <ComboBoxItem>1</ComboBoxItem>
-                                        <ComboBoxItem>2</ComboBoxItem>
-                                        <ComboBoxItem>3</ComboBoxItem>
-                                        <ComboBoxItem>4</ComboBoxItem>
-                                        <ComboBoxItem>6</ComboBoxItem>
-                                        <ComboBoxItem>8</ComboBoxItem>
-                                        <ComboBoxItem>10</ComboBoxItem>
-                                        <ComboBoxItem>12</ComboBoxItem>
-                                        <ComboBoxItem>14</ComboBoxItem>
-                                        <ComboBoxItem>16</ComboBoxItem>
-                                    </ComboBox>
-                                </StackPanel>
                             </StackPanel>
                         </StackPanel>
+                        
+                        <Grid Height="10"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Encryption" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <ComboBox x:Name="gzCmbEncrypt" Width="200" SelectedIndex="0" HorizontalAlignment="Left">
+                                <ComboBoxItem>ZipCrypto</ComboBoxItem>
+                                <ComboBoxItem>AES128</ComboBoxItem>
+                                <ComboBoxItem>AES192</ComboBoxItem>
+                                <ComboBoxItem>AES256</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <Grid Height="10"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Code page" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
+                                <RadioButton x:Name="gzRadioAlwaysLocalCP" Content="Always use local code page" IsChecked="True"/>
+                                <RadioButton x:Name="gzRadioAlwaysUTF8" Content="Always use UTF-8 code page"/>
+                                <RadioButton x:Name="gzRadioSpecify" Content="Specify code page"/>
+                                <ComboBox x:Name="gzRadioCP" Margin="25 0 0 0" Width="200" SelectedIndex="0" HorizontalAlignment="Left">
+                                    <ComboBoxItem>UTF-8</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Grid Height="10"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Timestamp" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox x:Name="gzStoreTM" IsChecked="True" Content="Stores last Modified timestamps for files"/>
+                                <CheckBox x:Name="gzStoreTC" IsChecked="False" Content="Stores Creation timestamps for files"/>
+                                <CheckBox x:Name="gzStoreTA" IsChecked="False" Content="Stores last Access timestamps for files"/>
+                                <ComboBox x:Name="gzRadioTPrec" Margin="0 10 0 0" Width="200" SelectedIndex="0" HorizontalAlignment="Left">
+                                    <ComboBoxItem>Windows (200 ns)</ComboBoxItem>
+                                    <ComboBoxItem>Unix (1 s)</ComboBoxItem>
+                                    <ComboBoxItem>DOS (2 s)</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="90 10 0 0">
+                            <CheckBox IsChecked="False" Content="Multithreaded"/>
+                            <ComboBox Margin="10 0 0 0" SelectedIndex="0">
+                                <ComboBoxItem>Auto</ComboBoxItem>
+                                <ComboBoxItem>1</ComboBoxItem>
+                                <ComboBoxItem>2</ComboBoxItem>
+                                <ComboBoxItem>3</ComboBoxItem>
+                                <ComboBoxItem>4</ComboBoxItem>
+                                <ComboBoxItem>6</ComboBoxItem>
+                                <ComboBoxItem>8</ComboBoxItem>
+                                <ComboBoxItem>10</ComboBoxItem>
+                                <ComboBoxItem>12</ComboBoxItem>
+                                <ComboBoxItem>14</ComboBoxItem>
+                                <ComboBoxItem>16</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Expander>
+
+                <Expander x:Name="expTar" Header="Gzip format options" HorizontalAlignment="Center" Width="475" Visibility="Collapsed" IsExpanded="True">
+
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Method" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <ComboBox Width="200" SelectedIndex="0" HorizontalAlignment="Left">
+                                <ComboBoxItem>GNU</ComboBoxItem>
+                                <ComboBoxItem>PAX</ComboBoxItem>
+                                <ComboBoxItem>POSIX</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        
+                        <Grid Height="10"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Timestamp" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox x:Name="tarStoreTM" IsChecked="True" Content="Stores last Modified timestamps for files"/>
+                                <CheckBox x:Name="tarStoreTC" IsChecked="False" Content="Stores Creation timestamps for files"/>
+                                <CheckBox x:Name="tarStoreTA" IsChecked="False" Content="Stores last Access timestamps for files"/>
+                                <ComboBox x:Name="tarRadioTPrec" Margin="0 10 0 0" Width="200" SelectedIndex="0" HorizontalAlignment="Left">
+                                    <ComboBoxItem>Windows (200 ns)</ComboBoxItem>
+                                    <ComboBoxItem>Unix (1 s)</ComboBoxItem>
+                                    <ComboBoxItem>DOS (2 s)</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Expander>
+
+                <Expander x:Name="expWim" Header="Gzip format options" HorizontalAlignment="Center" Width="475" Visibility="Collapsed" IsExpanded="True">
+
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="View" HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right"
+                                       TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <CheckBox x:Name="wimShowImageNumber" IsChecked="True" Content="Show image number in path"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="gray" Text="Timestamp" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="80" TextAlignment="Right" TextWrapping="Wrap" LineHeight="17" Padding="5" Margin="0 0 10 0" FontWeight="Regular"/>
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox x:Name="wimStoreTM" IsChecked="True" Content="Stores last Modified timestamps for files"/>
+                                <CheckBox x:Name="wimStoreTC" IsChecked="False" Content="Stores Creation timestamps for files"/>
+                                <CheckBox x:Name="wimStoreTA" IsChecked="False" Content="Stores last Access timestamps for files"/>
+                                <ComboBox x:Name="wimRadioTPrec" Margin="0 10 0 0" Width="200" SelectedIndex="0" HorizontalAlignment="Left">
+                                    <ComboBoxItem>Windows (200 ns)</ComboBoxItem>
+                                    <ComboBoxItem>Unix (1 s)</ComboBoxItem>
+                                    <ComboBoxItem>DOS (2 s)</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+
                     </StackPanel>
                 </Expander>
             </StackPanel>

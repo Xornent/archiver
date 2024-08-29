@@ -117,22 +117,22 @@ namespace Archiver
             #region Wildcard
 
             this.selectWd.Click += (s, e) => {
-                OpenFolderDialog folderSelect = new OpenFolderDialog();
-                folderSelect.Multiselect = false;
-                if (folderSelect.ShowDialog() == true)
-                {
-                    this.workingDirectory = new DirectoryInfo(folderSelect.FolderName);
-                    this.sourceParentalDirectory = this.workingDirectory;
-
-                    this.comboBoxDest.Items.Add(this.workingDirectory);
-                    this.comboWd.Items.Add(this.workingDirectory);
-                    this.comboBoxDest.SelectedIndex = this.comboBoxDest.Items.Count - 1;
-                    this.comboWd.SelectedIndex = this.comboWd.Items.Count - 1;
-                    dest = this.workingDirectory;
-
-                    updatedSearch = false;
-                    this.updatedExecution = false;
-                }
+                // OpenFolderDialog folderSelect = new OpenFolderDialog();
+                // folderSelect.Multiselect = false;
+                // if (folderSelect.ShowDialog() == true)
+                // {
+                //     this.workingDirectory = new DirectoryInfo(folderSelect.FolderName);
+                //     this.sourceParentalDirectory = this.workingDirectory;
+                // 
+                //     this.comboBoxDest.Items.Add(this.workingDirectory);
+                //     this.comboWd.Items.Add(this.workingDirectory);
+                //     this.comboBoxDest.SelectedIndex = this.comboBoxDest.Items.Count - 1;
+                //     this.comboWd.SelectedIndex = this.comboWd.Items.Count - 1;
+                //     dest = this.workingDirectory;
+                // 
+                //     updatedSearch = false;
+                //     this.updatedExecution = false;
+                // }
             };
 
             this.comboWd.SelectionChanged += (s, e) => {
@@ -315,6 +315,8 @@ namespace Archiver
                 this.expBzip.Visibility = Visibility.Collapsed;
                 this.expGzip.Visibility = Visibility.Collapsed;
                 this.exp7z.Visibility = Visibility.Collapsed;
+                this.expTar.Visibility = Visibility.Collapsed;
+                this.expWim.Visibility = Visibility.Collapsed;
 
                 // this.stSNS.Visibility = Visibility.Collapsed;
                 // this.stSNI.Visibility = Visibility.Collapsed;
@@ -324,26 +326,22 @@ namespace Archiver
                     case "zip":
                         this.expZip.Visibility = Visibility.Visible;
                         break;
-                    case "bzip2":
+                    case "bz2":
                         this.expBzip.Visibility = Visibility.Visible;
                         break;
-                    case "gzip":
+                    case "gz":
                         this.expGzip.Visibility = Visibility.Visible;
-                        break;
-                    case "xz":
                         break;
                     case "7z":
                         this.exp7z.Visibility = Visibility.Visible;
                         break;
-                    case "cab":
-                        break;
                     case "tar":
+                        this.expTar.Visibility = Visibility.Visible;
                         break;
                     case "wim":
-
+                        this.expWim.Visibility = Visibility.Visible;
                         // this.stSNI.Visibility = Visibility.Visible;
                         // this.stSNS.Visibility = Visibility.Visible;
-                        
                         break;
                 }
             };
@@ -368,32 +366,19 @@ namespace Archiver
                     return;
                 }
 
-                // if (this.chkSetTimestamp.IsChecked ?? false)
-                //     compressor.CustomParameters.Add("stl", "1");
-                // if (this.chkCompressShared.IsChecked ?? false)
-                //     compressor.CustomParameters.Add("ssw", "1");
-
                 switch (archiveType)
                 {
                     case "zip":
                         break;
-                    case "bzip2":
+                    case "bz2":
                         break;
-                    case "gzip":
-                        break;
-                    case "xz":
+                    case "gz":
                         break;
                     case "7z":
-                        break;
-                    case "cab":
                         break;
                     case "tar":
                         break;
                     case "wim":
-                        // if (this.chkRestoreNTSecurity.IsChecked ?? false)
-                        //     compressor.CustomParameters.Add("sni", "1");
-                        // if (this.chkIncludeNTFS.IsChecked ?? false)
-                        //     compressor.CustomParameters.Add("sns", "1");
                         break;
                 }
 

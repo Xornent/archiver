@@ -218,15 +218,15 @@ namespace Archiver
             wildcardInputs[0].btnExcludeSwitch.Click += wildCardUpdate;
 
             this.btnSelectDest.Click += (s, e) => {
-                OpenFolderDialog folder = new OpenFolderDialog();
-                folder.Multiselect = false;
-                if(folder.ShowDialog() ?? false)
-                {
-                    this.extracted = new DirectoryInfo(folder.FolderName);
-                    this.comboBoxDest.Items.Add(this.extracted);
-                    // here this.extracted will be set again
-                    this.comboBoxDest.SelectedIndex = this.comboBoxDest.Items.Count - 1;
-                }
+                // OpenFolderDialog folder = new OpenFolderDialog();
+                // folder.Multiselect = false;
+                // if(folder.ShowDialog() ?? false)
+                // {
+                //     this.extracted = new DirectoryInfo(folder.FolderName);
+                //     this.comboBoxDest.Items.Add(this.extracted);
+                //     // here this.extracted will be set again
+                //     this.comboBoxDest.SelectedIndex = this.comboBoxDest.Items.Count - 1;
+                // }
             };
 
             this.comboBoxDest.SelectionChanged += (s, e) =>
